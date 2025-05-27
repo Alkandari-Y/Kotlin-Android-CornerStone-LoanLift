@@ -1,9 +1,6 @@
 
-package com.joincoded.bankapi.data.response
+package com.coded.loanlift.data.response
 
-
-import com.project.campaignlift.entities.PledgeEntity
-import com.project.campaignlift.entities.PledgeStatus
 import java.math.BigDecimal
 import java.time.LocalDate
 
