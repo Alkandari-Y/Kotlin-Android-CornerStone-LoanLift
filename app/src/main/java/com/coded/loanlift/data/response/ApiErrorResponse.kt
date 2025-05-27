@@ -1,0 +1,45 @@
+package com.coded.loanlift.data.response
+
+data class ValidationError(
+    val field: String,
+    val message: String
+)
+
+data class ApiErrorResponse(
+    val timestamp: String,
+    val status: Int,
+    val error: String,
+    val message: String,
+    val code: String,
+    val path: String,
+    val fieldErrors: List<ValidationError>? = null,
+    val traceId: String? = null
+)
+
+enum class ErrorCode {
+    ACCESS_DENIED,
+    ACCOUNT_NOT_FOUND,
+    ACCOUNT_LIMIT_REACHED,
+    ACCOUNT_VERIFICATION_EXCEPTION,
+    ACCOUNT_NOT_VERIFIED,
+    ACCOUNT_NOT_ACTIVE,
+    INVALID_CREDENTIALS,
+    INVALID_FUNDS,
+    INVALID_TRANSFER,
+    USER_ALREADY_EXISTS,
+    USER_NOT_FOUND,
+    INVALID_INPUT,
+    INVALID_AGE,
+    INTERNAL_SERVER_ERROR,
+    UNAUTHORIZED,
+    EXPIRED_TOKEN,
+    INCOMPLETE_USER_REGISTRATION,
+    CAMPAIGN_NOT_FOUND,
+    CAMPAIGN_ALREADY_STARTED,
+    KYC_NOT_FOUND,
+    COMMENT_NOT_FOUND,
+    REPLY_ALREADY_EXISTS,
+    CATEGORY_NOT_FOUND,
+    ROLE_NOT_FOUND,
+    INVALID_TOKEN
+}
