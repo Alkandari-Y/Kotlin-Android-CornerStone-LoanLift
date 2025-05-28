@@ -10,12 +10,3 @@ data class CommentResponseDto(
     val createdAt: LocalDateTime,
     val reply: ReplyDto? = null
 )
-
-data class  CommentDto (
-    val id: Long,
-    val message: String,
-    val createdBy: Long,
-    val createdAt: LocalDateTime,
-    val campaign: Long,
-    val reply: ReplyDto?,
-)
