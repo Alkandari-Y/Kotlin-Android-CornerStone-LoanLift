@@ -2,12 +2,12 @@ package com.coded.loanlift.data.response
 
 import java.math.BigDecimal
 
-data class AccountView (
+data class AccountResponse(
     val id: Long,
     val accountNumber: String,
     val name: String,
     val balance: BigDecimal,
-    val isActive: Boolean,
+    val active: Boolean,
     val ownerId: Long,
-    val ownerType: AccountType,
+    val ownerType: AccountType
 )

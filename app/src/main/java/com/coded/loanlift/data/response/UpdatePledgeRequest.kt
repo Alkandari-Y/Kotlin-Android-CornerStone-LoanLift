@@ -1,3 +1,4 @@
+
 package com.coded.loanlift.data.response
 
 import java.math.BigDecimal

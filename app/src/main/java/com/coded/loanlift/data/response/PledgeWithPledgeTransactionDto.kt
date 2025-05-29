@@ -3,7 +3,8 @@ package com.coded.loanlift.data.response
 import java.math.BigDecimal
 
 data class PledgeWithPledgeTransactionsDto(
-    val pledgeId: Long,
+    val id: Long,
+    val campaignId: Long,
     val userId: Long,
     val accountId: Long,
     val amount: BigDecimal,

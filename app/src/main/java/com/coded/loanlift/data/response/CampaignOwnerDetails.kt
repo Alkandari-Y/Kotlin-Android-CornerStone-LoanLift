@@ -21,4 +21,5 @@ data class CampaignOwnerDetails(
     val submittedAt: LocalDate,
     val campaignDeadline: LocalDate,
     val imageUrl: String?,
+    val accountId: Long
 ) : CampaignDetailResponse
