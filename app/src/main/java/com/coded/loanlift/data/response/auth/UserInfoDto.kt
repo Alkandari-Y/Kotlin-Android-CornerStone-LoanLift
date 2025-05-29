@@ -1,4 +1,4 @@
-package com.coded.loanlift.data.response
+package com.coded.loanlift.data.response.auth
 
 data class UserInfoDto(
     val userId: Long,

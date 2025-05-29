@@ -1,4 +1,4 @@
-package com.coded.loanlift.data.response
+package com.coded.loanlift.data.response.kyc
 
 import java.math.BigDecimal
 import java.time.LocalDate

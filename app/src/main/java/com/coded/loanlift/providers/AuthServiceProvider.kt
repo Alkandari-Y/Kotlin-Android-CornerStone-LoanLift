@@ -3,7 +3,7 @@ package com.coded.loanlift.providers
 import com.coded.loanlift.data.response.auth.JwtResponse
 import com.coded.loanlift.data.response.auth.LoginRequest
 import com.coded.loanlift.data.response.auth.RegisterCreateRequest
-import com.coded.loanlift.data.response.UserInfoDto
+import com.coded.loanlift.data.response.auth.UserInfoDto
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Body
