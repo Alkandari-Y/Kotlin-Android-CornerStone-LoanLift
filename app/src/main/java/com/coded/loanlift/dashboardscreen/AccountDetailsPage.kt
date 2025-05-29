@@ -2,6 +2,7 @@ package com.coded.loanlift.dashboardscreen
 
 import android.provider.CalendarContract
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +46,7 @@ import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountDetailsScreen() {
+fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
     val darkBlue = Color(0xFF1B2541)
     val navyBlue = Color(0xFF1F2937)
     val account =  AccountResponse (
@@ -153,7 +154,7 @@ fun AccountDetailsScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
                 TransactionsHeader()
-                TransactionsList()
+                TransactionsList(onCampaignClick)
 
             }
         }
@@ -178,7 +179,7 @@ fun TransactionsHeader() {
 }
 
 @Composable
-fun TransactionsList() {
+fun TransactionsList(onCampaignClick: (String) -> Unit) {
     val transactions = listOf(
         "Pledge for Progress",
         "Commit to Win",
@@ -190,18 +191,19 @@ fun TransactionsList() {
 
     LazyColumn {
         items(transactions) { campaign ->
-            TransactionCard(campaign)
+            TransactionCard(campaign = campaign, onClick = { onCampaignClick(campaign) })
         }
     }
 }
 
 @Composable
-fun TransactionCard(campaign: String) {
+fun TransactionCard(campaign: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .background(Color(0xFF1B2541)),
+            .background(Color(0xFF1B2541))
+            .clickable { onClick() },
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(containerColor = Color(0xFF3F51B5))
     ) {
