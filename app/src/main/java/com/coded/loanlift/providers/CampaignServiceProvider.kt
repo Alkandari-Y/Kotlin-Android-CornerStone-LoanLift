@@ -17,6 +17,7 @@ import com.coded.loanlift.data.response.ReplyDto
 import com.coded.loanlift.data.response.UpdateCampaignRequest
 import com.coded.loanlift.data.response.UpdatePledgeRequest
 import com.coded.loanlift.data.response.UserPledgeDto
+import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -43,8 +44,6 @@ interface CampaignServiceProvider {
 
 
     // ROLE -> ROLE_USER
-    // NOTE: Need to either manually create form data structure
-    // or use json and use
     @Multipart
     @POST("/campaigns")
     suspend fun createCampaign(
@@ -78,9 +77,14 @@ interface CampaignServiceProvider {
         @Path("campaignId") campaignId: Long,
     ): Response<Unit>
 
+    // ROLE -> ROLE_USER (campaign owner)
+    @GET("/campaigns/manage/{campaignId}/transactions")
+    fun getMyCampaignTransactionsById(
+        @Path("campaignId") campaignId: Long,
+    ): Response<CampaignTransactionHistoryResponse>
 
-    // NOTE: Need to either manually create form data structure
-    // or use json and use
+
+    // ROLE -> ROLE_USER (campaign owner)
     @Multipart
     @PUT("/campaigns/manage/{campaignId}")
     suspend fun updateCampaign(
@@ -90,8 +94,8 @@ interface CampaignServiceProvider {
     ): Response<CampaignDetailResponse>
 
 
-     // NOTE: Need to change like form-data issue
-     @Multipart
+    // ROLE -> ROLE_USER (campaign owner)
+    @Multipart
      @POST("/manage/files")
      fun uploadFile(
          @PartMap fields: Map<String, @JvmSuppressWildcards RequestBody>,
