@@ -20,18 +20,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    SignUpScreen(
+//                    SignUpScreen(
+//                        onSignUpClick = { /* TODO */ },
+//                        onLoginClick = { /* TODO */ }
+//                    )
+                    LoginScreen(
+                        onLoginClick = { /* TODO */ },
                         onSignUpClick = { /* TODO */ },
-                        onLoginClick = { /* TODO */ }
+                        onForgotPasswordClick = { /* TODO */ },
                     )
-                    // DashboardScreen()
 
-//                    LoginScreen(
-//                        onLoginClick = {}
-//    onLoginClick: () -> Unit,
-//    onSignUpClick: () -> Unit,
-//    onForgotPasswordClick: () -> Unit
-//)
                 }
             }
         }
