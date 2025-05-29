@@ -13,6 +13,7 @@ import com.coded.loanlift.signUp.SignUpScreen
 import androidx.compose.ui.tooling.preview.Preview
 import com.coded.loanlift.dashboardscreen.AccountDetailsScreen
 import com.coded.loanlift.dashboardscreen.DashboardScreen
+import com.coded.loanlift.dashboardscreen.MainScreen
 import com.coded.loanlift.ui.theme.LoanLiftTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,10 +22,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    SignUpScreen(
-                        onSignUpClick = { /* TODO */ },
-                        onLoginClick = { /* TODO */ }
-                    )
+                    MainScreen()
+//                    SignUpScreen(
+//                        onSignUpClick = { /* TODO */ },
+//                        onLoginClick = { /* TODO */ }
+//                    )
                     // DashboardScreen()
 
 //                    LoginScreen(
@@ -37,6 +39,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+sealed class ScreenState {
+    object AccountDetails : ScreenState()
+    data class CampaignDetails(val campaignTitle: String) : ScreenState()
 }
 
 
