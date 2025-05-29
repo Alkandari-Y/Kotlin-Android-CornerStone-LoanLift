@@ -4,6 +4,8 @@ import com.coded.loanlift.data.response.AccountCreateRequest
 import com.coded.loanlift.data.response.AccountResponse
 import com.coded.loanlift.data.response.CategoryDto
 import com.coded.loanlift.data.response.CategoryRequest
+import com.coded.loanlift.data.response.KYCRequest
+import com.coded.loanlift.data.response.KYCResponse
 import com.coded.loanlift.data.response.TransactionDetails
 import com.coded.loanlift.data.response.TransferCreateRequest
 import com.coded.loanlift.data.response.UpdateAccountRequest
@@ -98,4 +100,10 @@ interface BankingServiceProvider {
     suspend fun getTransactionsByClientId(
         @Path("clientId") clientId: Long,
     ): Response<List<TransactionDetails>>
+
+
+
+    //kyc
+    @POST("/kyc")
+    suspend fun updateKyc(@Body request: KYCRequest): KYCResponse
 }

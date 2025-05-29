@@ -46,7 +46,12 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    
+
+    implementation(libs.squareup.retrofit)
+    implementation(libs.converter.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+
     implementation(libs.androidx.core.ktx)
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
     implementation(libs.androidx.lifecycle.runtime.ktx)

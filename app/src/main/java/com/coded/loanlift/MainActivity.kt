@@ -13,28 +13,34 @@ import com.coded.loanlift.signUp.SignUpScreen
 import androidx.compose.ui.tooling.preview.Preview
 import com.coded.loanlift.dashboardscreen.AccountDetailsScreen
 import com.coded.loanlift.dashboardscreen.DashboardScreen
+import com.coded.loanlift.kyc.KycEditPage
+import com.coded.loanlift.kyc.kycViewModel.KycViewModel
 import com.coded.loanlift.ui.theme.LoanLiftTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    SignUpScreen(
-                        onSignUpClick = { /* TODO */ },
-                        onLoginClick = { /* TODO */ }
-                    )
-                    // DashboardScreen()
 
-//                    LoginScreen(
-//                        onLoginClick = {}
-//    onLoginClick: () -> Unit,
-//    onSignUpClick: () -> Unit,
-//    onForgotPasswordClick: () -> Unit
-//)
-                }
+            LoanLiftTheme {
+                KycEditPage()
             }
+//            MaterialTheme {
+//                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+//                    SignUpScreen(
+//                        onSignUpClick = { /* TODO */ },
+//                        onLoginClick = { /* TODO */ }
+//                    )
+//                    // DashboardScreen()
+//
+////                    LoginScreen(
+////                        onLoginClick = {}
+////    onLoginClick: () -> Unit,
+////    onSignUpClick: () -> Unit,
+////    onForgotPasswordClick: () -> Unit
+////)
+//                }
+//            }
         }
     }
 }
@@ -45,5 +51,13 @@ class MainActivity : ComponentActivity() {
 fun DashboardScreenPreview() {
     LoanLiftTheme {
         DashboardScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun KycEditPagePreview() {
+    LoanLiftTheme {
+        KycEditPage()
     }
 }
