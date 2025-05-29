@@ -7,13 +7,29 @@ import com.coded.loanlift.data.response.CampaignStatus
 import com.coded.loanlift.data.response.CommentCreateRequest
 import com.coded.loanlift.data.response.CommentResponseDto
 import com.coded.loanlift.data.response.DownloadDto
+import com.coded.loanlift.data.response.FileDto
+import com.coded.loanlift.data.response.PledgeCreateRequest
+import com.coded.loanlift.data.response.PledgeResultDto
+import com.coded.loanlift.data.response.PledgeTransactionWithDetails
+import com.coded.loanlift.data.response.PledgeWithPledgeTransactionsDto
 import com.coded.loanlift.data.response.ReplyCreateRequest
 import com.coded.loanlift.data.response.ReplyDto
+import com.coded.loanlift.data.response.UpdateCampaignRequest
+import com.coded.loanlift.data.response.UpdatePledgeRequest
+import com.coded.loanlift.data.response.UserPledgeDto
+import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -28,21 +44,19 @@ interface CampaignServiceProvider {
 
 
     // ROLE -> ROLE_USER
-    // NOTE: Need to either manually create form data structure
-    // or use json and use
-//    @PostMapping(consumes = ["multipart/form-data"])
-//    suspend fun createCampaign(
-//        @Valid @ModelAttribute campaignCreateRequest: CreateCampaignDto,
-//        @RequestPart("image", required = true) image: MultipartFile,
-//        @RequestAttribute("authUser") authUser: UserInfoDto,
-//    ): ResponseEntity<CampaignEntity>
+    @Multipart
+    @POST("/campaigns")
+    suspend fun createCampaign(
+        @PartMap campaignFields: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part
+    ): Response<CampaignDetailResponse>
 
 
     // ROLE -> ROLE_USER
     @GET("/campaigns/details/{campaignId}")
     suspend fun getCampaignDetails(
-    @Path("campaignId") campaignId: Long,
-    @Query("includeComments") includeComments: Boolean = false
+        @Path("campaignId") campaignId: Long,
+        @Query("includeComments") includeComments: Boolean = false
     ): CampaignDetailResponse
 
     // ROLE -> ROLE_USER
@@ -63,26 +77,31 @@ interface CampaignServiceProvider {
         @Path("campaignId") campaignId: Long,
     ): Response<Unit>
 
+    // ROLE -> ROLE_USER (campaign owner)
+    @GET("/campaigns/manage/{campaignId}/transactions")
+    fun getMyCampaignTransactionsById(
+        @Path("campaignId") campaignId: Long,
+    ): Response<CampaignTransactionHistoryResponse>
 
-    // NOTE: Need to either manually create form data structure
-    // or use json and use
-//    @PutMapping("/manage/{campaignId}",
-//        consumes = ["multipart/form-data"]
-//    )
-//    fun updateCampaign(
-//        @PathVariable campaignId: Long,
-//        @Valid @ModelAttribute campaignUpdateRequest: UpdateCampaignRequest,
-//        @RequestPart("image", required = false) image: MultipartFile?,
-//        @RequestAttribute("authUser") authUser: UserInfoDto,
-//    ): ResponseEntity<CampaignEntity>
 
-    // NOTE: Need to change like form-data issue
-//    @POST("/manage/files")
-//    fun uploadFile(
-//        @Valid @ModelAttribute fileUploadRequest: FileUploadRequest,
-//        @RequestPart("file", required = true) file: MultipartFile,
-//        @RequestAttribute("authUser") authUser: UserInfoDto,
-//    ): ResponseEntity<FileDto>
+    // ROLE -> ROLE_USER (campaign owner)
+    @Multipart
+    @PUT("/campaigns/manage/{campaignId}")
+    suspend fun updateCampaign(
+        @Path("campaignId") campaignId: Long,
+        @PartMap updateFields: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part? = null
+    ): Response<CampaignDetailResponse>
+
+
+    // ROLE -> ROLE_USER (campaign owner)
+    @Multipart
+     @POST("/manage/files")
+     fun uploadFile(
+         @PartMap fields: Map<String, @JvmSuppressWildcards RequestBody>,
+         @Part file: MultipartBody.Part
+     ): Response<FileDto>
+
 
     // ROLE -> ROLE_USER ()
     @GET("/campaigns/manage/files/{fileId}/download")
@@ -91,18 +110,17 @@ interface CampaignServiceProvider {
     ): Response<DownloadDto>
 
 
-
     // Comments Controller
 
     // ROLE -> Authenticated User
     @GET("/comments/campaign/{campaignId}")
-    fun allAllCampaignComments(
+    suspend fun allAllCampaignComments(
         @Path("campaignId") campaignId: Long,
-    ) : List<CommentResponseDto>
+    ): List<CommentResponseDto>
 
     // ROLE -> Authenticated User
     @POST("/comments/campaign/{campaignId}")
-    fun addComment(
+    suspend fun addComment(
         @Path("campaignId") campaignId: Long,
         @Body commentRequest: CommentCreateRequest,
     ): Response<CommentResponseDto>
@@ -110,13 +128,54 @@ interface CampaignServiceProvider {
 
     // ROLE -> ROLE_ADMIN | ROLE_USER (comment owner)
     @DELETE("/comments/edit/{commentId}")
-    fun deleteComment(
+    suspend fun deleteComment(
         @Path("commentId") commentId: Long,
     ): Response<Unit>
 
+
     // ROLE -> ROLE_USER (campaign owner)
     @POST("/comments/reply")
-    fun replyToComment(
+    suspend fun replyToComment(
         @Body replyCreate: ReplyCreateRequest,
     ): Response<ReplyDto>
+
+
+    // Pledge Controller
+
+    // ROLE -> ROLE_USER (campaign owner)
+    @GET("/pledges")
+    suspend fun getAllMyPledges(): List<UserPledgeDto>
+
+    // ROLE -> ROLE_USER (campaign owner)
+    @POST("/pledges")
+    fun createPledge(
+        @Body request: PledgeCreateRequest,
+    ): Response<PledgeResultDto>
+
+
+    // ROLE -> ROLE_USER (pledge owner)
+    @PUT("/pledges/details/{pledgeId}")
+    suspend fun updatePledge(
+        @Path("pledgeId") pledgeId: Long,
+        @Body request: UpdatePledgeRequest,
+    ): Response<PledgeResultDto>
+
+    // ROLE ->  ROLE_ADMIN | ROLE_USER (pledge owner)
+    @GET("/pledges/details/{pledgeId}")
+    suspend fun getPledgeDetails(
+        @Path("pledgeId") pledgeId: Long,
+    ): Response<PledgeWithPledgeTransactionsDto>
+
+
+    // ROLE -> ROLE_ADMIN | ROLE_USER (pledge owner)
+    @GET("/pledges/details/{pledgeId}/transactions")
+    suspend fun getPledgeDetailedTransactions(
+        @Path("pledgeId") pledgeId: Long,
+    ): Response<List<PledgeTransactionWithDetails>>
+
+    // ROLE -> ROLE_USER (pledge owner)
+    @DELETE("/pledges/details/{pledgeId}")
+    suspend fun withdrawPledge(
+        @Path("pledgeId") pledgeId: Long,
+    ): Response<Unit>
 }
