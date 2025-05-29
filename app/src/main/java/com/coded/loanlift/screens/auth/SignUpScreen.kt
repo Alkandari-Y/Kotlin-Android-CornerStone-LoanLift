@@ -43,7 +43,12 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Hi !", fontSize = 32.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Welcome", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1976D2))
+        Text(
+            text = "Welcome",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1976D2)
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = "Let's create an account", fontSize = 16.sp, color = Color.Gray)
 
@@ -80,7 +85,10 @@ fun SignUpScreen(
             visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                    Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Toggle password visibility")
+                    Icon(
+                        imageVector = Icons.Filled.Visibility,
+                        contentDescription = "Toggle password visibility"
+                    )
                 }
             }
         )
@@ -97,8 +105,13 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { confirmPasswordVisible.value = !confirmPasswordVisible.value }) {
-                    Icon(imageVector = Icons.Filled.Visibility, contentDescription = "Toggle confirm password visibility")
+                IconButton(onClick = {
+                    confirmPasswordVisible.value = !confirmPasswordVisible.value
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Visibility,
+                        contentDescription = "Toggle confirm password visibility"
+                    )
                 }
             }
         )

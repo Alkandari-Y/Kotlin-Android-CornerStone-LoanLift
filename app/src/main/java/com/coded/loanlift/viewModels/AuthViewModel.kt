@@ -9,11 +9,7 @@ import com.coded.loanlift.data.response.auth.LoginRequest
 import com.coded.loanlift.data.response.auth.JwtResponse
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.providers.RetrofitInstance
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.auth0.android.jwt.JWT
 import com.coded.loanlift.data.response.auth.JwtContents
 
 
