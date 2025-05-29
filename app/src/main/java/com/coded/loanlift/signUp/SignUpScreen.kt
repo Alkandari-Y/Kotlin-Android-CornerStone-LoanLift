@@ -3,8 +3,6 @@ package com.coded.loanlift.signUp
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
@@ -34,14 +32,6 @@ fun SignUpScreen(
 
     val passwordVisible = remember { mutableStateOf(false) }
     val confirmPasswordVisible = remember { mutableStateOf(false) }
-    var categories = remember { mutableStateOf(listOf<CategoryDto>()) }
-
-    LaunchedEffect(categories){
-        val response = RetrofitInstance.bankingApiService.getAllCategories()
-        var categories  = response.body()
-        println(categories)
-    }
-
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
