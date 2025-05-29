@@ -69,16 +69,29 @@ fun LoginScreen(
             onValueChange = { formState = formState.copy(username = it) },
             label = { Text("Username, Email or Phone Number") },
             modifier = Modifier.fillMaxWidth(),
-            isError = formState.usernameError.isNullOrBlank().not()
+            isError = formState.usernameError != null,
+            supportingText = {
+                formState.usernameError?.let {
+                    Text(text = it, color = Color.Red)
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = formState.password,
-            onValueChange = { formState = formState.copy(password = it) },
+            onValueChange = {
+                formState = formState.copy(password = it).validate()
+            },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
+            isError = formState.passwordError != null,
+            supportingText = {
+                formState.passwordError?.let {
+                    Text(text = it, color = Color.Red)
+                }
+            },
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { showPassword = !showPassword }) {

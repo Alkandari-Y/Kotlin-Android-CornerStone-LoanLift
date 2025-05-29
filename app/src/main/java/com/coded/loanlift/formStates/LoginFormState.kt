@@ -3,20 +3,31 @@ package com.coded.loanlift.formStates
 data class LoginFormState(
     var password: String = "",
     var username: String = "",
-    var passwordError: String? = "",
-    var usernameError: String? = ""
+    var passwordError: String? = null,
+    var usernameError: String? = null
 ) {
     val formIsValid: Boolean
-        get() = password.isNotBlank() &&
-                username.isNotBlank()
+        get() = passwordIsValid && usernameIsValid
 
-    val passwordsValid: Boolean
-        get() = password.isNotBlank()
+    val passwordIsValid: Boolean
+        get() = password.length in 6..50
+
+    val usernameIsValid: Boolean
+        get() = username.isNotBlank() && username.length <= 50
 
     fun validate(): LoginFormState {
         return this.copy(
-            passwordError = if (password.isBlank()) "Password cannot be empty" else null,
-            usernameError = if (username.isBlank()) "Userame cannot be empty" else null
+            passwordError = when {
+                password.isBlank() -> "Password cannot be empty"
+                password.length < 6 -> "Password must be at least 6 characters"
+                password.length > 50 -> "Password must not exceed 50 characters"
+                else -> null
+            },
+            usernameError = when {
+                username.isBlank() -> "Username cannot be empty"
+                username.length > 50 -> "Username must not exceed 50 characters"
+                else -> null
+            }
         )
     }
 }
