@@ -38,8 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.coded.loanlift.data.response.AccountResponse
 import com.coded.loanlift.data.response.AccountType
-import com.coded.loanlift.data.response.AccountView
 import java.math.BigDecimal
 
 
@@ -48,12 +48,12 @@ import java.math.BigDecimal
 fun AccountDetailsScreen() {
     val darkBlue = Color(0xFF1B2541)
     val navyBlue = Color(0xFF1F2937)
-    val account =  AccountView (
+    val account =  AccountResponse (
         id = 1L,
         accountNumber = "1111",
         name =  "Meshal Alquraini",
         balance = BigDecimal("3000"),
-        isActive = true,
+        active = true,
         ownerId = 1,
         ownerType = AccountType.CAMPAIGN
     )
