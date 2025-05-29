@@ -1,5 +1,6 @@
 package com.coded.loanlift.signUp
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -8,16 +9,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.coded.loanlift.navigation.NavRoutesEnum
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    onSignUpClick: () -> Unit,
-    onLoginClick: () -> Unit
+    navController: NavHostController
 ) {
     var emailOrPhone by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
@@ -27,6 +32,9 @@ fun SignUpScreen(
 
     val passwordVisible = remember { mutableStateOf(false) }
     val confirmPasswordVisible = remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -101,7 +109,15 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = onSignUpClick,
+            onClick = {
+                Toast.makeText(context, "Account created", Toast.LENGTH_SHORT).show()
+                coroutineScope.launch {
+                    delay(1000L)
+                    navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
+                        popUpTo(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) { inclusive = true }
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
         ) {
@@ -115,7 +131,9 @@ fun SignUpScreen(
             Text(
                 text = "Log In",
                 color = Color(0xFF8E24AA),
-                modifier = Modifier.clickable { onLoginClick() },
+                modifier = Modifier.clickable {
+                    navController.popBackStack(NavRoutesEnum.NAV_ROUTE_LOGIN.value, false)
+                },
                 fontWeight = FontWeight.Bold
             )
         }

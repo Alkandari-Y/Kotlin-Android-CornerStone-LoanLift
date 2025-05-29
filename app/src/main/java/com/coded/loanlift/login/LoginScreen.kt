@@ -1,5 +1,6 @@
 package com.coded.loanlift.login
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -17,17 +19,23 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.coded.loanlift.navigation.NavRoutesEnum
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit,
+    navController: NavHostController,
     onForgotPasswordClick: () -> Unit
 ) {
     var identifier by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -36,7 +44,6 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo
         Text(
             text = "LoanLift",
             style = TextStyle(fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color(0xFF00BCD4))
@@ -44,7 +51,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Identifier Field
         OutlinedTextField(
             value = identifier,
             onValueChange = { identifier = it },
@@ -54,7 +60,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password Field
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -71,7 +76,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Remember Me & Forgot Password
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,9 +99,16 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Login Button
         Button(
-            onClick = onLoginClick,
+            onClick = {
+                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                coroutineScope.launch {
+                    delay(1000L)
+                    navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
+                        popUpTo(NavRoutesEnum.NAV_ROUTE_LOGIN.value) { inclusive = true }
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -108,12 +119,13 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Sign Up prompt
         Row {
             Text(text = "Don't have an account ? ", color = Color.Gray)
             Text(
                 text = "Sign Up",
-                modifier = Modifier.clickable { onSignUpClick() },
+                modifier = Modifier.clickable {
+                    navController.navigate(NavRoutesEnum.NAV_ROUTE_SIGNUP.value)
+                },
                 color = Color(0xFF2196F3),
                 fontWeight = FontWeight.Bold
             )
