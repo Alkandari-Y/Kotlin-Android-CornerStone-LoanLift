@@ -34,7 +34,7 @@ fun AccountsSection(mainBalance:String, secondaryBalance: String) {
         ) {
             AccountCard(
                 modifier = Modifier.weight(1f),
-                title = "Yousef's Main Account",
+                title = "Main Account",
                 accountNumber = "201038756",
                 balance = mainBalance
             )

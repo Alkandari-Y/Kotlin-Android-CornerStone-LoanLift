@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.coded.loanlift.login.LoginScreen
 import com.coded.loanlift.signUp.SignUpScreen
 import androidx.compose.ui.tooling.preview.Preview
+import com.coded.loanlift.dashboardscreen.AccountDetailsScreen
 import com.coded.loanlift.dashboardscreen.DashboardScreen
 import com.coded.loanlift.ui.theme.LoanLiftTheme
 
