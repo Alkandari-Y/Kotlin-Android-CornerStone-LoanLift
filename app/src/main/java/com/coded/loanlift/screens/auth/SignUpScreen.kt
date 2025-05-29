@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.signUp
+package com.coded.loanlift.screens.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable

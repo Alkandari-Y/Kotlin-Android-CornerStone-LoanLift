@@ -20,52 +20,44 @@ import retrofit2.http.Query
 
 
 interface BankingServiceProvider {
+
     // Accounts Controller
 
-    // ROLE -> Authenticated User
-    @GET("/accounts")
+    @GET("/api/v1/accounts")
     suspend fun getAllAccounts(): Response<List<AccountResponse>>
 
-    // ROLE -> Authenticated User
-    @POST("/accounts")
+    @POST("/api/v1/accounts")
     suspend fun createAccount(
         @Body accountCreateRequestDto: AccountCreateRequest,
-    ) : Response<AccountResponse>
+    ): Response<AccountResponse>
 
-    // ROLE -> Authenticated User ("account owner")
-    @POST("/accounts/transfer")
+    @POST("/api/v1/accounts/transfer")
     suspend fun transfer(
         @Body transferCreateRequestDto: TransferCreateRequest
     ): Response<UpdatedBalanceResponse>
 
-    // ROLE -> Authenticated User ("account owner")
-    @DELETE("/accounts/close/{accountNumber}")
+    @DELETE("/api/v1/accounts/close/{accountNumber}")
     suspend fun closeAccount(
-        @Path("accountNumber") accountNumber : String,
+        @Path("accountNumber") accountNumber: String,
     ): Response<Unit>
 
-    // ROLE -> Authenticated User  ("account owner")
-    @PUT("/accounts/details/{accountNumber}")
+    @PUT("/api/v1/accounts/details/{accountNumber}")
     suspend fun updateAccount(
-        @Path("accountNumber") accountNumber : String,
+        @Path("accountNumber") accountNumber: String,
         @Body accountUpdate: UpdateAccountRequest,
     ): Response<AccountResponse>
 
-    // ROLE -> ROLE_ADMIN | ROLE_USER  ("account owner")
-    @GET("/accounts/details/{accountNumber}")
+    @GET("/api/v1/accounts/details/{accountNumber}")
     suspend fun getAccountDetails(
-        @Path("accountNumber")accountNumber : String,
+        @Path("accountNumber") accountNumber: String,
     ): Response<AccountResponse>
 
-
-    // ROLE -> ROLE_ADMIN
-    @GET("/accounts/clients/{clientId}")
+    @GET("/api/v1/accounts/clients/{clientId}")
     suspend fun getUserAccounts(
-      @Path("clientId") clientId: Long
+        @Path("clientId") clientId: Long
     ): Response<UserAccountsResponse>
 
-    // ROLE -> ROLE_ADMIN | ROLE_USER  ("account owner")
-    @GET("/accounts/clients")
+    @GET("/api/v1/accounts/clients")
     suspend fun getAccountDetails(
         @Query("accountId") accountId: Long? = null,
         @Query("accountNumber") accountNumber: String? = null
@@ -74,27 +66,23 @@ interface BankingServiceProvider {
 
     // Categories Controller
 
-    // ROLE -> Authenticated
-    @GET("/categories")
+    @GET("/api/v1/categories")
     suspend fun getAllCategories(): Response<List<CategoryDto>>
 
-    // ROLE -> ROLE_ADMIN
-    @POST("categories")
+    @POST("/api/v1/categories")
     suspend fun createNewCategory(
         @Body categoryRequest: CategoryRequest
     ): Response<CategoryDto>
 
+
     // Transactions Controller
 
-    // ROLE -> ROLE_ADMIN | ROLE_USER ("account owner")
-    @GET("/transactions/account/{accountNumber}")
+    @GET("/api/v1/transactions/account/{accountNumber}")
     suspend fun getAllTransactionsByAccountNumber(
         @Path("accountNumber") accountNumber: String,
     ): Response<List<TransactionDetails>>
 
-
-    // ROLE -> ROLE_ADMIN | ROLE_USER ("account owner")
-    @GET("/transactions/clients/{clientId}")
+    @GET("/api/v1/transactions/clients/{clientId}")
     suspend fun getTransactionsByClientId(
         @Path("clientId") clientId: Long,
     ): Response<List<TransactionDetails>>

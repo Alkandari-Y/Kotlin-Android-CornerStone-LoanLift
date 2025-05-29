@@ -6,7 +6,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 object RetrofitInstance {
     private const val AUTH_SERVICE_PORT = 8081
     private const val BANK_SERVICE_PORT = 8082
@@ -14,48 +13,36 @@ object RetrofitInstance {
 
     private fun createOkHttpClient(context: Context): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(TokenInterceptor {
-                TokenManager.getToken(
-                    context = context
-                )
-            })
+            .addInterceptor(TokenInterceptor(context))
             .build()
     }
 
     fun getAuthServiceProvider(context: Context): AuthServiceProvider {
         return Retrofit.Builder()
-            .baseUrl(
-                getBaseUrl(port = AUTH_SERVICE_PORT)
-            )
+            .baseUrl(getBaseUrl(AUTH_SERVICE_PORT))
             .client(createOkHttpClient(context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthServiceProvider::class.java)
     }
 
-
     fun getBankingServiceProvide(context: Context): BankingServiceProvider {
         return Retrofit.Builder()
-            .baseUrl(
-                getBaseUrl(port = BANK_SERVICE_PORT)
-            )
-            .client(createOkHttpClient(context = context))
+            .baseUrl(getBaseUrl(BANK_SERVICE_PORT))
+            .client(createOkHttpClient(context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BankingServiceProvider::class.java)
     }
 
-
     fun campaignApiService(context: Context): CampaignServiceProvider {
         return Retrofit.Builder()
-            .baseUrl(
-                getBaseUrl(port = CAMPAIGN_SERVICE_PORT)
-            )
-            .client(createOkHttpClient(context = context))
+            .baseUrl(getBaseUrl(CAMPAIGN_SERVICE_PORT))
+            .client(createOkHttpClient(context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CampaignServiceProvider::class.java)
     }
 
-    private fun getBaseUrl(port: Int): String =  "http://10.0.2.2:$port/api/v1"
+    private fun getBaseUrl(port: Int): String = "http://10.0.2.2:$port/"
 }

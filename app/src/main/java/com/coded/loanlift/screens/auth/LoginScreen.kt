@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.login
+package com.coded.loanlift.screens.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -19,25 +19,36 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.coded.loanlift.formStates.LoginFormState
 import com.coded.loanlift.navigation.NavRoutesEnum
+import com.coded.loanlift.viewModels.AuthUiState
+import com.coded.loanlift.viewModels.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
+    viewModel: AuthViewModel = viewModel(),
     navController: NavHostController,
     onForgotPasswordClick: () -> Unit
 ) {
+    val uiState = viewModel.uiState.value
+    val context = LocalContext.current
+    val token = viewModel.token.value
 
     var showPassword by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
-
     var formState by remember { mutableStateOf(LoginFormState()) }
 
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(token) {
+        if (token?.access?.isNotBlank() == true) {
+            navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
+                popUpTo(NavRoutesEnum.NAV_ROUTE_LOGIN.value) { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -102,14 +113,26 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (uiState is AuthUiState.Error) {
+            Text(
+                text = uiState.message,
+                color = Color.Red,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         Button(
             onClick = {
-                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                coroutineScope.launch {
-                    delay(1000L)
-                    navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
-                        popUpTo(NavRoutesEnum.NAV_ROUTE_LOGIN.value) { inclusive = true }
-                    }
+                val validated = formState.validate()
+                if (validated.formIsValid) {
+                    formState = validated
+                    viewModel.login(
+                        username = validated.username,
+                        password = validated.password
+                    )
+                } else {
+                    formState = validated
+                    Toast.makeText(context, "Fix errors in form", Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier

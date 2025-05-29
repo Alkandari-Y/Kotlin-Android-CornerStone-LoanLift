@@ -5,12 +5,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.coded.loanlift.composables.dashboardscreen.DashboardScreen
-import com.coded.loanlift.composables.login.ForgotPasswordScreen
-import com.coded.loanlift.composables.login.LoginScreen
-import com.coded.loanlift.composables.signUp.SignUpScreen
+import com.coded.loanlift.screens.auth.ForgotPasswordScreen
+import com.coded.loanlift.screens.auth.LoginScreen
+import com.coded.loanlift.screens.auth.SignUpScreen
 import androidx.compose.animation.*
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coded.loanlift.viewModels.AuthViewModel
 
 enum class NavRoutesEnum(val value: String) {
     NAV_ROUTE_LOGIN("login"),
@@ -36,12 +39,19 @@ fun AppHost(
 //        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
 //        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
     ) {
+
+
+
         composable(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
+            val context = LocalContext.current
+            val authViewModel = remember { AuthViewModel(context) }
+
             LoginScreen(
                 navController = navController,
                 onForgotPasswordClick = {
                     navController.navigate(NavRoutesEnum.NAV_ROUTE_FORGOT_PASSWORD.value)
-                }
+                },
+                viewModel = authViewModel
             )
         }
 
