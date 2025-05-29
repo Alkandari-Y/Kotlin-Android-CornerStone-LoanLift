@@ -22,6 +22,7 @@ data class CampaignPublicDetails(
     val campaignDeadline: LocalDate,
     val imageUrl: String?,
     var amountRaised: BigDecimal,
+    var accountId: Long? = null,
 )  : CampaignDetailResponse
 
 data class CampaignPublicDetailsWithComments(
@@ -39,6 +40,7 @@ data class CampaignPublicDetailsWithComments(
     val campaignDeadline: LocalDate?,
     val imageUrl: String?,
     val amountRaised: BigDecimal = BigDecimal.ZERO,
+    var accountId: Long? = null,
     val comments: List<Comment> = emptyList()
 ) : CampaignDetailResponse
 

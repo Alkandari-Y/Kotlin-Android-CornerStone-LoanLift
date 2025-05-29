@@ -1,6 +1,5 @@
 package com.coded.loanlift.data.response
 
-import com.joincoded.bankapi.data.response.UserPledgeDto
 import java.math.BigDecimal
 import java.time.LocalDate
 

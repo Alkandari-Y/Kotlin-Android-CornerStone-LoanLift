@@ -9,6 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.coded.loanlift.login.LoginScreen
 import com.coded.loanlift.signUp.SignUpScreen
+import androidx.compose.ui.tooling.preview.Preview
+import com.coded.loanlift.dashboardscreen.DashboardScreen
+import com.coded.loanlift.ui.theme.LoanLiftTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +23,7 @@ class MainActivity : ComponentActivity() {
                         onSignUpClick = { /* TODO */ },
                         onLoginClick = { /* TODO */ }
                     )
+                    // DashboardScreen()
 
 //                    LoginScreen(
 //                        onLoginClick = {}
@@ -30,5 +34,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview() {
+    LoanLiftTheme {
+        DashboardScreen()
     }
 }
