@@ -1,5 +1,7 @@
 package com.coded.loanlift.dashboardscreen
 
+import android.provider.CalendarContract
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,12 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,12 +32,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.coded.loanlift.data.response.AccountType
+import com.coded.loanlift.data.response.AccountView
+import java.math.BigDecimal
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +48,15 @@ import androidx.compose.ui.unit.sp
 fun AccountDetailsScreen() {
     val darkBlue = Color(0xFF1B2541)
     val navyBlue = Color(0xFF1F2937)
+    val account =  AccountView (
+        id = 1L,
+        accountNumber = "1111",
+        name =  "Meshal Alquraini",
+        balance = BigDecimal("3000"),
+        isActive = true,
+        ownerId = 1,
+        ownerType = AccountType.CAMPAIGN
+    )
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -82,7 +103,7 @@ fun AccountDetailsScreen() {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Main Account",
+                        text = "${account.name}",
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
@@ -95,7 +116,7 @@ fun AccountDetailsScreen() {
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "2010384759",
+                        text = "${account.accountNumber}",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -109,7 +130,7 @@ fun AccountDetailsScreen() {
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "Campaign Account",
+                        text = "${account.ownerType}",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -123,44 +144,74 @@ fun AccountDetailsScreen() {
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "30.560 KD",
+                        text = "${account.balance} KWD",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
-            }
 
-            // Transactions History Section
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Transactions History",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Row {
-                        IconButton(onClick = { /* Handle search */ }) {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = Color.White
-                            )
-                        }
-//                        IconButton(onClick = { /* Handle filter */ }) {
-//                            Icon(Icons.Default.filter, contentDescription = "Filter", tint = Color.White)
-//                        }
-                    }
-                }
+                Spacer(modifier = Modifier.height(8.dp))
+                TransactionsHeader()
+                TransactionsList()
+
+            }
+        }
+    }
+}
+
+@Composable
+fun TransactionsHeader() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF1B2541))
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text("Transactions History", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Row {
+            Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+    }
+}
+
+@Composable
+fun TransactionsList() {
+    val transactions = listOf(
+        "Pledge for Progress",
+        "Commit to Win",
+        "Promise for the Planet",
+        "Fuel the Future",
+        "Mission: Possible",
+        "sourceAccount: true"
+    )
+
+    LazyColumn {
+        items(transactions) { campaign ->
+            TransactionCard(campaign)
+        }
+    }
+}
+
+@Composable
+fun TransactionCard(campaign: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .background(Color(0xFF1B2541)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF3F51B5))
+    ) {
+        // we can add if statement for the icon to show deposit or withdraw
+        Row(modifier = Modifier.padding(16.dp)) {
+            Icon(Icons.Default.ArrowUpward, contentDescription = null, tint = Color.White)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text("Debit–Pledge", fontWeight = FontWeight.Bold, color = Color.White)
+                Text("\"$campaign\" - campaign", color = Color.White)
 
             }
         }
