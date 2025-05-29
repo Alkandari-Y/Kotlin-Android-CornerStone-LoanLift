@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.coded.loanlift.dashboardscreen.AccountDetailsScreen
 import com.coded.loanlift.dashboardscreen.DashboardScreen
 import com.coded.loanlift.navigation.AppHost
 import com.coded.loanlift.ui.theme.LoanLiftTheme
@@ -24,6 +25,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+sealed class ScreenState {
+    object AccountDetails : ScreenState()
+    data class CampaignDetails(val campaignTitle: String) : ScreenState()
 }
 
 
