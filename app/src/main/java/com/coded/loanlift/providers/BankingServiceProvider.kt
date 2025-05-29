@@ -1,14 +1,14 @@
 package com.coded.loanlift.providers
 
-import com.coded.loanlift.data.response.AccountCreateRequest
-import com.coded.loanlift.data.response.AccountResponse
-import com.coded.loanlift.data.response.CategoryDto
-import com.coded.loanlift.data.response.CategoryRequest
-import com.coded.loanlift.data.response.TransactionDetails
-import com.coded.loanlift.data.response.TransferCreateRequest
-import com.coded.loanlift.data.response.UpdateAccountRequest
-import com.coded.loanlift.data.response.UpdatedBalanceResponse
-import com.coded.loanlift.data.response.banking.UserAccountsResponse
+import com.coded.loanlift.data.response.accounts.AccountCreateRequest
+import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.data.response.category.CategoryDto
+import com.coded.loanlift.data.response.category.CategoryRequest
+import com.coded.loanlift.data.response.transaction.TransactionDetails
+import com.coded.loanlift.data.response.transaction.TransferCreateRequest
+import com.coded.loanlift.data.response.accounts.UpdateAccountRequest
+import com.coded.loanlift.data.response.accounts.UpdatedBalanceResponse
+import com.coded.loanlift.data.response.accounts.UserAccountsResponse
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Body

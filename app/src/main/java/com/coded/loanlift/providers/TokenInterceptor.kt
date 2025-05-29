@@ -21,5 +21,4 @@ class TokenInterceptor(private val tokenProvider: () -> String?) : Interceptor {
         }
         return response
     }
-
 }

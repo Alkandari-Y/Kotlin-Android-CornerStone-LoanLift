@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.coded.loanlift.dashboardscreen.DashboardScreen
-import com.coded.loanlift.login.ForgotPasswordScreen
-import com.coded.loanlift.login.LoginScreen
-import com.coded.loanlift.signUp.SignUpScreen
+import com.coded.loanlift.composables.dashboardscreen.DashboardScreen
+import com.coded.loanlift.composables.login.ForgotPasswordScreen
+import com.coded.loanlift.composables.login.LoginScreen
+import com.coded.loanlift.composables.signUp.SignUpScreen
 import androidx.compose.animation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,6 +62,5 @@ fun AppHost(
         composable(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
             DashboardScreen()
         }
-
-        }
     }
+}

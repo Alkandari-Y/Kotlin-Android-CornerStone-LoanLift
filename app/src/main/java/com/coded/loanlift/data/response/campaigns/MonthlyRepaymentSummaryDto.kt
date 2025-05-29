@@ -1,7 +1,7 @@
 package com.coded.loanlift.data.response.campaigns
 
-import com.coded.loanlift.data.response.PledgeTransactionType
-import com.coded.loanlift.data.response.TransactionType
+import com.coded.loanlift.data.enums.PledgeTransactionType
+import com.coded.loanlift.data.enums.TransactionType
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.YearMonth

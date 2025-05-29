@@ -7,60 +7,55 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-
 object RetrofitInstance {
     private const val AUTH_SERVICE_PORT = 8081
     private const val BANK_SERVICE_PORT = 8082
     private const val CAMPAIGN_SERVICE_PORT = 8083
 
-    private lateinit var appContext: Context
-
-    fun init(context: Context) {
-        appContext = context.applicationContext
+    private fun createOkHttpClient(context: Context): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(TokenInterceptor {
+                TokenManager.getToken(
+                    context = context
+                )
+            })
+            .build()
     }
 
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(TokenInterceptor {
-            TokenManager.getToken(
-                context = appContext
-            )
-        })
-        .build()
-
-    val authApiService: AuthServiceProvider by lazy {
-        Retrofit.Builder()
+    fun getAuthServiceProvider(context: Context): AuthServiceProvider {
+        return Retrofit.Builder()
             .baseUrl(
                 getBaseUrl(port = AUTH_SERVICE_PORT)
             )
-            .client(okHttpClient)
+            .client(createOkHttpClient(context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthServiceProvider::class.java)
     }
 
 
-    val bankingApiService: BankingServiceProvider by lazy {
-        Retrofit.Builder()
+    fun getBankingServiceProvide(context: Context): BankingServiceProvider {
+        return Retrofit.Builder()
             .baseUrl(
                 getBaseUrl(port = BANK_SERVICE_PORT)
             )
-            .client(okHttpClient)
+            .client(createOkHttpClient(context = context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BankingServiceProvider::class.java)
     }
 
-    val campaignApiService: CampaignServiceProvider by lazy {
-        Retrofit.Builder()
+
+    fun campaignApiService(context: Context): CampaignServiceProvider {
+        return Retrofit.Builder()
             .baseUrl(
                 getBaseUrl(port = CAMPAIGN_SERVICE_PORT)
             )
-            .client(okHttpClient)
+            .client(createOkHttpClient(context = context))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CampaignServiceProvider::class.java)
     }
-
 
     private fun getBaseUrl(port: Int): String =  "http://10.0.2.2:$port/api/v1"
 }
