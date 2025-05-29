@@ -1,13 +1,14 @@
-package com.project.campaignlift.pledges.dtos
 
-import jakarta.validation.constraints.DecimalMin
-import jakarta.validation.constraints.NotNull
+package com.coded.loanlift.data.response
+
 import java.math.BigDecimal
+import java.time.LocalDate
 
-data class UpdatePledgeRequest(
-
-    @field:NotNull(message = "Amount is required.")
-    @field:DecimalMin(value = "1000.000", message = "Amount must be at least 1000.000")
-    val amount: BigDecimal?
-
+data class UserPledgeDto(
+    val id: Long,
+    val amount: BigDecimal,
+    val status: PledgeStatus,
+    val campaignTitle: String,
+    val campaignId: Long,
+    val createdAt: LocalDate
 )
