@@ -1,19 +1,38 @@
 package com.coded.loanlift.providers
 
+import com.coded.loanlift.managers.TokenManager
+import android.content.Context
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+
 
 object RetrofitInstance {
     private const val AUTH_SERVICE_PORT = 8081
     private const val BANK_SERVICE_PORT = 8082
     private const val CAMPAIGN_SERVICE_PORT = 8083
 
+    private lateinit var appContext: Context
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
+
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(TokenInterceptor {
+            TokenManager.getToken(
+                context = appContext
+            )
+        })
+        .build()
 
     val authApiService: AuthServiceProvider by lazy {
         Retrofit.Builder()
             .baseUrl(
                 getBaseUrl(port = AUTH_SERVICE_PORT)
             )
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthServiceProvider::class.java)
@@ -25,6 +44,7 @@ object RetrofitInstance {
             .baseUrl(
                 getBaseUrl(port = BANK_SERVICE_PORT)
             )
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BankingServiceProvider::class.java)
@@ -35,6 +55,7 @@ object RetrofitInstance {
             .baseUrl(
                 getBaseUrl(port = CAMPAIGN_SERVICE_PORT)
             )
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(CampaignServiceProvider::class.java)
