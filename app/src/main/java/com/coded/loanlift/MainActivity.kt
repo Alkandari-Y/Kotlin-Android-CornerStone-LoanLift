@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.coded.loanlift.dashboardscreen.DashboardScreen
-import com.coded.loanlift.navigation.NavHost
+import com.coded.loanlift.navigation.AppHost
 import com.coded.loanlift.ui.theme.LoanLiftTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    NavHost()
+                    AppHost()
                 }
             }
         }

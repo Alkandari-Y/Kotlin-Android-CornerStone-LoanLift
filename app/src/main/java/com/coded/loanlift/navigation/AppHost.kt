@@ -3,13 +3,14 @@ package com.coded.loanlift.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.coded.loanlift.dashboardscreen.DashboardScreen
 import com.coded.loanlift.login.ForgotPasswordScreen
 import com.coded.loanlift.login.LoginScreen
 import com.coded.loanlift.signUp.SignUpScreen
+import androidx.compose.animation.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 
 enum class NavRoutesEnum(val value: String) {
     NAV_ROUTE_LOGIN("login"),
@@ -19,8 +20,9 @@ enum class NavRoutesEnum(val value: String) {
     NAV_ROUTE_LOADING_DASHBOARD("loading_dashboard"),
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun NavHost(
+fun AppHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = NavRoutesEnum.NAV_ROUTE_LOGIN.value
@@ -28,9 +30,12 @@ fun NavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+//        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
+//        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
+//        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
+//        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
     ) {
-        // Login
         composable(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
             LoginScreen(
                 navController = navController,
@@ -40,32 +45,23 @@ fun NavHost(
             )
         }
 
-// SignUp
         composable(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) {
-            SignUpScreen(
-                navController = navController
-            )
+            SignUpScreen(navController = navController)
         }
 
-
-        //  Forgot Password
         composable(NavRoutesEnum.NAV_ROUTE_FORGOT_PASSWORD.value) {
-            ForgotPasswordScreen(
-                onSubmitClick = {
-                    navController.popBackStack(NavRoutesEnum.NAV_ROUTE_LOGIN.value, inclusive = false)
-                }
-            )
+            ForgotPasswordScreen {
+                navController.popBackStack(NavRoutesEnum.NAV_ROUTE_LOGIN.value, false)
+            }
         }
 
-        //Dashboard
-        composable(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
-            DashboardScreen()
-        }
-
-        // Loading before Dashboard
         composable(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
             LoadingDashboardScreen(navController = navController)
         }
 
+        composable(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
+            DashboardScreen()
+        }
+
+        }
     }
-}
