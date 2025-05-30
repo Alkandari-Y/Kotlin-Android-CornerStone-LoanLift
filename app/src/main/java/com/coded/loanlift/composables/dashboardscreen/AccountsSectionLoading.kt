@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,12 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.coded.loanlift.composables.accounts.AccountCard
-import com.coded.loanlift.composables.accounts.CreateAccountCard
-import com.coded.loanlift.data.response.accounts.AccountDto
+import com.coded.loanlift.composables.accounts.SkeletonAccountCard
+
 
 @Composable
-fun AccountsSection(accounts: List<AccountDto>) {
+fun AccountsSectionLoading() {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -44,26 +42,14 @@ fun AccountsSection(accounts: List<AccountDto>) {
             )
         }
 
-        LazyRow (
-            modifier = Modifier.fillMaxWidth(),
+        LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(accounts) { account ->
-                AccountCard(
+            items(2) {
+                SkeletonAccountCard(
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .width(200.dp),
-                    account = account,
-                    onTransferClick = {  }
-                )
-            }
-
-            item {
-                CreateAccountCard(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .width(200.dp),
-                    onCreateClick = { /* TODO */ }
+                        .width(200.dp)
                 )
             }
         }

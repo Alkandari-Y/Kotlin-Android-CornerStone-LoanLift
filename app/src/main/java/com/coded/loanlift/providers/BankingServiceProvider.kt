@@ -1,7 +1,7 @@
 package com.coded.loanlift.providers
 
 import com.coded.loanlift.data.response.accounts.AccountCreateRequest
-import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.data.response.category.CategoryDto
 import com.coded.loanlift.data.response.category.CategoryRequest
 import com.coded.loanlift.data.response.transaction.TransactionDetails
@@ -25,12 +25,12 @@ interface BankingServiceProvider {
     // Accounts Controller
 
     @GET("/api/v1/accounts")
-    suspend fun getAllAccounts(): Response<List<AccountResponse>>
+    suspend fun getAllAccounts(): Response<List<AccountDto>>
 
     @POST("/api/v1/accounts")
     suspend fun createAccount(
         @Body accountCreateRequestDto: AccountCreateRequest,
-    ): Response<AccountResponse>
+    ): Response<AccountDto>
 
     @POST("/api/v1/accounts/transfer")
     suspend fun transfer(
@@ -46,12 +46,12 @@ interface BankingServiceProvider {
     suspend fun updateAccount(
         @Path("accountNumber") accountNumber: String,
         @Body accountUpdate: UpdateAccountRequest,
-    ): Response<AccountResponse>
+    ): Response<AccountDto>
 
     @GET("/api/v1/accounts/details/{accountNumber}")
     suspend fun getAccountDetails(
         @Path("accountNumber") accountNumber: String,
-    ): Response<AccountResponse>
+    ): Response<AccountDto>
 
     @GET("/api/v1/accounts/clients/{clientId}")
     suspend fun getUserAccounts(
@@ -62,7 +62,7 @@ interface BankingServiceProvider {
     suspend fun getAccountDetails(
         @Query("accountId") accountId: Long? = null,
         @Query("accountNumber") accountNumber: String? = null
-    ): Response<AccountResponse>
+    ): Response<AccountDto>
 
 
     // Categories Controller

@@ -4,20 +4,49 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.data.response.accounts.AccountDto
+import com.coded.loanlift.data.response.auth.JwtResponse
+import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
+import com.coded.loanlift.data.response.error.ApiErrorResponse
+import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.CategoryRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DashboardViewModel(private val context: Context) : ViewModel() {
+sealed class AccountsUiState {
+    data object Loading : AccountsUiState()
+    data class Success(val accounts: List<AccountDto>) : AccountsUiState()
+    data class Error(val message: String) : AccountsUiState()
+}
 
-    private val _categoriesCount = MutableStateFlow(0)
-    val categoriesCount: StateFlow<Int> = _categoriesCount
+sealed class CampaignsUiState {
+    data object Loading : CampaignsUiState()
+    data class Success(val campaigns: List<CampaignListItemResponse>) : CampaignsUiState()
+    data class Error(val message: String) : CampaignsUiState()
+}
 
-    private val _accounts = MutableStateFlow<List<AccountResponse>>(emptyList())
-    val accounts: StateFlow<List<AccountResponse>> = _accounts
+sealed class PledgesUiState {
+    data object Loading : PledgesUiState()
+    data class Success(val pledges: List<UserPledgeDto>) : PledgesUiState()
+    data class Error(val message: String) : PledgesUiState()
+}
+
+class DashboardViewModel(
+    private val context: Context
+): ViewModel() {
+
+    private val _accountsUiState = MutableStateFlow<AccountsUiState>(AccountsUiState.Loading)
+    val accountsUiState: StateFlow<AccountsUiState> = _accountsUiState
+
+    private val _campaignsUiState = MutableStateFlow<CampaignsUiState>(CampaignsUiState.Loading)
+    val campaignsUiState: StateFlow<CampaignsUiState> = _campaignsUiState
+
+    private val _pledgesUiState = MutableStateFlow<PledgesUiState>(PledgesUiState.Loading)
+    val pledgesUiState: StateFlow<PledgesUiState> = _pledgesUiState
+
 
     fun fetchCategories() {
         viewModelScope.launch {
@@ -26,7 +55,6 @@ class DashboardViewModel(private val context: Context) : ViewModel() {
                 if (response.isSuccessful) {
                     val categories = response.body().orEmpty()
                     CategoryRepository.categories = categories
-                    _categoriesCount.value = categories.size
                 } else {
                     Log.e("DashboardViewModel", "Categories fetch failed: ${response.code()}")
                 }
@@ -38,15 +66,17 @@ class DashboardViewModel(private val context: Context) : ViewModel() {
 
     fun fetchAccounts() {
         viewModelScope.launch {
+            delay(500)
+            _accountsUiState.value = AccountsUiState.Loading
             try {
                 val response = RetrofitInstance.getBankingServiceProvide(context).getAllAccounts()
                 if (response.isSuccessful) {
-                    _accounts.value = response.body().orEmpty()
+                    _accountsUiState.value = AccountsUiState.Success(response.body().orEmpty())
                 } else {
-                    Log.e("DashboardViewModel", "Accounts fetch failed: ${response.code()}")
+                    _accountsUiState.value = AccountsUiState.Error("Error: ${response.code()}")
                 }
             } catch (e: Exception) {
-                Log.e("DashboardViewModel", "Error fetching accounts: ${e.message}")
+                _accountsUiState.value = AccountsUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

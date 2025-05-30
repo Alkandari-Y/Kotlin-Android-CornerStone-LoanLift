@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.coded.loanlift.data.enums.AccountType
-import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.data.response.accounts.AccountDto
 import java.math.BigDecimal
 
 
@@ -43,7 +43,7 @@ import java.math.BigDecimal
 fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
     val darkBlue = Color(0xFF1B2541)
     val navyBlue = Color(0xFF1F2937)
-    val account =  AccountResponse (
+    val account =  AccountDto (
         id = 1L,
         accountNumber = "1111",
         name =  "Meshal Alquraini",

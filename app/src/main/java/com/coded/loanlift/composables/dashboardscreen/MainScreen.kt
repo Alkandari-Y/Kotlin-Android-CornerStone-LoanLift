@@ -5,9 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.coded.loanlift.ScreenState
 import com.coded.loanlift.data.enums.AccountType
-import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignDetailsScreen
 import java.math.BigDecimal
@@ -17,7 +16,7 @@ fun MainScreen() {
     var currentScreen by remember { mutableStateOf<ScreenState>(ScreenState.AccountDetails) }
 
 
-    val account = AccountResponse(
+    val account = AccountDto(
         id = 1L,
         accountNumber = "1111",
         name = "Meshal Alquraini",
@@ -43,4 +42,10 @@ fun MainScreen() {
             onBack = { currentScreen = ScreenState.AccountDetails }
         )
     }
+}
+
+
+sealed class ScreenState {
+    object AccountDetails : ScreenState()
+    data class CampaignDetails(val campaignTitle: String) : ScreenState()
 }
