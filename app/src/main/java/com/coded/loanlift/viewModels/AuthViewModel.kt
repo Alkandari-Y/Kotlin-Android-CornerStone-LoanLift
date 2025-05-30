@@ -11,6 +11,11 @@ import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.providers.RetrofitInstance
 import kotlinx.coroutines.launch
 import com.coded.loanlift.data.response.auth.JwtContents
+import com.coded.loanlift.data.response.auth.RegisterCreateRequest
+import com.coded.loanlift.data.response.error.ApiErrorResponse
+import com.coded.loanlift.data.response.error.ValidationError
+import com.google.gson.Gson
+import retrofit2.HttpException
 
 
 sealed class AuthUiState {
@@ -31,6 +36,7 @@ class AuthViewModel(
     private val context: Context
 ) : ViewModel() {
     val uiState = mutableStateOf<AuthUiState>(AuthUiState.Loading)
+    val registerFieldErrors = mutableStateOf<List<ValidationError>>(emptyList())
 
     private val authApiService = RetrofitInstance.getAuthServiceProvider(context)
     var token = mutableStateOf<JwtResponse?>(null)
@@ -42,6 +48,43 @@ class AuthViewModel(
             token.value = storedToken
             decodedToken.value = TokenManager.decodeAccessToken(context)
             Log.d("Token", "Loaded token and decoded: ${decodedToken.value}")
+        }
+    }
+
+    fun register(username: String, email: String, password: String, civilId: String) {
+        viewModelScope.launch {
+            uiState.value = AuthUiState.Loading
+            try {
+                val response = authApiService.register(
+                    RegisterCreateRequest(
+                        username = username,
+                        email = email,
+                        password = password,
+                        civilId = civilId
+                    )
+                )
+                if (response.isSuccessful) {
+                    val jwtResponse = response.body()
+                    if (jwtResponse != null) {
+                        token.value = jwtResponse
+                        TokenManager.saveToken(context, jwtResponse)
+                        decodedToken.value = TokenManager.decodeAccessToken(context)
+                        uiState.value = AuthUiState.Success(jwtResponse)
+                    }
+                } else {
+                    if (response.code() == 400) {
+                        val errorBody = response.errorBody()?.string()
+                        val errorResponse = Gson().fromJson(errorBody, ApiErrorResponse::class.java)
+
+                        registerFieldErrors.value = errorResponse.fieldErrors ?: emptyList()
+                        uiState.value = AuthUiState.Error(errorResponse.message)
+                    } else {
+                        uiState.value = AuthUiState.Error("Registration failed: ${response.code()}")
+                    }
+                }
+            } catch (e: Exception) {
+                uiState.value = AuthUiState.Error("Network error: ${e.message}")
+            }
         }
     }
 

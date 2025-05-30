@@ -1,5 +1,7 @@
 package com.coded.loanlift.formStates
 
+import com.coded.loanlift.data.response.error.ValidationError
+
 data class RegisterFormState(
     val username: String = "",
     val password: String = "",
@@ -46,4 +48,14 @@ data class RegisterFormState(
             civilIdError = if (civilId.isBlank()) "Civil ID is required" else null
         )
     }
+
+    fun applyServerErrors(fieldErrors: List<ValidationError>): RegisterFormState {
+        return this.copy(
+            usernameError = fieldErrors.find { it.field == "username" }?.message ?: usernameError,
+            emailError = fieldErrors.find { it.field == "email" }?.message ?: emailError,
+            passwordError = fieldErrors.find { it.field == "password" }?.message ?: passwordError,
+            civilIdError = fieldErrors.find { it.field == "civilId" }?.message ?: civilIdError
+        )
+    }
+
 }
