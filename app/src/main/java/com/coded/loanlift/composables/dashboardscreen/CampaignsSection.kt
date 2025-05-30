@@ -20,7 +20,7 @@ fun CampaignsSection(
 ) {
     val categories = CategoryRepository.categories
     DashboardSection(
-        sectionTitle = "My Accounts",
+        sectionTitle = "My Campaigns",
         onLinkClick = { /* TODO */ }
     ) {
         LazyRow(
