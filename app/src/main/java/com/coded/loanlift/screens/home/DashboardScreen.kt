@@ -21,10 +21,12 @@ import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.dashboardscreen.AccountsSection
 import com.coded.loanlift.composables.dashboardscreen.AccountsSectionLoading
 import com.coded.loanlift.composables.dashboardscreen.CampaignsSection
+import com.coded.loanlift.composables.dashboardscreen.CampaignsSectionLoading
 import com.coded.loanlift.composables.dashboardscreen.PledgesSection
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.viewModels.AccountsUiState
+import com.coded.loanlift.viewModels.CampaignsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 
 
@@ -42,6 +44,7 @@ fun DashboardScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchCategories()
         viewModel.fetchAccounts()
+        viewModel.fetchCampaigns()
     }
 
     Column(
@@ -59,7 +62,9 @@ fun DashboardScreen(
                 onLogoutClick()
             }
         )
+
         Spacer(modifier = Modifier.height(24.dp))
+
         when (val state = accountsUiState) {
             is AccountsUiState.Loading -> AccountsSectionLoading()
             is AccountsUiState.Success -> AccountsSection(accounts = state.accounts)
@@ -69,9 +74,21 @@ fun DashboardScreen(
                 textAlign = TextAlign.Center
             )
         }
+
         Spacer(modifier = Modifier.height(24.dp))
-        CampaignsSection()
+
+        when (val state = campaignsUiState) {
+            is CampaignsUiState.Loading -> CampaignsSectionLoading()
+            is CampaignsUiState.Success -> CampaignsSection(campaigns = state.campaigns)
+            is CampaignsUiState.Error -> Text(
+                text = "Failed to load campaigns: ${state.message}",
+                color = Color.Red,
+                textAlign = TextAlign.Center
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
+
         PledgesSection()
     }
 }

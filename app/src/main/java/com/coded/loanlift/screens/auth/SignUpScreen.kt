@@ -145,12 +145,6 @@ fun SignUpScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            Text(
-                text = "Must contain a number and least of 6 characters",
-                fontSize = 12.sp,
-                color = Color(0xFF8E24AA)
-            )
-
             OutlinedTextField(
                 value = formState.confirmPassword,
                 onValueChange = { formState = formState.copy(confirmPassword = it).validate() },
@@ -171,12 +165,6 @@ fun SignUpScreen(
                         )
                     }
                 }
-            )
-
-            Text(
-                text = "Must contain a number and least of 6 characters",
-                fontSize = 12.sp,
-                color = Color(0xFF8E24AA)
             )
 
             if (uiState is AuthUiState.Error) {

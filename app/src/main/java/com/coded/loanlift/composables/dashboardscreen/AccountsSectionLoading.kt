@@ -20,28 +20,10 @@ import com.coded.loanlift.composables.accounts.SkeletonAccountCard
 
 @Composable
 fun AccountsSectionLoading() {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "My Accounts",
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = "View All",
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-
+    DashboardSection(
+        sectionTitle = "My Campaigns",
+        onLinkClick = {  }
+    ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {

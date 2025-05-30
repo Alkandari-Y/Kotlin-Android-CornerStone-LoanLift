@@ -87,16 +87,6 @@ fun LoginScreen(
             contentScale = ContentScale.Fit
         )
 
-//        Image(
-//            painter = painterResource(id = R.drawable.logo_no_bg),
-//            contentDescription = "Bottom Background Logo",
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .offset(x = 24.dp, y = 24.dp)
-//                .height(screenHeight * 0.3f),
-//            contentScale = ContentScale.Fit
-//        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,7 +108,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = formState.username,
                 onValueChange = { formState = formState.copy(username = it) },
-                label = { Text("Username, Email or Phone Number") },
+                label = { Text("Username") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.usernameError != null,
                 supportingText = {

@@ -12,7 +12,7 @@ data class CampaignListItemResponse(
     val title: String,
     val goalAmount: BigDecimal,
     val status: CampaignStatus,
-    val campaignDeadline: LocalDate?,
+    val campaignDeadline: String,
     val imageUrl: String?,
     val amountRaised: BigDecimal,
     val categoryName: String,
