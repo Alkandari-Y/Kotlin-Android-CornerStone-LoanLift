@@ -29,6 +29,7 @@ import com.coded.loanlift.data.response.accounts.AccountDto
 fun AccountCard(
     modifier: Modifier = Modifier,
     account: AccountDto,
+    onCardClick: () -> Unit,
     onTransferClick: () -> Unit
 ) {
     Card(

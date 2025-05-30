@@ -51,15 +51,15 @@ interface CampaignServiceProvider {
     suspend fun getCampaignDetails(
         @Path("campaignId") campaignId: Long,
         @Query("includeComments") includeComments: Boolean = false
-    ): CampaignDetailResponse
+    ): Response<CampaignDetailResponse>
 
     @GET("/api/v1/campaigns/manage")
-    suspend fun getMyCampaigns(): List<CampaignListItemResponse>
+    suspend fun getMyCampaigns(): Response<List<CampaignListItemResponse>>
 
     @GET("/api/v1/campaigns/manage/{campaignId}")
     suspend fun getMyCampaignById(
         @Path("campaignId") campaignId: Long,
-    ): CampaignOwnerDetails
+    ): Response<CampaignOwnerDetails>
 
     @DELETE("/api/v1/campaigns/manage/{campaignId}")
     fun deleteCampaign(
@@ -97,7 +97,7 @@ interface CampaignServiceProvider {
     @GET("/api/v1/comments/campaign/{campaignId}")
     suspend fun allAllCampaignComments(
         @Path("campaignId") campaignId: Long,
-    ): List<CommentResponseDto>
+    ): Response<List<CommentResponseDto>>
 
     @POST("/api/v1/comments/campaign/{campaignId}")
     suspend fun addComment(

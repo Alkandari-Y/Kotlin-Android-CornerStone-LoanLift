@@ -1,6 +1,5 @@
 package com.coded.loanlift.providers
 
-import com.coded.loanlift.managers.TokenManager
 import android.content.Context
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -35,7 +34,7 @@ object RetrofitInstance {
             .create(BankingServiceProvider::class.java)
     }
 
-    fun campaignApiService(context: Context): CampaignServiceProvider {
+    fun getCampaignApiService(context: Context): CampaignServiceProvider {
         return Retrofit.Builder()
             .baseUrl(getBaseUrl(CAMPAIGN_SERVICE_PORT))
             .client(createOkHttpClient(context))

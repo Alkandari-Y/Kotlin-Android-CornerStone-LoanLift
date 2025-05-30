@@ -80,4 +80,21 @@ class DashboardViewModel(
             }
         }
     }
+
+    fun fetchCampaigns() {
+        viewModelScope.launch {
+            delay(500)
+            _campaignsUiState.value = CampaignsUiState.Loading
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).getMyCampaigns()
+                if (response.isSuccessful) {
+                    _campaignsUiState.value = CampaignsUiState.Success(response.body().orEmpty())
+                } else {
+                    _campaignsUiState.value = CampaignsUiState.Error("Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _campaignsUiState.value = CampaignsUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
 }

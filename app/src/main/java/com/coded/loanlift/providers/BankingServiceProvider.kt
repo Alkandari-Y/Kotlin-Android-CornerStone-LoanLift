@@ -59,7 +59,7 @@ interface BankingServiceProvider {
     ): Response<UserAccountsResponse>
 
     @GET("/api/v1/accounts/clients")
-    suspend fun getAccountDetails(
+    suspend fun getAccountDetailsByQuery(
         @Query("accountId") accountId: Long? = null,
         @Query("accountNumber") accountNumber: String? = null
     ): Response<AccountDto>

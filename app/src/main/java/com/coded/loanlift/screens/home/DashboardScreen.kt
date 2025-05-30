@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +26,7 @@ import com.coded.loanlift.composables.dashboardscreen.PledgesSection
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.viewModels.AccountsUiState
+import com.coded.loanlift.viewModels.CampaignsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 
 
@@ -42,6 +44,7 @@ fun DashboardScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchCategories()
         viewModel.fetchAccounts()
+        viewModel.fetchCampaigns()
     }
 
     Column(
@@ -59,7 +62,9 @@ fun DashboardScreen(
                 onLogoutClick()
             }
         )
+
         Spacer(modifier = Modifier.height(24.dp))
+
         when (val state = accountsUiState) {
             is AccountsUiState.Loading -> AccountsSectionLoading()
             is AccountsUiState.Success -> AccountsSection(accounts = state.accounts)
@@ -69,9 +74,21 @@ fun DashboardScreen(
                 textAlign = TextAlign.Center
             )
         }
+
         Spacer(modifier = Modifier.height(24.dp))
-        CampaignsSection()
+
+        when (val state = campaignsUiState) {
+            is CampaignsUiState.Loading -> CircularProgressIndicator()
+            is CampaignsUiState.Success -> CampaignsSection(campaigns = state.campaigns)
+            is CampaignsUiState.Error -> Text(
+                text = "Failed to load campaigns: ${state.message}",
+                color = Color.Red,
+                textAlign = TextAlign.Center
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
+
         PledgesSection()
     }
 }
