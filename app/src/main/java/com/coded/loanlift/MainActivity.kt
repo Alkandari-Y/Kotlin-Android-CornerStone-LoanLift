@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed class ScreenState {
-    object AccountDetails : ScreenState()
-    data class CampaignDetails(val campaignTitle: String) : ScreenState()
-}
+//sealed class ScreenState {
+//    object AccountDetails : ScreenState()
+//    data class CampaignDetails(val campaignTitle: String) : ScreenState()
+//}
