@@ -44,7 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.coded.loanlift.R
-import com.coded.loanlift.formStates.LoginFormState
+import com.coded.loanlift.formStates.auth.LoginFormState
+import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.navigation.NavRoutesEnum
 import com.coded.loanlift.viewModels.AuthUiState
 import com.coded.loanlift.viewModels.AuthViewModel
@@ -60,7 +61,9 @@ fun LoginScreen(
     val token = viewModel.token.value
 
     var showPassword by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(false) }
+    var rememberMe by remember { mutableStateOf(
+        TokenManager.isRememberMeEnabled(context))
+    }
     var formState by remember { mutableStateOf(LoginFormState()) }
 
     LaunchedEffect(token) {
@@ -164,13 +167,15 @@ fun LoginScreen(
                         checked = rememberMe,
                         onCheckedChange = { rememberMe = it }
                     )
-                    Text(text = "Remember Me", color = Color.White)
+                    Text(
+                        text = "Remember Me",
+                        color = Color(0xFF2196F3),
+                    )
                 }
 
                 Text(
                     text = "Forgot Password ?",
                     modifier = Modifier.clickable { onForgotPasswordClick() },
-                    color = Color(0xFFB39DDB),
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -194,6 +199,8 @@ fun LoginScreen(
                             username = validated.username,
                             password = validated.password
                         )
+
+                        TokenManager.setRememberMe(context, rememberMe)
                     } else {
                         formState = validated
                         Toast.makeText(context, "Fix errors before submitting", Toast.LENGTH_SHORT).show()
@@ -204,7 +211,11 @@ fun LoginScreen(
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
             ) {
-                Text(text = "Log In", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Log In",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp))

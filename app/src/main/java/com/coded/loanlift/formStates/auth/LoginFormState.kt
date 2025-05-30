@@ -1,4 +1,4 @@
-package com.coded.loanlift.formStates
+package com.coded.loanlift.formStates.auth
 
 data class LoginFormState(
     var password: String = "",
