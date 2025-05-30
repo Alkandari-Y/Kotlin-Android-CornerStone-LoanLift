@@ -1,23 +1,17 @@
 package com.coded.loanlift.composables.dashboardscreen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
+import com.coded.loanlift.composables.ui.SectionLoading
 
 @Composable
 fun CampaignsSectionLoading() {
-    DashboardSection(
-        sectionTitle = "My Campaigns",
-        onLinkClick = {  }
+    val sectionTitle = "My Campaigns"
+
+    SectionLoading(
+        sectionTitle = sectionTitle,
+        onLinkClick = { }
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(2) {
-                SkeletonCampaignCard()
-            }
-        }
+        SkeletonCampaignCard()
     }
 }

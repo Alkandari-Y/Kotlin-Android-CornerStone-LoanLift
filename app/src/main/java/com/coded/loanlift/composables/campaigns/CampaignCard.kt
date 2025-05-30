@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.coded.loanlift.R
 import com.coded.loanlift.data.enums.CampaignStatus
@@ -48,12 +49,9 @@ fun CampaignCard(
         else 0f
 
     val showDeadline = campaign.status == CampaignStatus.ACTIVE
-
-    val imagePainter = rememberAsyncImagePainter(
-        model = campaign.imageUrl ?: R.drawable.default_campaign_image,
-        placeholder = painterResource(R.drawable.default_campaign_image),
-        error = painterResource(R.drawable.default_campaign_image)
-    )
+    val imageUrl = campaign.imageUrl
+        ?.replace("localhost", "10.0.2.2")
+        ?.let { "$it?ext=.jpg" }
 
     Card(
         onClick = onCardClick,
@@ -65,13 +63,16 @@ fun CampaignCard(
     ) {
         Column {
             BoxWithConstraints {
-                Image(
-                    painter = imagePainter,
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = "Campaign image",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.default_campaign_image),
+                    error = painterResource(R.drawable.default_campaign_image),
+                    fallback = painterResource(R.drawable.default_campaign_image)
                 )
 
                 Text(
