@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import com.coded.loanlift.ScreenState
 import com.coded.loanlift.data.enums.AccountType
 import com.coded.loanlift.data.response.accounts.AccountResponse
+import com.coded.loanlift.screens.accounts.AccountDetailsScreen
+import com.coded.loanlift.screens.campaigns.CampaignDetailsScreen
 import java.math.BigDecimal
 
 @Composable
@@ -40,6 +42,5 @@ fun MainScreen() {
             campaignTitle = screen.campaignTitle,
             onBack = { currentScreen = ScreenState.AccountDetails }
         )
-
     }
 }

@@ -17,9 +17,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.coded.loanlift.data.response.accounts.AccountResponse
 
 @Composable
-fun AccountsSection(mainBalance:String, secondaryBalance: String) {
+fun AccountsSection(accounts: List<AccountResponse>) {
     Column {
         Text(
             text = "My Accounts",
@@ -32,18 +33,14 @@ fun AccountsSection(mainBalance:String, secondaryBalance: String) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            AccountCard(
-                modifier = Modifier.weight(1f),
-                title = "Main Account",
-                accountNumber = "201038756",
-                balance = mainBalance
-            )
-            AccountCard(
-                modifier = Modifier.weight(1f),
-                title = "Account",
-                accountNumber = "201043526",
-                balance = secondaryBalance
-            )
+            accounts.take(2).forEach { account ->
+                AccountCard(
+                    modifier = Modifier.weight(1f),
+                    title = account.name,
+                    accountNumber = account.accountNumber,
+                    balance = "${account.balance} KWD"
+                )
+            }
         }
     }
 }

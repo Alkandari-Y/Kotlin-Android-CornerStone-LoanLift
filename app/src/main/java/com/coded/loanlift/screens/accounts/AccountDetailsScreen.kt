@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.screens.accounts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

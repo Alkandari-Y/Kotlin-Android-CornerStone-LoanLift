@@ -15,6 +15,15 @@ object TokenManager {
     private const val PREF_NAME = "auth_prefs"
     private const val ACCESS_TOKEN_KEY = "access"
     private const val REFRESH_TOKEN_KEY = "refresh"
+    private const val REMEMBER_ME_KEY = "remember_me"
+
+    fun setRememberMe(context: Context, remember: Boolean) {
+        getPrefs(context).edit().putBoolean(REMEMBER_ME_KEY, remember).apply()
+    }
+
+    fun isRememberMeEnabled(context: Context): Boolean {
+        return getPrefs(context).getBoolean(REMEMBER_ME_KEY, false)
+    }
 
     private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -40,6 +49,7 @@ object TokenManager {
         getPrefs(context).edit {
             remove(ACCESS_TOKEN_KEY)
             remove(REFRESH_TOKEN_KEY)
+            remove(REMEMBER_ME_KEY)
         }
     }
 
