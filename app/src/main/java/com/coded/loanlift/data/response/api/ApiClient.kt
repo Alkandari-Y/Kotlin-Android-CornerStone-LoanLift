@@ -34,6 +34,6 @@ object ApiClient {
 
     // Replace this with your real token-fetching logic
     private fun getToken(): String {
-        return "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInVzZXJJZCI6Miwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlzQWN0aXZlIjp0cnVlLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzQ4NTM1MDkwLCJleHAiOjE3NDkxMzk4OTB9.K7cOrbvKnDkwoO9GoB3a3qtMod8ZACxZAGI8lyIpky2TsU0B-yIGdTtAjS884XQ8"
+        return "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInVzZXJJZCI6Miwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlzQWN0aXZlIjp0cnVlLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc0ODYzODU4MywiZXhwIjoxNzQ5MjQzMzgzfQ.wDtvAJRPa00CF9JJXmcxJus4NkCzZLMumW4Hf38l5edof5vgOU_Rj5zKhwtF58Lo"
     }
 }

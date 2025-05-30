@@ -7,6 +7,6 @@ import retrofit2.http.POST
 
 interface KYCApi {
 
-    @POST("/kyc")
+    @POST("/api/v1/kyc")
     suspend fun updateKyc(@Body request: KYCRequest): KYCResponse
 }

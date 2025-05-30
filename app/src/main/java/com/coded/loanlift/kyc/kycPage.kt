@@ -1,18 +1,11 @@
 package com.coded.loanlift.kyc
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,72 +13,140 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.coded.loanlift.kyc.kycViewModel.KycViewModel
 
-
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.geometry.Offset
 
 @Composable
-fun KycEditPage(viewModel: KycViewModel= viewModel()) {
-//    val status by viewModel.status.collectAsState()
+fun KycEditPage(viewModel: KycViewModel = viewModel()) {
+    val purple = Color(0xFF6200EE)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text("Edit KYC", style = MaterialTheme.typography.headlineSmall)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Back Button
+            Text(
+                text = "< Back",
+                color = purple,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.align(Alignment.Start)
+            )
 
-        OutlinedTextField(
-            value = viewModel.firstName.value,
-            onValueChange = { viewModel.firstName.value = it },
-            label = { Text("First Name") }
-        )
+            Text("Edit KYC", style = MaterialTheme.typography.headlineSmall, color = Color.White)
 
-        OutlinedTextField(
-            value = viewModel.lastName.value,
-            onValueChange = { viewModel.lastName.value = it },
-            label = { Text("Last Name") }
-        )
+            TextField(
+                value = viewModel.firstName.value,
+                onValueChange = { viewModel.firstName.value = it },
+                placeholder = { Text("First Name") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBottomBorder(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
+            )
 
-        OutlinedTextField(
-            value = viewModel.dateOfBirth.value,
-            onValueChange = { viewModel.dateOfBirth.value = it },
-            label = { Text("Date of Birth (yyyy-MM-dd)") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            TextField(
+                value = viewModel.lastName.value,
+                onValueChange = { viewModel.lastName.value = it },
+                placeholder = { Text("Last Name") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBottomBorder(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
+            )
 
-        )
+            TextField(
+                value = viewModel.dateOfBirth.value,
+                onValueChange = { viewModel.dateOfBirth.value = it },
+                placeholder = { Text("Date of Birth (dd-MM-yyyy)") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBottomBorder(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
+            )
 
-        OutlinedTextField(
-            value = viewModel.salary.value,
-            onValueChange = { viewModel.salary.value = it },
-            label = { Text("Salary") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            TextField(
+                value = viewModel.salary.value,
+                onValueChange = { viewModel.salary.value = it },
+                placeholder = { Text("Salary") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBottomBorder(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
+            )
 
-        )
+            TextField(
+                value = viewModel.nationality.value,
+                onValueChange = { viewModel.nationality.value = it },
+                placeholder = { Text("Nationality") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBottomBorder(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
+            )
+        }
 
-        OutlinedTextField(
-            value = viewModel.nationality.value,
-            onValueChange = { viewModel.nationality.value = it },
-            label = { Text("Nationality") },
-
-        )
-
-
-        Button (
-            onClick = { viewModel.submitKyc()},
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+        Button(
+            onClick = { viewModel.submitKyc() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = purple)
         ) {
             Text("Submit")
         }
-
-//        when (status) {
-//            is KycViewModel.UiStatus.Loading -> CircularProgressIndicator()
-//            is KycViewModel.UiStatus.Success -> Text("KYC updated successfully!", color = Color.Green)
-//            is KycViewModel.UiStatus.Error -> Text(
-//                "Error: ${(status as KycViewModel.UiStatus.Error).message}",
-//                color = Color.Red
-//            )
-//            else -> {}
-//        }
     }
+}
+
+
+
+fun Modifier.drawBottomBorder(strokeWidth: Dp = 1.dp, color: Color = Color.Gray): Modifier {
+    return this.then(
+        Modifier.drawBehind {
+            val strokePx = strokeWidth.toPx()
+            drawLine(
+                color = color,
+                start = Offset(0f, size.height - strokePx / 2),
+                end = Offset(size.width, size.height - strokePx / 2),
+                strokeWidth = strokePx
+            )
+        }
+    )
 }
