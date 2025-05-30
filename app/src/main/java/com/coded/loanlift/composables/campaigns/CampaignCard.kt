@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.composables.campaigns
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image

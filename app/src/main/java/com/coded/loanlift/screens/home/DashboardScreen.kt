@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.dashboardscreen.AccountsSection
 import com.coded.loanlift.composables.dashboardscreen.AccountsSectionLoading
 import com.coded.loanlift.composables.dashboardscreen.CampaignsSection
+import com.coded.loanlift.composables.dashboardscreen.CampaignsSectionLoading
 import com.coded.loanlift.composables.dashboardscreen.PledgesSection
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
@@ -78,7 +79,7 @@ fun DashboardScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         when (val state = campaignsUiState) {
-            is CampaignsUiState.Loading -> CircularProgressIndicator()
+            is CampaignsUiState.Loading -> CampaignsSectionLoading()
             is CampaignsUiState.Success -> CampaignsSection(campaigns = state.campaigns)
             is CampaignsUiState.Error -> Text(
                 text = "Failed to load campaigns: ${state.message}",
