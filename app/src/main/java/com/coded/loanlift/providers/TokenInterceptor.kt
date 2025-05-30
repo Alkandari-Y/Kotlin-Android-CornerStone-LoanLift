@@ -1,25 +1,37 @@
 package com.coded.loanlift.providers
 
+import android.content.Context
 import android.util.Log
+import com.coded.loanlift.managers.TokenManager
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class TokenInterceptor(private val tokenProvider: () -> String?) : Interceptor {
+class TokenInterceptor(
+    private val context: Context
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
-        val token = tokenProvider()
-        val newRequest = if (!token.isNullOrBlank()) {
-            originalRequest.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-        } else {
-            originalRequest
+        var token = TokenManager.getToken(context)?.access
+
+        if (TokenManager.isAccessTokenExpired(context)) {
+            Log.d("TokenInterceptor", "Token expired, attempting refresh")
+            runBlocking {
+                val refreshed = TokenManager.refreshToken(context)
+                token = refreshed?.access
+            }
         }
-        val response = chain.proceed(newRequest)
+
+        val request = chain.request().newBuilder().apply {
+            token?.let { addHeader("Authorization", "Bearer $it") }
+        }.build()
+
+        val response = chain.proceed(request)
+
         if (response.code == 401) {
-            Log.w("Interceptor", "Token expired or unauthorized")
+            Log.w("TokenInterceptor", "Unauthorized – clearing tokens")
+            TokenManager.clearToken(context)
         }
+
         return response
     }
-
 }
