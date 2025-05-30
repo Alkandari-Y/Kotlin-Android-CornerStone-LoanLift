@@ -32,7 +32,6 @@ data class RegisterFormState(
                 password.length < 6 -> "Password must be at least 6 characters"
                 !Regex("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])").containsMatchIn(password) ->
                     "Password must contain uppercase, lowercase and a digit"
-
                 else -> null
             },
             confirmPasswordError = when {

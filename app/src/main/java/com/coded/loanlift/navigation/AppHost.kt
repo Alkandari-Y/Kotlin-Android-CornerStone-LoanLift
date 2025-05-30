@@ -56,7 +56,12 @@ fun AppHost(
         }
 
         composable(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) {
-            SignUpScreen(navController = navController)
+            val context = LocalContext.current
+            val authViewModel = remember { AuthViewModel(context) }
+            SignUpScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
         }
 
         composable(NavRoutesEnum.NAV_ROUTE_FORGOT_PASSWORD.value) {

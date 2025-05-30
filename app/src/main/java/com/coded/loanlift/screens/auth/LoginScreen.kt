@@ -198,13 +198,13 @@ fun LoginScreen(
                         )
                     } else {
                         formState = validated
-                        Toast.makeText(context, "Fix errors in form", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Fix errors before submitting", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B1FA2))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
             ) {
                 Text(text = "Log In", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
