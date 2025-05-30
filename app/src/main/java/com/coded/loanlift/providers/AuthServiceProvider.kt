@@ -5,6 +5,7 @@ import com.coded.loanlift.data.response.auth.LoginRequest
 import com.coded.loanlift.data.response.auth.RefreshRequest
 import com.coded.loanlift.data.response.auth.RegisterCreateRequest
 import com.coded.loanlift.data.response.auth.UserInfoDto
+import com.coded.loanlift.data.response.auth.ValidateTokenResponse
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Body
@@ -33,13 +34,15 @@ interface AuthServiceProvider {
     ): Response<JwtResponse>
 
 
+    @POST("/api/v1/auth/validate")
+    suspend fun getUserDetails(): Response<ValidateTokenResponse>
 
     // User Controller
     // NOTE Not all controller mappings included
 
     // ROLE -> ROLE_ADMIN
     @GET("/api/v1/users/details/{userId}")
-    suspend fun getUserDetails(
+    suspend fun getUserInfo(
         @Path("userId") userId: Long
     ): Response<UserInfoDto>
 

@@ -7,15 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +20,8 @@ import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.dashboardscreen.AccountsSection
 import com.coded.loanlift.composables.dashboardscreen.CampaignsSection
 import com.coded.loanlift.composables.dashboardscreen.PledgesSection
-import com.coded.loanlift.composables.dashboardscreen.TopBar
+import com.coded.loanlift.composables.ui.TopBar
+import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.viewModels.DashboardViewModel
 
 
@@ -33,8 +29,8 @@ import com.coded.loanlift.viewModels.DashboardViewModel
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(),
     navController: NavHostController,
+    onLogoutClick: () -> Unit
 ) {
-    var userName by remember { mutableStateOf("Yousef Alkandari") }
     val accounts by viewModel.accounts.collectAsState()
 
     val context = LocalContext.current
@@ -50,18 +46,20 @@ fun DashboardScreen(
             .background(Color(0xFF1A1B1E))
             .padding(16.dp)
     ) {
-        TopBar(userName)
+        TopBar(
+            onProfileClick = {
+                navController.navigate("profile")
+            },
+            onLogoutClick = {
+                TokenManager.clearToken(context)
+                onLogoutClick()
+            }
+        )
         Spacer(modifier = Modifier.height(24.dp))
         AccountsSection(accounts = accounts)
         Spacer(modifier = Modifier.height(24.dp))
         CampaignsSection()
         Spacer(modifier = Modifier.height(24.dp))
         PledgesSection()
-
-        Button(onClick = {
-            viewModel.fetchAccounts()
-        }) {
-            Text("Test Authenticated Call")
-        }
     }
 }

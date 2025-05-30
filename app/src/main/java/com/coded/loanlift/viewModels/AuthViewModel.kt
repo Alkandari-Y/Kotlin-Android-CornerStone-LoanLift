@@ -2,20 +2,19 @@ package com.coded.loanlift.viewModels
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coded.loanlift.data.response.auth.LoginRequest
-import com.coded.loanlift.data.response.auth.JwtResponse
-import com.coded.loanlift.managers.TokenManager
-import com.coded.loanlift.providers.RetrofitInstance
-import kotlinx.coroutines.launch
 import com.coded.loanlift.data.response.auth.JwtContents
+import com.coded.loanlift.data.response.auth.JwtResponse
+import com.coded.loanlift.data.response.auth.LoginRequest
 import com.coded.loanlift.data.response.auth.RegisterCreateRequest
 import com.coded.loanlift.data.response.error.ApiErrorResponse
 import com.coded.loanlift.data.response.error.ValidationError
+import com.coded.loanlift.managers.TokenManager
+import com.coded.loanlift.providers.RetrofitInstance
 import com.google.gson.Gson
-import retrofit2.HttpException
+import kotlinx.coroutines.launch
 
 
 sealed class AuthUiState {

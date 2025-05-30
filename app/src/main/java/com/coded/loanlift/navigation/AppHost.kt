@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
+import kotlinx.coroutines.runBlocking
 
 enum class NavRoutesEnum(val value: String) {
     NAV_ROUTE_LOGIN("login"),
@@ -30,8 +31,27 @@ enum class NavRoutesEnum(val value: String) {
 fun AppHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = NavRoutesEnum.NAV_ROUTE_LOGIN.value
 ) {
+
+    val context = LocalContext.current
+    val token = TokenManager.getToken(context)
+    val isRemembered = TokenManager.isRememberMeEnabled(context)
+    val isExpired = TokenManager.isAccessTokenExpired(context)
+
+    val startDestination = when {
+        token != null && isRemembered && !isExpired -> NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value
+        token != null && isRemembered && isExpired -> {
+            runBlocking {
+                TokenManager.refreshToken(context)
+            }
+            if (!TokenManager.isAccessTokenExpired(context))
+                NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value
+            else
+                NavRoutesEnum.NAV_ROUTE_LOGIN.value
+        }
+        else -> NavRoutesEnum.NAV_ROUTE_LOGIN.value
+    }
+
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -49,7 +69,6 @@ fun AppHost(
     ) {
 
         composable(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
-            val context = LocalContext.current
             val authViewModel = remember { AuthViewModel(context) }
 
             LoginScreen(
@@ -62,7 +81,6 @@ fun AppHost(
         }
 
         composable(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) {
-            val context = LocalContext.current
             val authViewModel = remember { AuthViewModel(context) }
             SignUpScreen(
                 navController = navController,
@@ -81,11 +99,15 @@ fun AppHost(
         }
 
         composable(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
-            val context = LocalContext.current
             val dashboardViewModel = remember { DashboardViewModel(context) }
             DashboardScreen(
                 navController = navController,
-                viewModel = dashboardViewModel
+                viewModel = dashboardViewModel,
+                onLogoutClick = {
+                    navController.navigate(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
     }

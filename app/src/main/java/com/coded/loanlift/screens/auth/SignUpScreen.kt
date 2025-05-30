@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.coded.loanlift.R
-import com.coded.loanlift.formStates.RegisterFormState
+import com.coded.loanlift.formStates.auth.RegisterFormState
 import com.coded.loanlift.navigation.NavRoutesEnum
 import com.coded.loanlift.viewModels.AuthUiState
 import com.coded.loanlift.viewModels.AuthViewModel
