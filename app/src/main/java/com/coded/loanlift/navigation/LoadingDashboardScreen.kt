@@ -8,12 +8,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.coded.loanlift.viewModels.DashboardViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoadingDashboardScreen(navController: NavHostController) {
+fun LoadingDashboardScreen(
+    viewModel: DashboardViewModel,
+    navController: NavHostController
+) {
     LaunchedEffect(Unit) {
         delay(1500L)
+        viewModel.fetchCategories()
+        viewModel.fetchAccounts()
+        viewModel.fetchCampaigns()
+        viewModel.fetchPledges()
         navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
             popUpTo(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) { inclusive = true }
         }

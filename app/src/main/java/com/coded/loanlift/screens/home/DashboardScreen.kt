@@ -42,7 +42,7 @@ import com.coded.loanlift.viewModels.PledgesUiState
 
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel = viewModel(),
+    viewModel: DashboardViewModel,
     navController: NavHostController,
     onLogoutClick: () -> Unit,
     onAccountClick: (String) -> Unit,
@@ -56,13 +56,6 @@ fun DashboardScreen(
     val accountsUiState by viewModel.accountsUiState.collectAsState()
     val campaignsUiState by viewModel.campaignsUiState.collectAsState()
     val pledgesUiState by viewModel.pledgesUiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchCategories()
-        viewModel.fetchAccounts()
-        viewModel.fetchCampaigns()
-        viewModel.fetchPledges()
-    }
 
     Column(
         modifier = Modifier
