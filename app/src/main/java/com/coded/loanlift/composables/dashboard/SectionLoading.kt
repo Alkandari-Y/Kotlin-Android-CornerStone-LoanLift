@@ -1,10 +1,9 @@
-package com.coded.loanlift.composables.ui
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.coded.loanlift.composables.dashboardscreen.DashboardSection
 
 @Composable
 fun SectionLoading(
