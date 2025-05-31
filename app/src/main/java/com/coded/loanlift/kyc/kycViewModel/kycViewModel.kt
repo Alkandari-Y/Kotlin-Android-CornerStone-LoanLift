@@ -22,12 +22,15 @@ class KycViewModel : ViewModel() {
     var dateOfBirth = mutableStateOf("")
     var salary = mutableStateOf("")
     var nationality = mutableStateOf("")
+
+    private val _status = MutableStateFlow<UiStatus>(UiStatus.Idle)
+    val status: StateFlow<UiStatus> = _status
 //    private val _status = mutableStateOf<UiStatus>(UiStatus.Idle)
 //    val status: StateFlow<UiStatus> = _status()
 
     fun submitKyc() {
         viewModelScope.launch {
-//            _status.value = UiStatus.Loading
+            _status.value = UiStatus.Loading
             try {
                 val request = KYCRequest(
                     firstName = firstName.value,
@@ -38,19 +41,22 @@ class KycViewModel : ViewModel() {
                 )
 
                 val response: KYCResponse = ApiClient.kycApi.updateKyc(request)
-//                _status.value = UiStatus.Success
+                _status.value = UiStatus.Success
 
             } catch (e: Exception) {
                  Log.e("KycViewModel", "Error submitting KYC", e)
+                _status.value = UiStatus.Error(e.message ?: "Unknown error")
+
             }
         }
     }
 
-    sealed class UiStatus {
-        object Idle : UiStatus()
-        object Loading : UiStatus()
-        object Success : UiStatus()
-        data class Error(val message: String) : UiStatus()
-    }
+
 }
 
+sealed class UiStatus {
+    object Idle : UiStatus()
+    object Loading : UiStatus()
+    object Success : UiStatus()
+    data class Error(val message: String) : UiStatus()
+}

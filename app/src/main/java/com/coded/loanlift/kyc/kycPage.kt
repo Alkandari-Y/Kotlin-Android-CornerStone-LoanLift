@@ -1,11 +1,15 @@
 package com.coded.loanlift.kyc
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +22,30 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Offset
+import com.coded.loanlift.kyc.kycViewModel.UiStatus
+//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun KycEditPage(viewModel: KycViewModel = viewModel()) {
     val purple = Color(0xFF6200EE)
+    val status by viewModel.status.collectAsState()
+    val context = LocalContext.current
+
+
+    LaunchedEffect(status) {
+        when (status) {
+            is UiStatus.Success -> {
+                Toast.makeText(context, "KYC updated successfully", Toast.LENGTH_SHORT).show()
+//                onNavigateHome()
+            }
+            is UiStatus.Error -> {
+                Toast.makeText(context, (status as UiStatus.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
 
     Box(  modifier = Modifier
         .fillMaxSize()

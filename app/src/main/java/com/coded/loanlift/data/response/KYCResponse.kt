@@ -8,7 +8,8 @@ data class KYCResponse(
     val userId: Long,
     val firstName: String,
     val lastName: String,
-    var dateOfBirth: LocalDate? = null,
+//    var dateOfBirth: LocalDate? = null,
+    var dateOfBirth:String,
     val salary: BigDecimal,
     val nationality: String
 )
