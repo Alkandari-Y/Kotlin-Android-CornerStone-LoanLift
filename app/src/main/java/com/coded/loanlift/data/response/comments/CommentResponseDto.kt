@@ -7,6 +7,6 @@ data class CommentResponseDto(
     val campaignId: Long,
     val message: String,
     val createdBy: Long,
-    val createdAt: LocalDateTime,
+    val createdAt: String,
     val reply: ReplyDto? = null
 )

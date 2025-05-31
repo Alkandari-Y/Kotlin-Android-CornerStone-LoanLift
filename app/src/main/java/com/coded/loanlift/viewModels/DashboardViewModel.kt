@@ -5,9 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coded.loanlift.data.response.accounts.AccountDto
-import com.coded.loanlift.data.response.auth.JwtResponse
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
-import com.coded.loanlift.data.response.error.ApiErrorResponse
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.CategoryRepository

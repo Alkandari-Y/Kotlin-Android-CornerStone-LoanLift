@@ -9,9 +9,9 @@ data class PledgeOverviewDto(
     val userId: Long,
     val accountId: Long,
     val amount: BigDecimal,
-    val createdAt: LocalDate,
-    val updatedAt: LocalDate,
+    val createdAt: String,
+    val updatedAt: String,
     val status: PledgeStatus,
-    val withdrawnAt: LocalDate?,
+    val withdrawnAt: String?,
 )
 

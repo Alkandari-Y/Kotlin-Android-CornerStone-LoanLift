@@ -13,41 +13,42 @@ import java.math.BigDecimal
 
 
 // This may need to be removed
-@Composable
-fun MainScreen() {
-    var currentScreen by remember { mutableStateOf<ScreenState>(ScreenState.AccountDetails) }
-
-
-    val account = AccountDto(
-        id = 1L,
-        accountNumber = "1111",
-        name = "Meshal Alquraini",
-        balance = BigDecimal("3000"),
-        active = true,
-        ownerId = 1,
-        ownerType = AccountType.CAMPAIGN
-    )
-
-    when (val screen = currentScreen) {
-        is ScreenState.AccountDetails -> AccountDetailsScreen(
-            onCampaignClick = { campaignTitle ->
-                currentScreen = if (account.ownerType == AccountType.CAMPAIGN) {
-                    ScreenState.CampaignDetails(campaignTitle)
-                } else {
-                    return@AccountDetailsScreen
-                }
-            },
-            onBackClick = { }
-        )
-
-        is ScreenState.CampaignDetails -> CampaignOwnerDetailsScreen(
-            onBackClick = { currentScreen = ScreenState.AccountDetails }
-        )
-    }
-}
-
-
-sealed class ScreenState {
-    object AccountDetails : ScreenState()
-    data class CampaignDetails(val campaignTitle: String) : ScreenState()
-}
+//@Composable
+//fun MainScreen() {
+//    var currentScreen by remember { mutableStateOf<ScreenState>(ScreenState.AccountDetails) }
+//
+//
+//    val account = AccountDto(
+//        id = 1L,
+//        accountNumber = "1111",
+//        name = "Meshal Alquraini",
+//        balance = BigDecimal("3000"),
+//        active = true,
+//        ownerId = 1,
+//        ownerType = AccountType.CAMPAIGN
+//    )
+//
+//    when (val screen = currentScreen) {
+//        is ScreenState.AccountDetails -> AccountDetailsScreen(
+//            onCampaignClick = { campaignTitle ->
+//                currentScreen = if (account.ownerType == AccountType.CAMPAIGN) {
+//                    ScreenState.CampaignDetails(campaignTitle)
+//                } else {
+//                    return@AccountDetailsScreen
+//                }
+//            },
+//            onBackClick = { }
+//        )
+//
+//        is ScreenState.CampaignDetails -> CampaignOwnerDetailsScreen(
+//            campaignId = 1L,
+//            onBackClick = { currentScreen = ScreenState.AccountDetails }
+//        )
+//    }
+//}
+//
+//
+//sealed class ScreenState {
+//    object AccountDetails : ScreenState()
+//    data class CampaignDetails(val campaignTitle: String) : ScreenState()
+//}

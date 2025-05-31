@@ -11,7 +11,7 @@ data class CampaignTransactionDetailsDto(
     val destinationAccountId: Long,
     val destinationAccountNumber: String,
     val amount: BigDecimal,
-    val transactionDate: LocalDate,
+    val transactionDate: String,
     val transactionType: PledgeTransactionType,
     val pledgeId: Long
 )

@@ -16,8 +16,8 @@ data class CampaignDetailsBasicAdmin(
     val interestRate: BigDecimal,
     val repaymentMonths: Int,
     val status: CampaignStatus,
-    val submittedAt: LocalDate,
-    val campaignDeadline: LocalDate,
+    val submittedAt: String,
+    val campaignDeadline: String,
     val imageUrl: String,
     val files: List<FileDto> = emptyList(),
 )

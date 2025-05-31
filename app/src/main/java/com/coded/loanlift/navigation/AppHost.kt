@@ -15,9 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.managers.TokenManager
+import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
+import com.coded.loanlift.viewModels.CampaignOwnerViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -54,24 +57,31 @@ fun AppHost(
 ) {
     val context = LocalContext.current
     val dashboardViewModel = remember { DashboardViewModel(context) }
+    val campaignOwnerViewModel = remember { CampaignOwnerViewModel(context) }
 
-    val token = TokenManager.getToken(context)
-    val isRemembered = TokenManager.isRememberMeEnabled(context)
-    val isExpired = TokenManager.isAccessTokenExpired(context)
+    val startDestination = remember {
+        when {
+            TokenManager.getToken(context) != null &&
+                    TokenManager.isRememberMeEnabled(context) &&
+                    !TokenManager.isAccessTokenExpired(context) -> NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
 
-    val startDestination = when {
-        token != null && isRemembered && !isExpired -> NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-        token != null && isRemembered && isExpired -> {
-            runBlocking {
-                TokenManager.refreshToken(context)
+            TokenManager.getToken(context) != null &&
+                    TokenManager.isRememberMeEnabled(context) &&
+                    TokenManager.isAccessTokenExpired(context) -> {
+                runBlocking {
+                    TokenManager.refreshToken(context)
+                    if (!TokenManager.isAccessTokenExpired(context)) {
+                        UserRepository.loadUserInfo(context)
+                        NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
+                    } else {
+                        NavRoutes.NAV_ROUTE_LOGIN
+                    }
+                }
             }
-            if (!TokenManager.isAccessTokenExpired(context))
-                NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-            else
-                NavRoutes.NAV_ROUTE_LOGIN
+            else -> NavRoutes.NAV_ROUTE_LOGIN
         }
-        else -> NavRoutes.NAV_ROUTE_LOGIN
     }
+
 
     NavHost(
         modifier = modifier,
@@ -152,18 +162,28 @@ fun AppHost(
             )
         }
 
-        // these screens need to be updated
-        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_DETAILS) {
-            CampaignOwnerDetailsScreen(
-                onBackClick = { navController.popBackStack() }
-            )
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_DETAILS) { backStackEntry ->
+            val campaignId = backStackEntry.arguments?.getString("campaignId")
+            if (campaignId != null) {
+                CampaignOwnerDetailsScreen(
+                    navController = navController,
+                    viewModel = campaignOwnerViewModel,
+                    campaignId = campaignId.toLong(),
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
         }
 
+        // these screens need to be updated
         composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
             AccountDetailsScreen(
                 onCampaignClick = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() }
             )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
+            AccountCreateScreen()
         }
     }
 }

@@ -2,7 +2,6 @@ package com.coded.loanlift.data.response.campaigns
 
 import com.coded.loanlift.data.enums.CampaignStatus
 import java.math.BigDecimal
-import java.time.LocalDate
 
 data class CampaignOwnerDetails(
     val id: Long,
@@ -19,8 +18,8 @@ data class CampaignOwnerDetails(
     val bankFee: BigDecimal,
     val netToLenders: BigDecimal,
     val status: CampaignStatus,
-    val submittedAt: LocalDate,
-    val campaignDeadline: LocalDate,
+    val submittedAt: String,
+    val campaignDeadline: String,
     val imageUrl: String?,
     val accountId: Long
 ) : CampaignDetailResponse
