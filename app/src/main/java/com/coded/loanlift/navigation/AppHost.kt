@@ -183,7 +183,7 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
-            AccountCreateScreen()
+            AccountCreateScreen(navController = navController)
         }
     }
 }

@@ -95,7 +95,7 @@ fun PledgeCard(
                     )
 
                     Text(
-                        text = "Campaign: ${pledge.campaignStatus.name}",
+                        text = "Campaign: ${pledge.campaignStatus}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
