@@ -13,6 +13,7 @@ import com.coded.loanlift.data.response.error.ApiErrorResponse
 import com.coded.loanlift.data.response.error.ValidationError
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.providers.RetrofitInstance
+import com.coded.loanlift.repositories.UserRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
@@ -68,6 +69,7 @@ class AuthViewModel(
                         token.value = jwtResponse
                         TokenManager.saveToken(context, jwtResponse)
                         decodedToken.value = TokenManager.decodeAccessToken(context)
+                        UserRepository.loadUserInfo(context)
                         uiState.value = AuthUiState.Success(jwtResponse)
                     }
                 } else {
@@ -98,6 +100,7 @@ class AuthViewModel(
                         token.value = jwtResponse
                         TokenManager.saveToken(context, jwtResponse)
                         decodedToken.value = TokenManager.decodeAccessToken(context)
+                        UserRepository.loadUserInfo(context)
                         uiState.value = AuthUiState.Success(jwtResponse)
                     }
                 } else {

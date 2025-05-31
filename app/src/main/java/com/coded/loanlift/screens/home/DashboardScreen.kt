@@ -34,6 +34,7 @@ import com.coded.loanlift.composables.dashboard.PledgesSection
 import com.coded.loanlift.composables.dashboard.PledgesSectionLoading
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
+import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.viewModels.AccountsUiState
 import com.coded.loanlift.viewModels.CampaignsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
@@ -56,6 +57,12 @@ fun DashboardScreen(
     val accountsUiState by viewModel.accountsUiState.collectAsState()
     val campaignsUiState by viewModel.campaignsUiState.collectAsState()
     val pledgesUiState by viewModel.pledgesUiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if (UserRepository.userInfo == null) {
+            UserRepository.loadUserInfo(context)
+        }
+    }
 
     Column(
         modifier = Modifier

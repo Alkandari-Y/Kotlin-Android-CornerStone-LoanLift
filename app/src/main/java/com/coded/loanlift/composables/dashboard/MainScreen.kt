@@ -41,6 +41,7 @@ fun MainScreen() {
         )
 
         is ScreenState.CampaignDetails -> CampaignOwnerDetailsScreen(
+            campaignId = 1L,
             onBackClick = { currentScreen = ScreenState.AccountDetails }
         )
     }
