@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.accounts
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,14 +22,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @Composable
-fun CreateAccountCard(
+fun CreateEntityCard(
     modifier: Modifier = Modifier,
+    icon: ImageVector,
+    title: String,
+    buttonText: String,
     onCreateClick: () -> Unit
 ) {
     Card(
@@ -38,6 +42,7 @@ fun CreateAccountCard(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
@@ -49,14 +54,14 @@ fun CreateAccountCard(
             ) {
 
                 Icon(
-                    imageVector = Icons.Filled.CreditCard,
-                    contentDescription = "Add Account",
+                    imageVector = icon,
+                    contentDescription = title,
                     tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Create New Account",
+                    text = title,
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -74,7 +79,7 @@ fun CreateAccountCard(
                     .height(40.dp)
             ) {
                 Text(
-                    text = "Create",
+                    text = buttonText,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )

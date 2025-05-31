@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.coded.loanlift.composables.pledges.CreatePledgeCard
 import com.coded.loanlift.composables.pledges.PledgeCard
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 
@@ -32,11 +33,14 @@ fun PledgesSection(pledges: List<UserPledgeDto>) {
             }
 
             item {
-                CreatePledgeCard(
-                    modifier = Modifier
-                        .width(280.dp),
+                CreateEntityCard(
+                    modifier = Modifier.width(280.dp),
+                    icon = Icons.Filled.Money,
+                    title = "Create New Pledge",
+                    buttonText = "Create",
                     onCreateClick = { /* TODO */ }
                 )
+
             }
         }
     }

@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.accounts.AccountCard
-import com.coded.loanlift.composables.accounts.CreateAccountCard
 import com.coded.loanlift.data.response.accounts.AccountDto
 
 @Composable
@@ -41,9 +42,11 @@ fun AccountsSection(
             }
 
             item {
-                CreateAccountCard(
-                    modifier = Modifier
-                        .width(280.dp),
+                CreateEntityCard(
+                    modifier = Modifier.width(280.dp),
+                    icon = Icons.Filled.CreditCard,
+                    title = "Create New Account",
+                    buttonText = "Create",
                     onCreateClick = onAccountCreateClick
                 )
             }

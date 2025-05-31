@@ -2,15 +2,17 @@ package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.campaigns.CampaignCard
-import com.coded.loanlift.composables.campaigns.CreateCampaignCard
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.repositories.CategoryRepository
 
@@ -42,8 +44,13 @@ fun CampaignsSection(
             }
 
             item {
-                CreateCampaignCard(
-                    modifier = Modifier.width(280.dp),
+                CreateEntityCard(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .heightIn(min = 260.dp, max = 268.dp),
+                    icon = Icons.Filled.Add,
+                    title = "Create New Campaign",
+                    buttonText = "Start Campaign",
                     onCreateClick = onCampaignCreateClick
                 )
             }
