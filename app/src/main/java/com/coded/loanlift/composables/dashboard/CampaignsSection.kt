@@ -1,8 +1,7 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -38,8 +37,7 @@ fun CampaignsSection(
 
             item {
                 CreateCampaignCard(
-                    Modifier.padding(end = 8.dp)
-                    .width(200.dp),
+                    modifier = Modifier.width(280.dp),
                     onCreateClick = { /* TODO */ }
                 )
             }

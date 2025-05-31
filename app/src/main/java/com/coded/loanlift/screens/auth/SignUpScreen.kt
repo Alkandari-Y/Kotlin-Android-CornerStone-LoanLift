@@ -36,9 +36,7 @@ fun SignUpScreen(
 ) {
     val uiState = viewModel.uiState.value
     val fieldErrors = viewModel.registerFieldErrors.value
-
     val context = LocalContext.current
-    val token = viewModel.token.value
 
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmedPassword by remember { mutableStateOf(false) }

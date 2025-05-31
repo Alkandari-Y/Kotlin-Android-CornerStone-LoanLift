@@ -1,8 +1,7 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,8 +25,7 @@ fun AccountsSection(accounts: List<AccountDto>) {
             items(accounts) { account ->
                 AccountCard(
                     modifier = Modifier
-                        .padding(end = 8.dp)
-                        .width(200.dp),
+                        .width(280.dp),
                     account = account,
                     onCardClick = { /* TODO */ },
                     onTransferClick = { /* TODO */ }
@@ -37,8 +35,7 @@ fun AccountsSection(accounts: List<AccountDto>) {
             item {
                 CreateAccountCard(
                     modifier = Modifier
-                        .padding(end = 8.dp)
-                        .width(200.dp),
+                        .width(280.dp),
                     onCreateClick = { /* TODO */ }
                 )
             }

@@ -41,7 +41,9 @@ fun CreateCampaignCard(
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier

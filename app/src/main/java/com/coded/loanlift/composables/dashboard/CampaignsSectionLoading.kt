@@ -1,8 +1,7 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.runtime.Composable
 import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
-import com.coded.loanlift.composables.ui.SectionLoading
 
 @Composable
 fun CampaignsSectionLoading() {

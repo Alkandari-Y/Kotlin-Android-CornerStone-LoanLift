@@ -1,7 +1,6 @@
 package com.coded.loanlift.composables.campaigns
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.coded.loanlift.R
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
