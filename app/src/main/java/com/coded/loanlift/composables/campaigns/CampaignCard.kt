@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -39,16 +40,20 @@ fun CampaignCard(
     modifier: Modifier = Modifier,
     campaign: CampaignListItemResponse,
     category: CategoryDto?,
-    onCardClick: () -> Unit
-) {
+    onCardClick: () -> Unit,
+    contentScale: ContentScale =  ContentScale.Crop,
+    heightIn: Dp = 260.dp,
+    composable: @Composable () -> Unit
+
+    ) {
     val fundingProgress =
         if (campaign.goalAmount > BigDecimal.ZERO)
             (campaign.amountRaised / campaign.goalAmount).toFloat().coerceIn(0f, 1f)
         else 0f
 
     val statusColor = when (campaign.status) {
-        CampaignStatus.ACTIVE -> Color(0xFF4CAF50)
-        CampaignStatus.FUNDED -> Color(0xFF2196F3)
+        CampaignStatus.ACTIVE -> Color(0xFF2196F3)
+        CampaignStatus.FUNDED -> Color(0xFF4CAF50)
         CampaignStatus.FAILED -> Color.Red
         else -> Color.Gray
     }
@@ -113,6 +118,7 @@ fun CampaignCard(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
+
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

@@ -13,14 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
-import com.coded.loanlift.viewModels.CampaignOwnerViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -57,7 +55,6 @@ fun AppHost(
 ) {
     val context = LocalContext.current
     val dashboardViewModel = remember { DashboardViewModel(context) }
-    val campaignOwnerViewModel = remember { CampaignOwnerViewModel(context) }
 
     val startDestination = remember {
         when {
@@ -81,7 +78,6 @@ fun AppHost(
             else -> NavRoutes.NAV_ROUTE_LOGIN
         }
     }
-
 
     NavHost(
         modifier = modifier,
@@ -167,7 +163,7 @@ fun AppHost(
             if (campaignId != null) {
                 CampaignOwnerDetailsScreen(
                     navController = navController,
-                    viewModel = campaignOwnerViewModel,
+                    viewModel = dashboardViewModel,
                     campaignId = campaignId.toLong(),
                     onBackClick = { navController.popBackStack() }
                 )

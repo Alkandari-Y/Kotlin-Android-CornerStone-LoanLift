@@ -29,6 +29,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,21 +52,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.coded.loanlift.composables.campaigns.CampaignCard
 import com.coded.loanlift.composables.dashboard.AccountsSection
 import com.coded.loanlift.composables.dashboard.AccountsSectionLoading
 import com.coded.loanlift.data.enums.AccountType
+import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.data.response.auth.JwtResponse
 import com.coded.loanlift.data.response.auth.UserInfoDto
 import com.coded.loanlift.data.response.auth.ValidateTokenResponse
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
+import com.coded.loanlift.data.response.campaigns.toCampaignListItemResponse
+import com.coded.loanlift.data.response.category.CategoryDto
 import com.coded.loanlift.navigation.NavRoutes
+import com.coded.loanlift.repositories.AccountRepository
+import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.accounts.TransactionsHeader
 import com.coded.loanlift.viewModels.AccountsUiState
 import com.coded.loanlift.viewModels.CampaignDetailUiState
-import com.coded.loanlift.viewModels.CampaignOwnerViewModel
+import com.coded.loanlift.viewModels.DashboardViewModel
 import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,12 +80,18 @@ import java.math.BigDecimal
 fun CampaignOwnerDetailsScreen(
     navController: NavHostController,
     campaignId: Long,
-    viewModel: CampaignOwnerViewModel = viewModel(),
+    viewModel: DashboardViewModel,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
     val campaignHistoryUiState by viewModel.campaignHistoryUiState.collectAsState()
+
+    val campaign = (campaignDetailUiState as? CampaignDetailUiState.Success)?.campaign
+    val campaignAccount = remember(campaign) {
+        AccountRepository.myAccounts.find { it.id == campaign?.accountId }
+    }
+
     var menuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(campaignId) {
@@ -124,16 +138,21 @@ fun CampaignOwnerDetailsScreen(
                                 text = { Text("View Account", color = Color.Red) },
                                 onClick = {
                                     menuExpanded = false
-//                                    navController.navigate(NavRoutes.accountDetailRoute())
+                                    campaignAccount?.accountNumber?.let { accountNum ->
+                                        navController.navigate(NavRoutes.accountDetailRoute(accountNum))
+                                    }
                                 }
                             )
-                            DropdownMenuItem(
-                                text = { Text("Delete", color = Color.Red) },
-                                onClick = {
-                                    menuExpanded = false
-                                    // TODO: Delete
-                                }
-                            )
+
+                            if (campaign?.status == CampaignStatus.NEW) {
+                                DropdownMenuItem(
+                                    text = { Text("Delete", color = Color.Red) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        // TODO: Delete
+                                    }
+                                )
+                            }
                         }
                     }
                 },
@@ -203,54 +222,20 @@ fun CampaignDetailsForOwner(
     userInfo: ValidateTokenResponse,
     campaign: CampaignOwnerDetails
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
+
+    CampaignCard(
+        onCardClick = {},
+        modifier = Modifier.fillMaxWidth(),
+        campaign = campaign.toCampaignListItemResponse(),
+        category = CategoryDto(campaign.categoryId, campaign.categoryName),
+        contentScale = ContentScale.FillWidth,
+        heightIn = 340.dp
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = campaign.title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Status: ${campaign.status}", color = Color.LightGray)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "${campaign.amountRaised} / ${campaign.goalAmount} KD",
-                color = Color.Magenta,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text("Funding Progress", color = Color.White)
-        }
+        Spacer(modifier = Modifier)
+
     }
 }
-//
-//@Composable
-//fun CampaignDetailsForOwner(
-//    userInfo: ValidateTokenResponse,
-//    campaign: CampaignOwnerDetails
-//) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF1B2541))
-//    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(text = campaign.title, fontWeight = FontWeight.Bold,
-//                fontSize = 24.sp, color = Color.White)
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text("75%", color = Color.Magenta, fontSize = 32.sp, fontWeight = FontWeight.Bold)
-//            Text("Funding - in progress", color = Color.White)
-//        }
-//    }
-//}
+
 
 @Composable
 fun PledgeViewCard(donorInfo: String) {
