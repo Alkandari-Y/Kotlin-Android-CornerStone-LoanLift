@@ -144,6 +144,6 @@ private fun getGreetingForCurrentTime(): String {
         in 5..11 -> "Good Morning"
         in 12..16 -> "Good Afternoon"
         in 17..20 -> "Good Evening"
-        else -> "Hello,"
+        else -> "Hello"
     }
 }

@@ -1,6 +1,7 @@
 package com.coded.loanlift.composables.accounts
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,10 @@ fun AccountCard(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Column(modifier = Modifier.weight(1f).padding(16.dp),
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+                    .clickable { onCardClick() },
                 ) {
                     Text(
                         text = account.name,

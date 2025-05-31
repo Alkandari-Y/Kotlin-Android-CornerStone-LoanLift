@@ -1,4 +1,4 @@
-package com.coded.loanlift.composables.dashboardscreen
+package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -8,9 +8,11 @@ import androidx.compose.runtime.setValue
 import com.coded.loanlift.data.enums.AccountType
 import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
-import com.coded.loanlift.screens.campaigns.CampaignDetailsScreen
+import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import java.math.BigDecimal
 
+
+// This may need to be removed
 @Composable
 fun MainScreen() {
     var currentScreen by remember { mutableStateOf<ScreenState>(ScreenState.AccountDetails) }
@@ -34,12 +36,12 @@ fun MainScreen() {
                 } else {
                     return@AccountDetailsScreen
                 }
-            }
+            },
+            onBackClick = { }
         )
 
-        is ScreenState.CampaignDetails -> CampaignDetailsScreen(
-            campaignTitle = screen.campaignTitle,
-            onBack = { currentScreen = ScreenState.AccountDetails }
+        is ScreenState.CampaignDetails -> CampaignOwnerDetailsScreen(
+            onBackClick = { currentScreen = ScreenState.AccountDetails }
         )
     }
 }

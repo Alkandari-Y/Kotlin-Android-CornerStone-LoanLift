@@ -25,7 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.coded.loanlift.R
 import com.coded.loanlift.formStates.auth.RegisterFormState
-import com.coded.loanlift.navigation.NavRoutesEnum
+import com.coded.loanlift.navigation.NavRoutes
 import com.coded.loanlift.viewModels.AuthUiState
 import com.coded.loanlift.viewModels.AuthViewModel
 
@@ -36,9 +36,7 @@ fun SignUpScreen(
 ) {
     val uiState = viewModel.uiState.value
     val fieldErrors = viewModel.registerFieldErrors.value
-
     val context = LocalContext.current
-    val token = viewModel.token.value
 
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmedPassword by remember { mutableStateOf(false) }
@@ -53,8 +51,8 @@ fun SignUpScreen(
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
             Toast.makeText(context, "Account created", Toast.LENGTH_SHORT).show()
-            navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
-                popUpTo(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) { inclusive = true }
+            navController.navigate(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) {
+                popUpTo(NavRoutes.NAV_ROUTE_SIGNUP) { inclusive = true }
             }
         }
     }
@@ -209,7 +207,7 @@ fun SignUpScreen(
                     color = Color(0xFF2196F3),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable {
-                        navController.popBackStack(NavRoutesEnum.NAV_ROUTE_LOGIN.value, false)
+                        navController.popBackStack(NavRoutes.NAV_ROUTE_LOGIN, false)
                     },
                 )
             }

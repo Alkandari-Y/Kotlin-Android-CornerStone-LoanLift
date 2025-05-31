@@ -40,7 +40,10 @@ import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
+fun AccountDetailsScreen(
+    onBackClick: () -> Unit,
+    onCampaignClick: (String) -> Unit
+) {
     val darkBlue = Color(0xFF1B2541)
     val navyBlue = Color(0xFF1F2937)
     val account =  AccountDto (
@@ -60,11 +63,10 @@ fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Top App Bar
             TopAppBar(
                 title = { Text("Account Details", color = Color.White) },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back navigation */ }) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -86,7 +88,6 @@ fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
                 )
             )
 
-            // Account Details Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -98,7 +99,7 @@ fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "${account.name}",
+                        text = account.name,
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
@@ -111,7 +112,7 @@ fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "${account.accountNumber}",
+                        text = account.accountNumber,
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -125,7 +126,7 @@ fun AccountDetailsScreen(onCampaignClick: (String) -> Unit) {
                         fontSize = 16.sp
                     )
                     Text(
-                        text = "${account.ownerType}",
+                        text = account.ownerType.toString(),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold

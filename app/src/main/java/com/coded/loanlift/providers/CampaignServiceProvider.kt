@@ -119,7 +119,7 @@ interface CampaignServiceProvider {
     // Pledge Controller
 
     @GET("/api/v1/pledges")
-    suspend fun getAllMyPledges(): List<UserPledgeDto>
+    suspend fun getAllMyPledges(): Response<List<UserPledgeDto>>
 
     @POST("/api/v1/pledges")
     fun createPledge(
