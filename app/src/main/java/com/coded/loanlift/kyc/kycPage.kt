@@ -1,5 +1,6 @@
 package com.coded.loanlift.kyc
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,7 +23,9 @@ import androidx.compose.ui.geometry.Offset
 fun KycEditPage(viewModel: KycViewModel = viewModel()) {
     val purple = Color(0xFF6200EE)
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(  modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -30,7 +33,6 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Back Button
             Text(
                 text = "< Back",
                 color = purple,
@@ -38,7 +40,7 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Text("Edit KYC", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+            Text("Edit KYC", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
 
             TextField(
                 value = viewModel.firstName.value,
@@ -50,9 +52,11 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.White
+
+                    cursorColor = Color.White,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary
+
                 )
             )
 
@@ -66,9 +70,11 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.White
+
+                    cursorColor = Color.White,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary
+
                 )
             )
 
@@ -82,9 +88,12 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.White
+
+                    cursorColor = Color.White,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary
+
+
                 )
             )
 
@@ -99,9 +108,10 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.White
+
+                    cursorColor = Color.White,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary
                 )
             )
 
@@ -115,9 +125,11 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.White
+
+                    cursorColor = Color.White,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary
+
                 )
             )
         }
@@ -130,7 +142,7 @@ fun KycEditPage(viewModel: KycViewModel = viewModel()) {
                 .padding(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = purple)
         ) {
-            Text("Submit")
+            Text("Submit", color = Color.White)
         }
     }
 }
