@@ -63,26 +63,26 @@ object TokenManager {
         }
     }
 
-    suspend fun refreshToken(context: Context): JwtResponse? {
-        val refreshToken = getToken(context)?.refresh ?: return null
-        return try {
-            val response = RetrofitInstance.getAuthServiceProvider(context)
-                .refreshToken(RefreshRequest(refresh = refreshToken))
-
-            if (response.isSuccessful) {
-                response.body()?.also {
-                    saveToken(context, it)
-                    Log.d("TokenManager", "Token refreshed successfully")
-                }
-            } else {
-                Log.w("TokenManager", "Refresh failed: ${response.code()}")
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("TokenManager", "Refresh error: ${e.message}")
-            null
-        }
-    }
+//    suspend fun refreshToken(context: Context): JwtResponse? {
+//        val refreshToken = getToken(context)?.refresh ?: return null
+//        return try {
+//            val response = RetrofitInstance.getAuthServiceProvider(context)
+//                .refreshToken(RefreshRequest(refresh = refreshToken))
+//
+//            if (response.isSuccessful) {
+//                response.body()?.also {
+//                    saveToken(context, it)
+//                    Log.d("TokenManager", "Token refreshed successfully")
+//                }
+//            } else {
+//                Log.w("TokenManager", "Refresh failed: ${response.code()}")
+//                null
+//            }
+//        } catch (e: Exception) {
+//            Log.e("TokenManager", "Refresh error: ${e.message}")
+//            null
+//        }
+//    }
 
     fun decodeAccessToken(context: Context): JwtContents? {
         val token = getToken(context)?.access ?: return null
