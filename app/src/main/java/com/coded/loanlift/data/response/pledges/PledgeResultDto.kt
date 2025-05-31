@@ -15,5 +15,5 @@ data class UserPledgeProjection (
     val status: Int,
     val campaignTitle: String,
     val campaignId: Long,
-    val createdAt: LocalDate
+    val createdAt: String
 )

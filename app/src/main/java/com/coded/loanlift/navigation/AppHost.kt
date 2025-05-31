@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
@@ -58,10 +59,6 @@ fun AppHost(
     val dashboardViewModel = remember { DashboardViewModel(context) }
     val campaignOwnerViewModel = remember { CampaignOwnerViewModel(context) }
 
-//    val token = TokenManager.getToken(context)
-//    val isRemembered = TokenManager.isRememberMeEnabled(context)
-//    val isExpired = TokenManager.isAccessTokenExpired(context)
-
     val startDestination = remember {
         when {
             TokenManager.getToken(context) != null &&
@@ -81,7 +78,6 @@ fun AppHost(
                     }
                 }
             }
-
             else -> NavRoutes.NAV_ROUTE_LOGIN
         }
     }
@@ -166,11 +162,11 @@ fun AppHost(
             )
         }
 
-        // these screens need to be updated
         composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_DETAILS) { backStackEntry ->
             val campaignId = backStackEntry.arguments?.getString("campaignId")
             if (campaignId != null) {
                 CampaignOwnerDetailsScreen(
+                    navController = navController,
                     viewModel = campaignOwnerViewModel,
                     campaignId = campaignId.toLong(),
                     onBackClick = { navController.popBackStack() }
@@ -178,11 +174,16 @@ fun AppHost(
             }
         }
 
+        // these screens need to be updated
         composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
             AccountDetailsScreen(
                 onCampaignClick = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() }
             )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
+            AccountCreateScreen()
         }
     }
 }

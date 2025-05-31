@@ -7,6 +7,6 @@ data class TransactionDetails(
     val sourceAccountNumber: String,
     val destinationAccountNumber: String,
     val amount: BigDecimal,
-    val createdAt: Instant,
+    val createdAt: String,
     val category: String
 )

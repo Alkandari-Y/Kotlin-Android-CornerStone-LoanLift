@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coded.loanlift.data.response.accounts.AccountCreateRequest
+import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
 import com.coded.loanlift.providers.RetrofitInstance
@@ -11,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 
 
 sealed class CampaignDetailUiState {
@@ -76,5 +77,4 @@ class CampaignOwnerViewModel(
             }
         }
     }
-
 }

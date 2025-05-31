@@ -11,7 +11,7 @@ data class PledgeTransactionWithDetails(
     val transactionId: Long,
     val amount: BigDecimal,
     val transactionType: TransactionType,
-    val createdAt: Instant
+    val createdAt: String
 )
 
 

@@ -46,6 +46,13 @@ fun CampaignCard(
             (campaign.amountRaised / campaign.goalAmount).toFloat().coerceIn(0f, 1f)
         else 0f
 
+    val statusColor = when (campaign.status) {
+        CampaignStatus.ACTIVE -> Color(0xFF4CAF50)
+        CampaignStatus.FUNDED -> Color(0xFF2196F3)
+        CampaignStatus.FAILED -> Color.Red
+        else -> Color.Gray
+    }
+
     val showDeadline = campaign.status == CampaignStatus.ACTIVE
     val imageUrl = campaign.imageUrl
         ?.replace("localhost", "10.0.2.2")
@@ -131,12 +138,7 @@ fun CampaignCard(
                 Text(
                     text = "Status: ${campaign.status.name}",
                     fontSize = 12.sp,
-                    color = when (campaign.status) {
-                        CampaignStatus.ACTIVE -> Color(0xFF4CAF50)
-                        CampaignStatus.FUNDED -> Color(0xFF2196F3)
-                        CampaignStatus.FAILED -> Color.Red
-                        else -> Color.Gray
-                    },
+                    color = statusColor,
                     fontWeight = FontWeight.SemiBold
                 )
             }

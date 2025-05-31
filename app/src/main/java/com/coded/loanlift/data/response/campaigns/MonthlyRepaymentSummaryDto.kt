@@ -7,7 +7,7 @@ import java.time.Instant
 import java.time.YearMonth
 
 data class MonthlyRepaymentSummaryDto(
-    val month: YearMonth,
+    val month: String,
     val totalPaidWithBankFee: BigDecimal,
     val pledgeTransactionType: PledgeTransactionType = PledgeTransactionType.REPAYMENT,
 )
