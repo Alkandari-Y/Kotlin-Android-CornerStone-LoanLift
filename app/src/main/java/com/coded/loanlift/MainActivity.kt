@@ -22,25 +22,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            LoanLiftTheme {
-                KycEditPage()
-            }
-//            MaterialTheme {
-//                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-//                    SignUpScreen(
-//                        onSignUpClick = { /* TODO */ },
-//                        onLoginClick = { /* TODO */ }
-//                    )
-//                    // DashboardScreen()
-//
-////                    LoginScreen(
-////                        onLoginClick = {}
-////    onLoginClick: () -> Unit,
-////    onSignUpClick: () -> Unit,
-////    onForgotPasswordClick: () -> Unit
-////)
-//                }
+//            LoanLiftTheme {
+//                KycEditPage()
 //            }
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    SignUpScreen(
+                        onSignUpClick = { /* TODO */ },
+                        onLoginClick = { /* TODO */ }
+                    )
+                    // DashboardScreen()
+
+//                    LoginScreen(
+//                        onLoginClick = {}
+//    onLoginClick: () -> Unit,
+//    onSignUpClick: () -> Unit,
+//    onForgotPasswordClick: () -> Unit
+//)
+                }
+            }
         }
     }
 }
