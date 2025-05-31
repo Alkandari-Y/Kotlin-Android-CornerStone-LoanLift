@@ -13,17 +13,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.managers.TokenManager
+import com.coded.loanlift.screens.accounts.AccountDetailsScreen
+import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import kotlinx.coroutines.runBlocking
 
-enum class NavRoutesEnum(val value: String) {
-    NAV_ROUTE_LOGIN("login"),
-    NAV_ROUTE_SIGNUP("signup"),
-    NAV_ROUTE_FORGOT_PASSWORD("forgot_password"),
-    NAV_ROUTE_DASHBOARD("dashboard"),
-    NAV_ROUTE_LOADING_DASHBOARD("loading_dashboard"),
+object NavRoutes {
+    const val NAV_ROUTE_LOGIN = "login"
+    const val NAV_ROUTE_SIGNUP = "signup"
+    const val NAV_ROUTE_FORGOT_PASSWORD = "forgot_password"
+    const val NAV_ROUTE_DASHBOARD = "dashboard"
+    const val NAV_ROUTE_LOADING_DASHBOARD = "loading_dashboard"
+
+
+    const val NAV_ROUTE_CREATE_ACCOUNT = "accounts/create"
+    const val NAV_ROUTE_ACCOUNT_DETAILS = "accounts/manage/{accountNum}"
+
+
+    const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/create"
+    const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
+
+    const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
+    const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
+
+    fun accountDetailRoute(accountNum: String) = "accounts/manage/${accountNum}"
+    fun campaignOwnerDetailRoute(campaignId: Long) = "campaigns/manage/${campaignId}"
+    fun pledgeDetailRoute(pledgeId: Long) = "pledges/manage/${pledgeId}"
+
+
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -39,17 +59,17 @@ fun AppHost(
     val isExpired = TokenManager.isAccessTokenExpired(context)
 
     val startDestination = when {
-        token != null && isRemembered && !isExpired -> NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value
+        token != null && isRemembered && !isExpired -> NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
         token != null && isRemembered && isExpired -> {
             runBlocking {
                 TokenManager.refreshToken(context)
             }
             if (!TokenManager.isAccessTokenExpired(context))
-                NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value
+                NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
             else
-                NavRoutesEnum.NAV_ROUTE_LOGIN.value
+                NavRoutes.NAV_ROUTE_LOGIN
         }
-        else -> NavRoutesEnum.NAV_ROUTE_LOGIN.value
+        else -> NavRoutes.NAV_ROUTE_LOGIN
     }
 
     NavHost(
@@ -58,7 +78,7 @@ fun AppHost(
         startDestination = if (TokenManager.getToken(LocalContext.current) != null &&
             TokenManager.isRememberMeEnabled(LocalContext.current) &&
             !TokenManager.isAccessTokenExpired(LocalContext.current)) {
-            NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value
+            NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
         } else {
             startDestination
         }
@@ -68,19 +88,19 @@ fun AppHost(
 //        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
     ) {
 
-        composable(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
+        composable(NavRoutes.NAV_ROUTE_LOGIN) {
             val authViewModel = remember { AuthViewModel(context) }
 
             LoginScreen(
                 navController = navController,
                 onForgotPasswordClick = {
-                    navController.navigate(NavRoutesEnum.NAV_ROUTE_FORGOT_PASSWORD.value)
+                    navController.navigate(NavRoutes.NAV_ROUTE_FORGOT_PASSWORD)
                 },
                 viewModel = authViewModel
             )
         }
 
-        composable(NavRoutesEnum.NAV_ROUTE_SIGNUP.value) {
+        composable(NavRoutes.NAV_ROUTE_SIGNUP) {
             val authViewModel = remember { AuthViewModel(context) }
             SignUpScreen(
                 navController = navController,
@@ -88,26 +108,57 @@ fun AppHost(
             )
         }
 
-        composable(NavRoutesEnum.NAV_ROUTE_FORGOT_PASSWORD.value) {
+        composable(NavRoutes.NAV_ROUTE_FORGOT_PASSWORD) {
             ForgotPasswordScreen {
-                navController.popBackStack(NavRoutesEnum.NAV_ROUTE_LOGIN.value, false)
+                navController.popBackStack(NavRoutes.NAV_ROUTE_LOGIN, false)
             }
         }
 
-        composable(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
+        composable(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) {
             LoadingDashboardScreen(navController = navController)
         }
 
-        composable(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
+        composable(NavRoutes.NAV_ROUTE_DASHBOARD) {
             val dashboardViewModel = remember { DashboardViewModel(context) }
             DashboardScreen(
                 navController = navController,
                 viewModel = dashboardViewModel,
                 onLogoutClick = {
-                    navController.navigate(NavRoutesEnum.NAV_ROUTE_LOGIN.value) {
+                    navController.navigate(NavRoutes.NAV_ROUTE_LOGIN) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                onAccountClick = { accountNum: String ->
+                    navController.navigate(NavRoutes.accountDetailRoute(accountNum))
+                },
+                onCampaignClick = { campaignId: Long ->
+                    navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
+                },
+                onPledgeCLick = { pledgeId: Long ->
+                    navController.navigate(NavRoutes.pledgeDetailRoute(pledgeId))
+                },
+                onAccountCreateClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT)
+                },
+                onCampaignCreateClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CREATE_CAMPAIGN)
+                },
+                onPledgeCreateClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CREATE_PLEDGE)
+                },
+            )
+        }
+
+        // these screens need to be updated
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_DETAILS) {
+            CampaignOwnerDetailsScreen(
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
+            AccountDetailsScreen(
+                onCampaignClick = { navController.popBackStack() }
             )
         }
     }

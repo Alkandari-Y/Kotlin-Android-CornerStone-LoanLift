@@ -3,9 +3,7 @@ package com.coded.loanlift.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -38,7 +36,13 @@ import com.coded.loanlift.viewModels.PledgesUiState
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(),
     navController: NavHostController,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onAccountClick: (String) -> Unit,
+    onCampaignClick: (Long) -> Unit,
+    onPledgeCLick: (Long) -> Unit,
+    onAccountCreateClick: () -> Unit,
+    onCampaignCreateClick: () -> Unit,
+    onPledgeCreateClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val accountsUiState by viewModel.accountsUiState.collectAsState()
@@ -74,7 +78,9 @@ fun DashboardScreen(
             item {
                 when (val state = accountsUiState) {
                     is AccountsUiState.Loading -> AccountsSectionLoading()
-                    is AccountsUiState.Success -> AccountsSection(accounts = state.accounts)
+                    is AccountsUiState.Success -> AccountsSection(
+                        accounts = state.accounts
+                    )
                     is AccountsUiState.Error -> Text(
                         text = "Failed to load accounts: ${state.message}",
                         color = Color.Red,
@@ -86,7 +92,12 @@ fun DashboardScreen(
             item {
                 when (val state = campaignsUiState) {
                     is CampaignsUiState.Loading -> CampaignsSectionLoading()
-                    is CampaignsUiState.Success -> CampaignsSection(campaigns = state.campaigns)
+                    is CampaignsUiState.Success -> CampaignsSection(
+                        campaigns = state.campaigns,
+                        navController = navController,
+                        onCampaignClick = onCampaignClick,
+                        onCampaignCreateClick = onCampaignCreateClick
+                    )
                     is CampaignsUiState.Error -> Text(
                         text = "Failed to load campaigns: ${state.message}",
                         color = Color.Red,
@@ -98,7 +109,9 @@ fun DashboardScreen(
             item {
                 when (val state = pledgesUiState) {
                     is PledgesUiState.Loading -> PledgesSectionLoading()
-                    is PledgesUiState.Success -> PledgesSection(pledges = state.pledges)
+                    is PledgesUiState.Success -> PledgesSection(
+                        pledges = state.pledges
+                    )
                     is PledgesUiState.Error -> Text(
                         text = "Failed to load pledges: ${state.message}",
                         color = Color.Red,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.campaigns.CampaignCard
 import com.coded.loanlift.composables.campaigns.CreateCampaignCard
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
@@ -16,6 +17,9 @@ import com.coded.loanlift.repositories.CategoryRepository
 @Composable
 fun CampaignsSection(
     campaigns: List<CampaignListItemResponse>,
+    navController: NavHostController,
+    onCampaignClick: (Long) -> Unit,
+    onCampaignCreateClick: () -> Unit,
 ) {
     val categories = CategoryRepository.categories
     DashboardSection(
@@ -31,14 +35,16 @@ fun CampaignsSection(
                     modifier = Modifier.width(280.dp),
                     campaign = campaign,
                     category = categories.find { it.id == campaign.categoryId },
-                    onCardClick = { /* TODO */ }
+                    onCardClick = {
+                        onCampaignClick(campaign.id)
+                    }
                 )
             }
 
             item {
                 CreateCampaignCard(
                     modifier = Modifier.width(280.dp),
-                    onCreateClick = { /* TODO */ }
+                    onCreateClick = onCampaignCreateClick
                 )
             }
         }

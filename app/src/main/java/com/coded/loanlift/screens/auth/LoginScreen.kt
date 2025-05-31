@@ -46,7 +46,7 @@ import androidx.navigation.NavHostController
 import com.coded.loanlift.R
 import com.coded.loanlift.formStates.auth.LoginFormState
 import com.coded.loanlift.managers.TokenManager
-import com.coded.loanlift.navigation.NavRoutesEnum
+import com.coded.loanlift.navigation.NavRoutes
 import com.coded.loanlift.viewModels.AuthUiState
 import com.coded.loanlift.viewModels.AuthViewModel
 
@@ -68,8 +68,8 @@ fun LoginScreen(
 
     LaunchedEffect(token) {
         if (token?.access?.isNotBlank() == true) {
-            navController.navigate(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) {
-                popUpTo(NavRoutesEnum.NAV_ROUTE_LOGIN.value) { inclusive = true }
+            navController.navigate(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) {
+                popUpTo(NavRoutes.NAV_ROUTE_LOGIN) { inclusive = true }
             }
         }
     }
@@ -215,7 +215,7 @@ fun LoginScreen(
                 Text(
                     text = "Sign Up",
                     modifier = Modifier.clickable {
-                        navController.navigate(NavRoutesEnum.NAV_ROUTE_SIGNUP.value)
+                        navController.navigate(NavRoutes.NAV_ROUTE_SIGNUP)
                     },
                     color = Color(0xFF2196F3),
                     fontWeight = FontWeight.Bold

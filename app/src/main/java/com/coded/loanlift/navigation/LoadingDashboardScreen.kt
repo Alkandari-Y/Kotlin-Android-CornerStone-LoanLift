@@ -14,8 +14,8 @@ import kotlinx.coroutines.delay
 fun LoadingDashboardScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         delay(1500L)
-        navController.navigate(NavRoutesEnum.NAV_ROUTE_DASHBOARD.value) {
-            popUpTo(NavRoutesEnum.NAV_ROUTE_LOADING_DASHBOARD.value) { inclusive = true }
+        navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
+            popUpTo(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) { inclusive = true }
         }
     }
 
