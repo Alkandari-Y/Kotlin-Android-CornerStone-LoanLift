@@ -79,7 +79,10 @@ fun DashboardScreen(
                 when (val state = accountsUiState) {
                     is AccountsUiState.Loading -> AccountsSectionLoading()
                     is AccountsUiState.Success -> AccountsSection(
-                        accounts = state.accounts
+                        accounts = state.accounts,
+                        navController = navController,
+                        onAccountClick = onAccountClick,
+                        onAccountCreateClick = onAccountCreateClick
                     )
                     is AccountsUiState.Error -> Text(
                         text = "Failed to load accounts: ${state.message}",

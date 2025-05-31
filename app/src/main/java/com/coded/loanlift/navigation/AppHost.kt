@@ -158,7 +158,8 @@ fun AppHost(
 
         composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
             AccountDetailsScreen(
-                onCampaignClick = { navController.popBackStack() }
+                onCampaignClick = { navController.popBackStack() },
+                onBackClick = { navController.popBackStack() }
             )
         }
     }

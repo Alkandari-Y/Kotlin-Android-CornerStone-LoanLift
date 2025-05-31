@@ -36,7 +36,8 @@ fun MainScreen() {
                 } else {
                     return@AccountDetailsScreen
                 }
-            }
+            },
+            onBackClick = { }
         )
 
         is ScreenState.CampaignDetails -> CampaignOwnerDetailsScreen(
