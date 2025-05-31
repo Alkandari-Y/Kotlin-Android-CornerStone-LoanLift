@@ -52,8 +52,9 @@ fun AppHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
-
     val context = LocalContext.current
+    val dashboardViewModel = remember { DashboardViewModel(context) }
+
     val token = TokenManager.getToken(context)
     val isRemembered = TokenManager.isRememberMeEnabled(context)
     val isExpired = TokenManager.isAccessTokenExpired(context)
@@ -115,11 +116,13 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) {
-            LoadingDashboardScreen(navController = navController)
+            LoadingDashboardScreen(
+                navController = navController,
+                viewModel= dashboardViewModel
+            )
         }
 
         composable(NavRoutes.NAV_ROUTE_DASHBOARD) {
-            val dashboardViewModel = remember { DashboardViewModel(context) }
             DashboardScreen(
                 navController = navController,
                 viewModel = dashboardViewModel,
