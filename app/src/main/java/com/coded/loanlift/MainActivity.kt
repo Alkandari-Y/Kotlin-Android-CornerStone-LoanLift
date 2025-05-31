@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.coded.loanlift.composables.kyc.KycEditPage
 import com.coded.loanlift.navigation.AppHost
+import com.coded.loanlift.ui.theme.LoanLiftTheme
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition", "ViewModelConstructorInComposable")

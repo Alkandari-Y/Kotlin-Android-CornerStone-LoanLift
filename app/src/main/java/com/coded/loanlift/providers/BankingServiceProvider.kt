@@ -9,6 +9,7 @@ import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.data.response.accounts.UpdateAccountRequest
 import com.coded.loanlift.data.response.accounts.UpdatedBalanceResponse
 import com.coded.loanlift.data.response.accounts.UserAccountsResponse
+import com.coded.loanlift.data.response.kyc.KYCRequest
 import com.coded.loanlift.data.response.kyc.KYCResponse
 import retrofit2.http.GET
 import retrofit2.Response
@@ -90,6 +91,9 @@ interface BankingServiceProvider {
 
 
     // KYC
+    @POST("/api/v1/kyc")
+    suspend fun updateKyc(@Body request: KYCRequest): KYCResponse
+
 
     @GET("/api/v1/kyc")
     suspend fun getUserKyc(): Response<KYCResponse>
