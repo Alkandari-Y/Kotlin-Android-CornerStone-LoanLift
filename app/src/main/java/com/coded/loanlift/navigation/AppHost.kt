@@ -9,25 +9,17 @@ import com.coded.loanlift.screens.auth.ForgotPasswordScreen
 import com.coded.loanlift.screens.auth.LoginScreen
 import com.coded.loanlift.screens.auth.SignUpScreen
 import androidx.compose.animation.*
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.coded.loanlift.composables.kyc.KycEditPage
-import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
-import com.coded.loanlift.managers.TokenManager
-import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import com.coded.loanlift.viewModels.KycViewModel
-import kotlinx.coroutines.runBlocking
 
 object NavRoutes {
     const val NAV_ROUTE_LOGIN = "login"
@@ -135,6 +127,9 @@ fun AppHost(
                 onPledgeCreateClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_CREATE_PLEDGE)
                 },
+                onProfileClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
+                }
             )
         }
 
@@ -164,7 +159,7 @@ fun AppHost(
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
             val kycViewModel = remember { KycViewModel(context) }
-            KycEditPage(
+            KycScreen(
                 navController = navController,
                 viewModel= kycViewModel)
         }

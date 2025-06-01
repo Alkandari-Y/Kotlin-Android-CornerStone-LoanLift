@@ -39,7 +39,7 @@ import java.time.LocalTime
 @Composable
 fun TopBar(
     onProfileClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val greeting = remember { getGreetingForCurrentTime() }
@@ -93,7 +93,7 @@ fun TopBar(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { /* TODO */ }) {
+            IconButton(onClick = onProfileClick) {
                 Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
             }
             IconButton(onClick = { /* TODO */ }) {
