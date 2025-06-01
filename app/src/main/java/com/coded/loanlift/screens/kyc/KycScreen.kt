@@ -23,17 +23,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.coded.loanlift.navigation.NavRoutes
+import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.viewModels.KycViewModel
 import com.coded.loanlift.viewModels.UiStatus
+import android.content.Context
 
 
 @Composable
 fun KycScreen(navController: NavHostController,
+
               viewModel: KycViewModel = viewModel()
 ) {
     val purple = Color(0xFF6200EE)
-
     val context = LocalContext.current
+
+//    val viewModel: KycViewModel = viewModel(factory = KycViewModelFactory(context))
+
+
     val formState by viewModel.formState
     val isEditMode by viewModel.isEditMode
     val status by viewModel.status.collectAsState()
@@ -56,6 +62,8 @@ fun KycScreen(navController: NavHostController,
         }
     }
 
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -75,9 +83,12 @@ fun KycScreen(navController: NavHostController,
                 modifier = Modifier
                     .align(Alignment.Start)
                     .clickable {
-                        navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
-                            popUpTo(NavRoutes.NAV_ROUTE_DASHBOARD) { inclusive = true }
-                        }
+                      navController.popBackStack()
+//                            navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
+//                                popUpTo(NavRoutes.NAV_ROUTE_DASHBOARD) { inclusive = true }
+
+
+
                     }
             )
 
@@ -94,7 +105,7 @@ fun KycScreen(navController: NavHostController,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = if (isEditMode) "Update Personal Information" else "Your Personal Infomation",
+                    text = if (isEditMode) "Update Personal Information" else "Your Personal Information",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -198,7 +209,7 @@ fun KycScreen(navController: NavHostController,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                 ) {
                     Text(
-                        text = if (isEditMode) "Save Changes" else "Edit",
+                        text = if (isEditMode) "Save" else "Edit",
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )

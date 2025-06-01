@@ -67,12 +67,18 @@ fun LoginScreen(
     var formState by remember { mutableStateOf(LoginFormState()) }
 
     LaunchedEffect(token) {
-        if (token?.access?.isNotBlank() == true) {
+        if (token?.access?.isNotBlank() == true ) {
+            if (TokenManager.decodeAccessToken(context)!!.isActive){
             navController.navigate(NavRoutes.NAV_ROUTE_LOADING_DASHBOARD) {
                 popUpTo(NavRoutes.NAV_ROUTE_LOGIN) { inclusive = true }
             }
+            }
+            else {
+                navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC) {
+                    popUpTo(NavRoutes.NAV_ROUTE_LOGIN) { inclusive = true }
+                }
         }
-    }
+    }}
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val screenHeight = maxHeight

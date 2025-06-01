@@ -161,6 +161,8 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
+
+
             val kycViewModel = remember { KycViewModel(context) }
             KycScreen(
                 navController = navController,
