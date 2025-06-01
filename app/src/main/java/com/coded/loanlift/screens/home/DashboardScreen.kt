@@ -52,6 +52,8 @@ fun DashboardScreen(
     onAccountCreateClick: () -> Unit,
     onCampaignCreateClick: () -> Unit,
     onPledgeCreateClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    onViewAllCampaignsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val accountsUiState by viewModel.accountsUiState.collectAsState()
@@ -71,9 +73,7 @@ fun DashboardScreen(
             .padding(16.dp)
     ) {
         TopBar(
-            onProfileClick = {
-                navController.navigate("profile")
-            },
+            onProfileClick = onProfileClick,
             onLogoutClick = {
                 TokenManager.clearToken(context)
                 onLogoutClick()
@@ -110,7 +110,8 @@ fun DashboardScreen(
                         campaigns = state.campaigns,
                         navController = navController,
                         onCampaignClick = onCampaignClick,
-                        onCampaignCreateClick = onCampaignCreateClick
+                        onCampaignCreateClick = onCampaignCreateClick,
+                        onViewAllClick = onViewAllCampaignsClick
                     )
                     is CampaignsUiState.Error -> Text(
                         text = "Failed to load campaigns: ${state.message}",

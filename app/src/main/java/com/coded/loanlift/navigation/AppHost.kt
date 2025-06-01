@@ -13,16 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
-import com.coded.loanlift.managers.TokenManager
-import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
+import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
-import com.coded.loanlift.viewModels.CampaignOwnerViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
-import kotlinx.coroutines.runBlocking
+import com.coded.loanlift.viewModels.KycViewModel
 
 object NavRoutes {
     const val NAV_ROUTE_LOGIN = "login"
@@ -36,11 +34,14 @@ object NavRoutes {
     const val NAV_ROUTE_ACCOUNT_DETAILS = "accounts/manage/{accountNum}"
 
 
-    const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/create"
+    const val NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL = "campaigns/manage"
     const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
+    const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/manage/create"
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
+
+    const val NAV_ROUTE_EDIT_KYC = "/kyc"
 
     fun accountDetailRoute(accountNum: String) = "accounts/manage/${accountNum}"
     fun campaignOwnerDetailRoute(campaignId: Long) = "campaigns/manage/${campaignId}"
@@ -57,31 +58,6 @@ fun AppHost(
 ) {
     val context = LocalContext.current
     val dashboardViewModel = remember { DashboardViewModel(context) }
-    val campaignOwnerViewModel = remember { CampaignOwnerViewModel(context) }
-
-    val startDestination = remember {
-        when {
-            TokenManager.getToken(context) != null &&
-                    TokenManager.isRememberMeEnabled(context) &&
-                    !TokenManager.isAccessTokenExpired(context) -> NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-
-            TokenManager.getToken(context) != null &&
-                    TokenManager.isRememberMeEnabled(context) &&
-                    TokenManager.isAccessTokenExpired(context) -> {
-                runBlocking {
-                    TokenManager.refreshToken(context)
-                    if (!TokenManager.isAccessTokenExpired(context)) {
-                        UserRepository.loadUserInfo(context)
-                        NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-                    } else {
-                        NavRoutes.NAV_ROUTE_LOGIN
-                    }
-                }
-            }
-            else -> NavRoutes.NAV_ROUTE_LOGIN
-        }
-    }
-
 
     NavHost(
         modifier = modifier,
@@ -93,7 +69,6 @@ fun AppHost(
         } else {
             startDestination
         }
-
     ) {
 
         composable(NavRoutes.NAV_ROUTE_LOGIN) {
@@ -156,6 +131,12 @@ fun AppHost(
                 onPledgeCreateClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_CREATE_PLEDGE)
                 },
+                onProfileClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
+                },
+                onViewAllCampaignsClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL)
+                }
             )
         }
 
@@ -164,9 +145,9 @@ fun AppHost(
             if (campaignId != null) {
                 CampaignOwnerDetailsScreen(
                     navController = navController,
-                    viewModel = campaignOwnerViewModel,
+                    viewModel = dashboardViewModel,
                     campaignId = campaignId.toLong(),
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
                 )
             }
         }
@@ -181,6 +162,26 @@ fun AppHost(
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
             AccountCreateScreen(navController = navController)
+        }
+
+        composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
+            val kycViewModel = remember { KycViewModel(context) }
+            KycScreen(
+                navController = navController,
+                viewModel= kycViewModel)
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL) {
+            AllCampaignsOwnerScreen(
+                navController = navController,
+                viewModel = dashboardViewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onCampaignClick = { campaignId: Long ->
+                    navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
+                },
+            )
         }
     }
 }

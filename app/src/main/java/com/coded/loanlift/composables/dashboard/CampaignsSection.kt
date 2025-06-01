@@ -1,6 +1,7 @@
 package com.coded.loanlift.composables.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
@@ -22,11 +23,12 @@ fun CampaignsSection(
     navController: NavHostController,
     onCampaignClick: (Long) -> Unit,
     onCampaignCreateClick: () -> Unit,
+    onViewAllClick: () -> Unit
 ) {
     val categories = CategoryRepository.categories
     DashboardSection(
         sectionTitle = "My Campaigns",
-        onLinkClick = { /* TODO */ }
+        onLinkClick = onViewAllClick
     ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -39,8 +41,10 @@ fun CampaignsSection(
                     category = categories.find { it.id == campaign.categoryId },
                     onCardClick = {
                         onCampaignClick(campaign.id)
-                    }
-                )
+                    },
+                ) {
+                    Spacer(modifier = Modifier)
+                }
             }
 
             item {
