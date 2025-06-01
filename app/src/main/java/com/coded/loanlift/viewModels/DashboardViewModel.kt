@@ -9,15 +9,19 @@ import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
+import com.coded.loanlift.data.response.comments.CommentCreateRequest
+import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
+import com.coded.loanlift.repositories.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 sealed class AccountsUiState {
     data object Loading : AccountsUiState()
@@ -65,6 +69,20 @@ sealed class DeleteCampaignUiState {
 }
 
 
+sealed class CommentsUiState {
+    data object Loading: CommentsUiState()
+    data class Success(val comments: List<CommentResponseDto>): CommentsUiState()
+    data class Error(val message: String): CommentsUiState()
+}
+
+sealed class PostCommentUiState {
+    data object Idle: PostCommentUiState()
+    data object Loading: PostCommentUiState()
+    data object Success: PostCommentUiState()
+    data class Error(val message: String): PostCommentUiState()
+}
+
+
 class DashboardViewModel(
     private val context: Context
 ): ViewModel() {
@@ -89,6 +107,26 @@ class DashboardViewModel(
 
     private val _publicCampaignsUiState = MutableStateFlow<PublicCampaignsUiState>(PublicCampaignsUiState.Loading)
     val publicCampaignsUiState: StateFlow<PublicCampaignsUiState> = _publicCampaignsUiState
+
+    private val _commentsUiState = MutableStateFlow<CommentsUiState>(CommentsUiState.Loading)
+    val commentsUiState: StateFlow<CommentsUiState> = _commentsUiState
+
+    private val _postCommentsUiState = MutableStateFlow<PostCommentUiState>(PostCommentUiState.Idle)
+    val postCommentsUiState: StateFlow<PostCommentUiState> = _postCommentsUiState
+
+
+    init {
+        viewModelScope.launch {
+            if (UserRepository.userInfo == null) {
+                UserRepository.loadUserInfo(context)
+            }
+            fetchPublicCampaigns()
+            fetchCampaigns()
+            fetchPledges()
+            fetchAccounts()
+            fetchCategories()
+        }
+    }
 
     fun fetchCategories() {
         viewModelScope.launch {
@@ -223,6 +261,27 @@ class DashboardViewModel(
         }
     }
 
+
+    fun fetchCampaignComments(campaignId: Long) {
+        viewModelScope.launch {
+            _commentsUiState.value = CommentsUiState.Loading
+            try {
+                val response = RetrofitInstance
+                    .getCampaignApiService(context)
+                    .allAllCampaignComments(campaignId)
+
+                if (response.isSuccessful) {
+                    val comments = response.body()
+                    _commentsUiState.value = CommentsUiState.Success(comments = comments!!)
+                } else {
+                    _commentsUiState.value = CommentsUiState.Error("Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _commentsUiState.value = CommentsUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
     fun deleteCampaign(campaignId: Long) {
         viewModelScope.launch {
             _deleteCampaignUiState.value = DeleteCampaignUiState.Loading
@@ -239,4 +298,32 @@ class DashboardViewModel(
             }
         }
     }
+
+    fun postComment(campaignId: Long, message: String) {
+        viewModelScope.launch {
+            _postCommentsUiState.value = PostCommentUiState.Loading
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).addComment(
+                    campaignId = campaignId,
+                    CommentCreateRequest(message = message)
+                )
+
+                if (response.isSuccessful) {
+                    val newComment = response.body()
+                    if (newComment != null) {
+                        val currentComments = (_commentsUiState.value as? CommentsUiState.Success)?.comments ?: emptyList()
+                        val updatedComments = (currentComments + newComment)
+
+                        _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
+                    }
+                    _postCommentsUiState.value = PostCommentUiState.Success
+                } else {
+                    _postCommentsUiState.value = PostCommentUiState.Error("Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _postCommentsUiState.value = PostCommentUiState.Error("Error: ${e.message}")
+            }
+        }
+    }
+
 }

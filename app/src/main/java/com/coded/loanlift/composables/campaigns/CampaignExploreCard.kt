@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.coded.loanlift.R
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
+import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.category.CategoryDto
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -66,7 +67,7 @@ fun CampaignExploreCard(
         onClick = onCardClick,
         modifier = modifier
             .padding(bottom = 16.dp)
-            .heightIn(min = 260.dp),
+            .heightIn(min = 200.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
     ) {
@@ -96,8 +97,6 @@ fun CampaignExploreCard(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
 
-
-
                 Text(
                     text = category?.name ?: "Uncategorized",
                     color = Color.White,
@@ -112,12 +111,25 @@ fun CampaignExploreCard(
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = campaign.title,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = campaign.title,
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (showDeadline) {
+                        Text(
+                            text = "Ends: ${campaign.campaignDeadline}",
+                            fontSize = 12.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -136,6 +148,7 @@ fun CampaignExploreCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+
                     Text(
                         text = "${(fundingProgress * 100).toInt()}% funded",
                         fontSize = 12.sp,
@@ -148,25 +161,6 @@ fun CampaignExploreCard(
                         color = Color.White
                     )
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-
-                    if (showDeadline) {
-                        Text(
-                            text = "Ends: ${campaign.campaignDeadline}",
-                            fontSize = 12.sp,
-                            color = Color.Gray
-                        )
-                    }
-                }
-
-                composable()
             }
         }
     }
