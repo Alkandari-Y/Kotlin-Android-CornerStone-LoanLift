@@ -1,24 +1,5 @@
 package com.coded.loanlift.screens.accounts
 
-//@Composable
-//fun AccountCreateScreen() {
-//
-//    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-//        val screenHeight = maxHeight
-//        val screenWidth = maxWidth
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(24.dp),
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//            Text(text = "Let's create an account", fontSize = 16.sp, color = Color.Gray)
-//            Spacer(modifier = Modifier.height(24.dp))
-//        }
-//    }
-//}
-
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -33,7 +14,7 @@ import com.coded.loanlift.viewModels.AccountViewModel
 
 @Composable
 fun AccountCreateScreen(
-    navController: NavController? = null
+    navController: NavController
 ) {
     val context = LocalContext.current
     val viewModel: AccountViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
@@ -44,8 +25,19 @@ fun AccountCreateScreen(
 
     val formState by viewModel.formState.collectAsState()
     val uiState by viewModel.accountUiState.collectAsState()
+    val shouldNavigate by viewModel.shouldNavigate.collectAsState()
 
     val isLoading = uiState is AccountViewModel.AccountCreateUiState.Loading
+
+    if (shouldNavigate) {
+        LaunchedEffect(true) {
+            Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+            viewModel.resetNavigationFlag()
+            navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
+                popUpTo(NavRoutes.NAV_ROUTE_DASHBOARD) { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -87,14 +79,15 @@ fun AccountCreateScreen(
         ) {
             Button(
                 onClick = {
-                    navController?.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
+                    navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
                         popUpTo(NavRoutes.NAV_ROUTE_DASHBOARD) { inclusive = true }
                     }
                 },
                 modifier = Modifier.weight(1f),
                 enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                 )
             ) {
                 Text("Cancel")
@@ -111,27 +104,11 @@ fun AccountCreateScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        when (uiState) {
-            is AccountViewModel.AccountCreateUiState.Success -> {
-                val account = (uiState as AccountViewModel.AccountCreateUiState.Success).account
-                LaunchedEffect(account.accountNumber) {
-                    Toast
-                        .makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
-                        .show()
-                    navController?.navigate(NavRoutes.NAV_ROUTE_DASHBOARD) {
-                        popUpTo(NavRoutes.NAV_ROUTE_DASHBOARD) { inclusive = true }
-                    }
-                }
-            }
-
-            is AccountViewModel.AccountCreateUiState.Error -> {
-                Text(
-                    (uiState as AccountViewModel.AccountCreateUiState.Error).message,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            else -> {}
+        if (uiState is AccountViewModel.AccountCreateUiState.Error) {
+            Text(
+                (uiState as AccountViewModel.AccountCreateUiState.Error).message,
+                color = MaterialTheme.colorScheme.error
+            )
         }
 
         if (isLoading) {

@@ -1,6 +1,5 @@
 package com.coded.loanlift.viewModels
 
-
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +28,13 @@ class AccountViewModel(
 
     private val _accountUiState = MutableStateFlow<AccountCreateUiState>(AccountCreateUiState.Idle)
     val accountUiState: StateFlow<AccountCreateUiState> = _accountUiState
+
+    private val _shouldNavigate = MutableStateFlow(false)
+    val shouldNavigate: StateFlow<Boolean> = _shouldNavigate
+
+    fun resetNavigationFlag() {
+        _shouldNavigate.value = false
+    }
 
     private val repository = AccountRepository(context)
 
@@ -70,6 +76,8 @@ class AccountViewModel(
 
                 result.onSuccess {
                     _accountUiState.value = AccountCreateUiState.Success(it)
+                    _formState.value = AccountCreateForm()
+                    _shouldNavigate.value = true
                 }.onFailure {
                     _accountUiState.value = AccountCreateUiState.Error(it.message ?: "Unknown error")
                 }
