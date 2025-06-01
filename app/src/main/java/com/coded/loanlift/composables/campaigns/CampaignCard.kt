@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,7 +120,6 @@ fun CampaignCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -127,7 +127,27 @@ fun CampaignCard(
                     Text(
                         text = "${(fundingProgress * 100).toInt()}% funded",
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "${campaign.goalAmount} KWD",
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Status: ${campaign.status.name}",
+                        fontSize = 12.sp,
+                        color = statusColor,
+                        fontWeight = FontWeight.SemiBold
                     )
 
                     if (showDeadline) {
@@ -138,15 +158,6 @@ fun CampaignCard(
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "Status: ${campaign.status.name}",
-                    fontSize = 12.sp,
-                    color = statusColor,
-                    fontWeight = FontWeight.SemiBold
-                )
             }
         }
     }
