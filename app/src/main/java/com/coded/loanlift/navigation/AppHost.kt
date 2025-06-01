@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
+import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
@@ -33,8 +34,9 @@ object NavRoutes {
     const val NAV_ROUTE_ACCOUNT_DETAILS = "accounts/manage/{accountNum}"
 
 
-    const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/create"
+    const val NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL = "campaigns/manage"
     const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
+    const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/manage/create"
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
@@ -129,6 +131,9 @@ fun AppHost(
                 },
                 onProfileClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
+                },
+                onViewAllCampaignsClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL)
                 }
             )
         }
@@ -162,6 +167,19 @@ fun AppHost(
             KycScreen(
                 navController = navController,
                 viewModel= kycViewModel)
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL) {
+            AllCampaignsOwnerScreen(
+                navController = navController,
+                viewModel = dashboardViewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onCampaignClick = { campaignId: Long ->
+                    navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
+                },
+            )
         }
     }
 }

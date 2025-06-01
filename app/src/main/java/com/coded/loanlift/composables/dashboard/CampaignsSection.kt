@@ -23,11 +23,12 @@ fun CampaignsSection(
     navController: NavHostController,
     onCampaignClick: (Long) -> Unit,
     onCampaignCreateClick: () -> Unit,
+    onViewAllClick: () -> Unit
 ) {
     val categories = CategoryRepository.categories
     DashboardSection(
         sectionTitle = "My Campaigns",
-        onLinkClick = { /* TODO */ }
+        onLinkClick = onViewAllClick
     ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
