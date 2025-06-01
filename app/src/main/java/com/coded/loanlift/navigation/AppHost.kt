@@ -80,10 +80,7 @@ fun AppHost(
         modifier = modifier,
         navController = navController,
         startDestination = NavRoutes.NAV_ROUTE_LOGIN
-//        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
-//        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
-//        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
-//        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
+
     ) {
 
         composable(NavRoutes.NAV_ROUTE_LOGIN) {
@@ -176,10 +173,12 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
-            AccountCreateScreen()
+            AccountCreateScreen(navController = navController)
         }
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
+
+
             val kycViewModel = remember { KycViewModel(context) }
             KycScreen(
                 navController = navController,
