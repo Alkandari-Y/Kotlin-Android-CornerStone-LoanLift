@@ -45,7 +45,9 @@ class KycViewModel(private val context: Context): ViewModel() {
             viewModelScope.launch {
                 _status.value = UiStatus.Loading
                 try {
+                    Log.d("KYC_DEBUG", "Calling getUserKyc()")
                     val response = bankingService.getUserKyc()
+                    Log.d("KYC_DEBUG", "KYC Response: ${response.body()}")  ;
                     if (response.isSuccessful) {
                         response.body()?.let { kyc ->
                             loadKyc(kyc)
@@ -61,7 +63,8 @@ class KycViewModel(private val context: Context): ViewModel() {
                     _status.value = UiStatus.Error("Error fetching KYC: ${e.message}")
                 }
             }
-        } else {
+        }
+        else {
             isEditMode.value = true
         }
     }
@@ -94,6 +97,11 @@ class KycViewModel(private val context: Context): ViewModel() {
                     RetrofitInstance.getBankingServiceProvide(context).updateKyc(request)
 
                 UserRepository.kyc = updatedKyc
+                TokenManager.refreshToken(context)
+
+                loadKyc(updatedKyc)
+                initializeKycIfAvailable()
+
                 _status.value = UiStatus.Success
                 isEditMode.value = false
             } catch (e: Exception) {
