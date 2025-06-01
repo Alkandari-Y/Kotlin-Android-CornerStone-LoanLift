@@ -52,6 +52,7 @@ fun DashboardScreen(
     onAccountCreateClick: () -> Unit,
     onCampaignCreateClick: () -> Unit,
     onPledgeCreateClick: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
     val context = LocalContext.current
     val accountsUiState by viewModel.accountsUiState.collectAsState()
@@ -71,9 +72,7 @@ fun DashboardScreen(
             .padding(16.dp)
     ) {
         TopBar(
-            onProfileClick = {
-                navController.navigate("profile")
-            },
+            onProfileClick = onProfileClick,
             onLogoutClick = {
                 TokenManager.clearToken(context)
                 onLogoutClick()
