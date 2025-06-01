@@ -17,11 +17,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,11 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.coded.loanlift.R
-import com.coded.loanlift.data.enums.CampaignDetailsTab
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.category.CategoryDto
-import java.math.BigDecimal
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -57,9 +50,6 @@ fun CampaignCard(
         if (campaign.goalAmount.toFloat().coerceIn(0f, 1f) > 0F)
             (campaign.amountRaised / campaign.goalAmount).toFloat().coerceIn(0f, 1f)
         else 0f
-
-//    LaunchedEffect {
-//    }
 
     val statusColor = when (campaign.status) {
         CampaignStatus.ACTIVE -> Color(0xFF2196F3)

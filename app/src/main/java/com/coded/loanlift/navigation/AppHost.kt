@@ -23,6 +23,7 @@ import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
 import com.coded.loanlift.screens.campaigns.AllPublicActiveCampaignsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
+import com.coded.loanlift.screens.campaigns.PublicCampaignDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.KycViewModel
@@ -43,6 +44,8 @@ object NavRoutes {
     const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
     const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/manage/create"
     const val NAV_ROUTE_CAMPAIGN_EXPLORE = "campaigns/explore"
+    const val NAV_ROUTE_CAMPAIGN_PUBLIC_DETAILS = "campaigns/explore/{campaignId}"
+
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
@@ -51,6 +54,8 @@ object NavRoutes {
 
     fun accountDetailRoute(accountNum: String) = "accounts/manage/${accountNum}"
     fun campaignOwnerDetailRoute(campaignId: Long) = "campaigns/manage/${campaignId}"
+    fun campaignPublicDetailRoute(campaignId: Long) = "campaigns/explore/${campaignId}"
+
     fun pledgeDetailRoute(pledgeId: Long) = "pledges/manage/${pledgeId}"
 
 
@@ -177,8 +182,6 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
-
-
             val kycViewModel = remember { KycViewModel(context) }
             KycScreen(
                 navController = navController,
@@ -205,8 +208,22 @@ fun AppHost(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onCampaignClick = { campaignId: Long -> /* TODO */} // navigate to a public campaign details page
+                onCampaignClick = { campaignId: Long ->
+                    navController.navigate(NavRoutes.campaignPublicDetailRoute(campaignId))
+                }
             )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_PUBLIC_DETAILS) { backStackEntry ->
+            val campaignId = backStackEntry.arguments?.getString("campaignId")
+            if (campaignId != null) {
+                PublicCampaignDetailsScreen(
+                    viewModel = dashboardViewModel,
+                    navController = navController,
+                    campaignId = campaignId.toLong(),
+                    onBackClick = { navController.popBackStack() },
+                )
+            }
         }
     }
 }
