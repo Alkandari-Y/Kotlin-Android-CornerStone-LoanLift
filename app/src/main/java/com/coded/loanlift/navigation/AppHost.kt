@@ -14,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coded.loanlift.composables.kyc.KycEditPage
+import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
@@ -24,6 +26,7 @@ import com.coded.loanlift.viewModels.DashboardViewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.coded.loanlift.viewModels.KycViewModel
 import kotlinx.coroutines.runBlocking
 
 object NavRoutes {
@@ -43,6 +46,8 @@ object NavRoutes {
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
+
+    const val NAV_ROUTE_EDIT_KYC = "/kyc"
 
     fun accountDetailRoute(accountNum: String) = "accounts/manage/${accountNum}"
     fun campaignOwnerDetailRoute(campaignId: Long) = "campaigns/manage/${campaignId}"
@@ -155,6 +160,13 @@ fun AppHost(
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
             AccountCreateScreen()
+        }
+
+        composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
+            val kycViewModel = remember { KycViewModel(context) }
+            KycEditPage(
+                navController = navController,
+                viewModel= kycViewModel)
         }
     }
 }
