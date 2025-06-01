@@ -9,10 +9,14 @@ import com.coded.loanlift.screens.auth.ForgotPasswordScreen
 import com.coded.loanlift.screens.auth.LoginScreen
 import com.coded.loanlift.screens.auth.SignUpScreen
 import androidx.compose.animation.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coded.loanlift.managers.TokenManager
+import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
@@ -60,6 +64,17 @@ fun AppHost(
 ) {
     val context = LocalContext.current
     val dashboardViewModel = remember { DashboardViewModel(context) }
+
+
+    LaunchedEffect(Unit){
+        if (
+            TokenManager.getToken(context) != null &&
+                    TokenManager.isRememberMeEnabled(context) &&
+                    !TokenManager.isAccessTokenExpired(context)
+            ) {
+                navController.navigate(NavRoutes.NAV_ROUTE_DASHBOARD)
+            }
+    }
 
     NavHost(
         modifier = modifier,
