@@ -62,12 +62,12 @@ interface CampaignServiceProvider {
     ): Response<CampaignOwnerDetails>
 
     @DELETE("/api/v1/campaigns/manage/{campaignId}")
-    fun deleteCampaign(
+    suspend fun deleteCampaign(
         @Path("campaignId") campaignId: Long,
     ): Response<Unit>
 
     @GET("/api/v1/campaigns/manage/{campaignId}/transactions")
-    fun getMyCampaignTransactionsById(
+    suspend fun getMyCampaignTransactionsById(
         @Path("campaignId") campaignId: Long,
     ): Response<CampaignTransactionHistoryResponse>
 
@@ -81,13 +81,13 @@ interface CampaignServiceProvider {
 
     @Multipart
     @POST("/api/v1/campaigns/manage/files")
-    fun uploadFile(
+    suspend fun uploadFile(
         @PartMap fields: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part file: MultipartBody.Part
     ): Response<FileDto>
 
     @GET("/api/v1/campaigns/manage/files/{fileId}/download")
-    fun downloadFile(
+    suspend fun downloadFile(
         @Path("fileId") fileId: Long,
     ): Response<DownloadDto>
 
@@ -122,7 +122,7 @@ interface CampaignServiceProvider {
     suspend fun getAllMyPledges(): Response<List<UserPledgeDto>>
 
     @POST("/api/v1/pledges")
-    fun createPledge(
+    suspend fun createPledge(
         @Body request: PledgeCreateRequest,
     ): Response<PledgeResultDto>
 

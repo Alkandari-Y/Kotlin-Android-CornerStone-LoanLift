@@ -23,3 +23,17 @@ data class CampaignOwnerDetails(
     val imageUrl: String?,
     val accountId: Long
 ) : CampaignDetailResponse
+
+
+fun CampaignOwnerDetails.toCampaignListItemResponse() = CampaignListItemResponse(
+    id = id,
+    createdBy = createdBy,
+    categoryId = categoryId,
+    title = title,
+    goalAmount = goalAmount,
+    status = status,
+    campaignDeadline = campaignDeadline,
+    imageUrl = imageUrl,
+    amountRaised = amountRaised,
+    categoryName = categoryName
+)

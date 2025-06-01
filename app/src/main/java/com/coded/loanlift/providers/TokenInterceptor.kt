@@ -13,13 +13,13 @@ class TokenInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         var token = TokenManager.getToken(context)?.access
 
-        if (TokenManager.isAccessTokenExpired(context)) {
-            Log.d("TokenInterceptor", "Token expired, attempting refresh")
-            runBlocking {
-                val refreshed = TokenManager.refreshToken(context)
-                token = refreshed?.access
-            }
-        }
+//        if (TokenManager.isAccessTokenExpired(context)) {
+//            Log.d("TokenInterceptor", "Token expired, attempting refresh")
+//            runBlocking {
+//                val refreshed = TokenManager.refreshToken(context)
+//                token = refreshed?.access
+//            }
+//        }
 
         val request = chain.request().newBuilder().apply {
             token?.let { addHeader("Authorization", "Bearer $it") }

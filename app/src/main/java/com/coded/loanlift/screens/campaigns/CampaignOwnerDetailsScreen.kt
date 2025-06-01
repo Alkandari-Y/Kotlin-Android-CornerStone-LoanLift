@@ -1,28 +1,14 @@
 package com.coded.loanlift.screens.campaigns
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.rounded.AccountBalanceWallet
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,37 +34,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.coded.loanlift.composables.dashboard.AccountsSection
-import com.coded.loanlift.composables.dashboard.AccountsSectionLoading
-import com.coded.loanlift.data.enums.AccountType
-import com.coded.loanlift.data.response.accounts.AccountDto
-import com.coded.loanlift.data.response.auth.JwtResponse
-import com.coded.loanlift.data.response.auth.UserInfoDto
-import com.coded.loanlift.data.response.auth.ValidateTokenResponse
-import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
+import com.coded.loanlift.composables.campaignOwnerDetails.CampaignDetailsForOwner
+import com.coded.loanlift.composables.campaignOwnerDetails.CampaignGeneralInfoCardOwner
+import com.coded.loanlift.composables.campaignOwnerDetails.CampaignPledgeTransactionCard
+import com.coded.loanlift.composables.campaignOwnerDetails.CampaignTransactionsTabSelector
+import com.coded.loanlift.composables.campaignOwnerDetails.MonthlyRepaymentSummaryCard
+import com.coded.loanlift.data.enums.CampaignDetailsTab
+import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.navigation.NavRoutes
-import com.coded.loanlift.repositories.UserRepository
-import com.coded.loanlift.screens.accounts.AccountDetailsScreen
-import com.coded.loanlift.screens.accounts.TransactionsHeader
-import com.coded.loanlift.viewModels.AccountsUiState
+import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.viewModels.CampaignDetailUiState
-import com.coded.loanlift.viewModels.CampaignOwnerViewModel
-import java.math.BigDecimal
+import com.coded.loanlift.viewModels.CampaignHistoryUiState
+import com.coded.loanlift.viewModels.DashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CampaignOwnerDetailsScreen(
     navController: NavHostController,
     campaignId: Long,
-    viewModel: CampaignOwnerViewModel = viewModel(),
-    onBackClick: () -> Unit
+    viewModel: DashboardViewModel,
+    onBackClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
     val campaignHistoryUiState by viewModel.campaignHistoryUiState.collectAsState()
+
+    val campaign = (campaignDetailUiState as? CampaignDetailUiState.Success)?.campaign
+    val campaignAccount = remember(campaign) {
+        AccountRepository.myAccounts.find { it.id == campaign?.accountId }
+    }
+
     var menuExpanded by remember { mutableStateOf(false) }
+
+    var selectedTab by remember { mutableStateOf<CampaignDetailsTab?>(null) }
+
+    LaunchedEffect(campaign?.status) {
+        selectedTab = when (campaign?.status) {
+            CampaignStatus.ACTIVE -> CampaignDetailsTab.PLEDGES
+            CampaignStatus.FUNDED, CampaignStatus.COMPLETED, CampaignStatus.DEFAULTED -> CampaignDetailsTab.REPAYMENTS
+            else -> CampaignDetailsTab.INFO
+        }
+    }
+
 
     LaunchedEffect(campaignId) {
         viewModel.fetchCampaignDetail(campaignId)
@@ -124,16 +122,26 @@ fun CampaignOwnerDetailsScreen(
                                 text = { Text("View Account", color = Color.Red) },
                                 onClick = {
                                     menuExpanded = false
-//                                    navController.navigate(NavRoutes.accountDetailRoute())
+                                    campaignAccount?.accountNumber?.let { accountNum ->
+                                        navController.navigate(
+                                            NavRoutes.accountDetailRoute(
+                                                accountNum
+                                            )
+                                        )
+                                    }
                                 }
                             )
-                            DropdownMenuItem(
-                                text = { Text("Delete", color = Color.Red) },
-                                onClick = {
-                                    menuExpanded = false
-                                    // TODO: Delete
-                                }
-                            )
+
+                            if (campaign?.status == CampaignStatus.NEW) {
+                                DropdownMenuItem(
+                                    text = { Text("Delete", color = Color.Red) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        viewModel.deleteCampaign(campaign.id)
+                                        onBackClick()
+                                    }
+                                )
+                            }
                         }
                     }
                 },
@@ -164,7 +172,6 @@ fun CampaignOwnerDetailsScreen(
                     is CampaignDetailUiState.Success -> {
                         CampaignDetailsForOwner(
                             campaign = state.campaign,
-                            userInfo = UserRepository.userInfo!!
                         )
                     }
 
@@ -181,96 +188,86 @@ fun CampaignOwnerDetailsScreen(
                 }
             }
 
-            item { TransactionsHeader() }
+            item {
+                if (campaign != null) {
+                    selectedTab?.let { it ->
+                        CampaignTransactionsTabSelector(
+                            selectedTab = it,
+                            onTabSelected = { selectedTab = it },
+                        )
+                    }
+                }
+            }
 
-            items(
-                listOf(
-                    "Ahmadi Ali - 1,000 KD",
-                    "Younna Salim - 2,500 KD",
-                    "Sarah AlEnzi - 500 KD",
-                    "Yousef AlShemmari - 3,450 KD",
-                    "Yara Ahmad - 1,000 KD"
-                )
-            ) { donor ->
-                PledgeViewCard(donor)
+
+            when (campaignHistoryUiState) {
+                is CampaignHistoryUiState.Success -> {
+                    val history =
+                        (campaignHistoryUiState as CampaignHistoryUiState.Success).campaignTransactionHistory
+                    when (selectedTab) {
+                        CampaignDetailsTab.INFO -> {
+                            item {
+                                CampaignGeneralInfoCardOwner(campaign)
+                            }
+                        }
+
+                        CampaignDetailsTab.PLEDGES -> {
+                            items(history.pledgeTransactions) { tx ->
+                                CampaignPledgeTransactionCard(tx)
+                            }
+                        }
+
+                        CampaignDetailsTab.REPAYMENTS -> {
+                            items(history.repaymentSummaries) { summary ->
+                                MonthlyRepaymentSummaryCard(summary)
+                            }
+                        }
+
+                        null -> item {
+                            Text(
+                                text = when (campaign?.status) {
+                                    CampaignStatus.NEW -> "Thank you for submitting your campaign. You may edit or remove your campaign application."
+                                    CampaignStatus.PENDING -> "Campaign is under review."
+                                    CampaignStatus.REJECTED -> "Campaign has been rejected."
+                                    else -> "No data to display."
+                                },
+                                color = Color.Gray,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+
+                is CampaignHistoryUiState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color.Magenta)
+                        }
+                    }
+                }
+
+                is CampaignHistoryUiState.Error -> {
+                    item {
+                        Text(
+                            text = "Failed to load transactions: ${(campaignHistoryUiState as CampaignHistoryUiState.Error).message}",
+                            color = Color.Red,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun CampaignDetailsForOwner(
-    userInfo: ValidateTokenResponse,
-    campaign: CampaignOwnerDetails
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = campaign.title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Status: ${campaign.status}", color = Color.LightGray)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "${campaign.amountRaised} / ${campaign.goalAmount} KD",
-                color = Color.Magenta,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text("Funding Progress", color = Color.White)
-        }
-    }
-}
-//
-//@Composable
-//fun CampaignDetailsForOwner(
-//    userInfo: ValidateTokenResponse,
-//    campaign: CampaignOwnerDetails
-//) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF1B2541))
-//    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(text = campaign.title, fontWeight = FontWeight.Bold,
-//                fontSize = 24.sp, color = Color.White)
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text("75%", color = Color.Magenta, fontSize = 32.sp, fontWeight = FontWeight.Bold)
-//            Text("Funding - in progress", color = Color.White)
-//        }
-//    }
-//}
-
-@Composable
-fun PledgeViewCard(donorInfo: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .background(Color(0xFF173E5D))
-                .padding(16.dp)
-        ) {
-            Icon(Icons.Rounded.AccountBalanceWallet, contentDescription = null, tint = Color.White)
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text("Credit–Pledge", fontWeight = FontWeight.Bold, color = Color.White)
-                Text(donorInfo, color = Color.White)
-            }
-        }
-    }
-}

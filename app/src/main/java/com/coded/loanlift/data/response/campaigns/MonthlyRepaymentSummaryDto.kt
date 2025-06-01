@@ -18,7 +18,7 @@ data class CampaignTransactionViewDto(
     val transactionType: TransactionType,
     val pledgeTransactionType: PledgeTransactionType,
     val amount: BigDecimal,
-    val createdAt: Instant,
+    val createdAt: String,
 )
 
 

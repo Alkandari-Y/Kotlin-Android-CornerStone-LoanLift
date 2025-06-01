@@ -9,6 +9,7 @@ import com.coded.loanlift.screens.auth.ForgotPasswordScreen
 import com.coded.loanlift.screens.auth.LoginScreen
 import com.coded.loanlift.screens.auth.SignUpScreen
 import androidx.compose.animation.*
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -21,8 +22,10 @@ import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
-import com.coded.loanlift.viewModels.CampaignOwnerViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.coded.loanlift.viewModels.KycViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -61,42 +64,11 @@ fun AppHost(
 ) {
     val context = LocalContext.current
     val dashboardViewModel = remember { DashboardViewModel(context) }
-    val campaignOwnerViewModel = remember { CampaignOwnerViewModel(context) }
-
-    val startDestination = remember {
-        when {
-            TokenManager.getToken(context) != null &&
-                    TokenManager.isRememberMeEnabled(context) &&
-                    !TokenManager.isAccessTokenExpired(context) -> NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-
-            TokenManager.getToken(context) != null &&
-                    TokenManager.isRememberMeEnabled(context) &&
-                    TokenManager.isAccessTokenExpired(context) -> {
-                runBlocking {
-                    TokenManager.refreshToken(context)
-                    if (!TokenManager.isAccessTokenExpired(context)) {
-                        UserRepository.loadUserInfo(context)
-                        NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-                    } else {
-                        NavRoutes.NAV_ROUTE_LOGIN
-                    }
-                }
-            }
-            else -> NavRoutes.NAV_ROUTE_LOGIN
-        }
-    }
-
 
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (TokenManager.getToken(LocalContext.current) != null &&
-            TokenManager.isRememberMeEnabled(LocalContext.current) &&
-            !TokenManager.isAccessTokenExpired(LocalContext.current)) {
-            NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-        } else {
-            startDestination
-        }
+        startDestination = NavRoutes.NAV_ROUTE_LOGIN
 //        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
 //        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
 //        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
@@ -171,9 +143,9 @@ fun AppHost(
             if (campaignId != null) {
                 CampaignOwnerDetailsScreen(
                     navController = navController,
-                    viewModel = campaignOwnerViewModel,
+                    viewModel = dashboardViewModel,
                     campaignId = campaignId.toLong(),
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
                 )
             }
         }
