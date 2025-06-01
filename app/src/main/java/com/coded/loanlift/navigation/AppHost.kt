@@ -140,7 +140,7 @@ fun AppHost(
                     navController = navController,
                     viewModel = dashboardViewModel,
                     campaignId = campaignId.toLong(),
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
                 )
             }
         }

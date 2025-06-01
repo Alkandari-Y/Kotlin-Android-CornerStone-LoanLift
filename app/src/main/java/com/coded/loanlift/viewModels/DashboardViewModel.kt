@@ -51,6 +51,13 @@ sealed class CampaignHistoryUiState {
     data class Error(val message: String): CampaignHistoryUiState()
 }
 
+sealed class DeleteCampaignUiState {
+    data object Idle: DeleteCampaignUiState()
+    data object Loading: DeleteCampaignUiState()
+    data object Success: DeleteCampaignUiState()
+    data class Error(val message: String): DeleteCampaignUiState()
+}
+
 
 class DashboardViewModel(
     private val context: Context
@@ -71,6 +78,8 @@ class DashboardViewModel(
     private val _campaignHistoryUiState = MutableStateFlow<CampaignHistoryUiState>(CampaignHistoryUiState.Loading)
     val campaignHistoryUiState: StateFlow<CampaignHistoryUiState> = _campaignHistoryUiState
 
+    private val _deleteCampaignUiState = MutableStateFlow<DeleteCampaignUiState>(DeleteCampaignUiState.Idle)
+    val deleteCampaignUiState: StateFlow<DeleteCampaignUiState> = _deleteCampaignUiState
 
     fun fetchCategories() {
         viewModelScope.launch {
@@ -184,6 +193,23 @@ class DashboardViewModel(
                 }
             } catch (e: Exception) {
                 _campaignHistoryUiState.value = CampaignHistoryUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun deleteCampaign(campaignId: Long) {
+        viewModelScope.launch {
+            _deleteCampaignUiState.value = DeleteCampaignUiState.Loading
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).deleteCampaign(campaignId)
+                if (response.isSuccessful) {
+                    _deleteCampaignUiState.value = DeleteCampaignUiState.Success
+                    fetchCampaigns()
+                } else {
+                    _deleteCampaignUiState.value = DeleteCampaignUiState.Error("Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _deleteCampaignUiState.value = DeleteCampaignUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

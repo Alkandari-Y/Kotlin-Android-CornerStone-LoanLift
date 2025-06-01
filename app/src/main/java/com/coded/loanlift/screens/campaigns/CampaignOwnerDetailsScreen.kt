@@ -54,7 +54,7 @@ fun CampaignOwnerDetailsScreen(
     navController: NavHostController,
     campaignId: Long,
     viewModel: DashboardViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
@@ -137,7 +137,8 @@ fun CampaignOwnerDetailsScreen(
                                     text = { Text("Delete", color = Color.Red) },
                                     onClick = {
                                         menuExpanded = false
-                                        // TODO: Delete
+                                        viewModel.deleteCampaign(campaign.id)
+                                        onBackClick()
                                     }
                                 )
                             }
