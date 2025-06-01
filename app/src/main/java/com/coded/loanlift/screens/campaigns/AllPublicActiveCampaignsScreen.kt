@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,11 +27,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.coded.loanlift.composables.campaigns.CampaignCard
+import com.coded.loanlift.composables.campaigns.CampaignExploreCard
 import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
 import com.coded.loanlift.composables.dashboard.SectionLoading
 import com.coded.loanlift.repositories.CategoryRepository
-import com.coded.loanlift.viewModels.CampaignsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.PublicCampaignsUiState
 
@@ -45,13 +45,17 @@ fun AllPublicActiveCampaignsScreen(
     val uiState: PublicCampaignsUiState by viewModel.publicCampaignsUiState.collectAsState()
     val categories = CategoryRepository.categories
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchPublicCampaigns()
+    }
+
     Scaffold(
         containerColor = Color(0xFF1A1B1E),
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Manage Campaigns",
+                        text = "Explore Campaigns",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -95,7 +99,7 @@ fun AllPublicActiveCampaignsScreen(
                     }
 
                     items(state.campaigns) { campaign ->
-                        CampaignCard(
+                        CampaignExploreCard(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .fillMaxWidth(),

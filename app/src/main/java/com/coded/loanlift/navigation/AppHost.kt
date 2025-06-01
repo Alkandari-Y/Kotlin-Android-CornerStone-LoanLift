@@ -135,7 +135,7 @@ fun AppHost(
                     navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
                 },
                 onViewAllCampaignsClick = {
-                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL)
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE)
                 }
             )
         }
