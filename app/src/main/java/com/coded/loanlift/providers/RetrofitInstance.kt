@@ -34,6 +34,7 @@ object RetrofitInstance {
             .create(BankingServiceProvider::class.java)
     }
 
+
     fun getCampaignApiService(context: Context): CampaignServiceProvider {
         return Retrofit.Builder()
             .baseUrl(getBaseUrl(CAMPAIGN_SERVICE_PORT))

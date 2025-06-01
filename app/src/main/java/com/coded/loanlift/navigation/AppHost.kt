@@ -62,11 +62,13 @@ fun AppHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = NavRoutes.NAV_ROUTE_LOGIN
-//        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
-//        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
-//        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
-//        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
+        startDestination = if (TokenManager.getToken(LocalContext.current) != null &&
+            TokenManager.isRememberMeEnabled(LocalContext.current) &&
+            !TokenManager.isAccessTokenExpired(LocalContext.current)) {
+            NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
+        } else {
+            startDestination
+        }
     ) {
 
         composable(NavRoutes.NAV_ROUTE_LOGIN) {
@@ -159,7 +161,7 @@ fun AppHost(
         }
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
-            AccountCreateScreen()
+            AccountCreateScreen(navController = navController)
         }
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
