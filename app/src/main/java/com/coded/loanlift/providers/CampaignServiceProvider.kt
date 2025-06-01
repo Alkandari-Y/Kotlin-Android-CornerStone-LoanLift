@@ -36,9 +36,7 @@ interface CampaignServiceProvider {
     // Campaign Controller
 
     @GET("/api/v1/campaigns")
-    suspend fun getAllCampaigns(
-        @Query("status") status: CampaignStatus?
-    ): Response<List<CampaignListItemResponse>>
+    suspend fun getAllCampaigns(): Response<List<CampaignListItemResponse>>
 
     @Multipart
     @POST("/api/v1/campaigns")

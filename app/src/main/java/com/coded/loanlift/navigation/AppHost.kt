@@ -18,6 +18,7 @@ import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
+import com.coded.loanlift.screens.campaigns.AllPublicActiveCampaignsScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
@@ -38,6 +39,7 @@ object NavRoutes {
     const val NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL = "campaigns/manage"
     const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
     const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/manage/create"
+    const val NAV_ROUTE_CAMPAIGN_EXPLORE = "campaigns/explore"
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
@@ -131,7 +133,7 @@ fun AppHost(
                     navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
                 },
                 onViewAllCampaignsClick = {
-                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL)
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE)
                 }
             )
         }
@@ -179,6 +181,17 @@ fun AppHost(
                 onCampaignClick = { campaignId: Long ->
                     navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
                 },
+            )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE) {
+            AllPublicActiveCampaignsScreen (
+                viewModel = dashboardViewModel,
+                navController = navController,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onCampaignClick = { campaignId: Long -> /* TODO */} // navigate to a public campaign details page
             )
         }
     }
