@@ -1,17 +1,15 @@
 package com.coded.loanlift.repositories
 
-//import com.coded.loanlift.data.response.accounts.AccountDto
-//
-////object AccountRepository {
-////    var myAccounts: List<AccountDto> = listOf()
-////}
-
 import android.content.Context
 import com.coded.loanlift.data.response.accounts.AccountCreateRequest
 import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.providers.RetrofitInstance
 
 class AccountRepository(private val context: Context) {
+
+        companion object {
+            var myAccounts: MutableList<AccountDto> = mutableListOf()
+        }
 
     private val accounts = mutableListOf<AccountDto>()
 
@@ -34,4 +32,4 @@ class AccountRepository(private val context: Context) {
     }
 
     fun getCachedAccounts(): List<AccountDto> = accounts
-}
+    }

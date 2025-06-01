@@ -104,8 +104,9 @@ class DashboardViewModel(
             try {
                 val response = RetrofitInstance.getBankingServiceProvide(context).getAllAccounts()
                 if (response.isSuccessful) {
-                    _accountsUiState.value = AccountsUiState.Success(response.body().orEmpty())
-                    AccountRepository.myAccounts = response.body()?.toMutableList() ?: mutableListOf()
+                    val accounts = response.body()?.toMutableList() ?: mutableListOf()
+                    _accountsUiState.value = AccountsUiState.Success(accounts)
+                    AccountRepository.myAccounts = accounts
                 } else {
                     _accountsUiState.value = AccountsUiState.Error("Error: ${response.code()}")
                 }
