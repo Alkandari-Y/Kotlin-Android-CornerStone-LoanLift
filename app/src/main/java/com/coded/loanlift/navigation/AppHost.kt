@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
@@ -62,13 +63,8 @@ fun AppHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (TokenManager.getToken(LocalContext.current) != null &&
-            TokenManager.isRememberMeEnabled(LocalContext.current) &&
-            !TokenManager.isAccessTokenExpired(LocalContext.current)) {
-            NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-        } else {
-            startDestination
-        }
+        startDestination = NavRoutes.NAV_ROUTE_LOGIN
+
     ) {
 
         composable(NavRoutes.NAV_ROUTE_LOGIN) {

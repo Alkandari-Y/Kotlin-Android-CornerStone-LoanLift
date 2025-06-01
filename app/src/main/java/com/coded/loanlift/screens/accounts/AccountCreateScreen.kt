@@ -17,12 +17,7 @@ fun AccountCreateScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
-    val viewModel: AccountViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
-        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-            return AccountViewModel(context) as T
-        }
-    })
-
+    val viewModel: AccountViewModel = viewModel()
     val formState by viewModel.formState.collectAsState()
     val uiState by viewModel.accountUiState.collectAsState()
     val shouldNavigate by viewModel.shouldNavigate.collectAsState()
