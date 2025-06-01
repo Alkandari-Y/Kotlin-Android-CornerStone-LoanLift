@@ -64,6 +64,11 @@ fun DashboardScreen(
         if (UserRepository.userInfo == null) {
             UserRepository.loadUserInfo(context)
         }
+        viewModel.fetchPublicCampaigns()
+        viewModel.fetchCampaigns()
+        viewModel.fetchPledges()
+        viewModel.fetchAccounts()
+        viewModel.fetchCategories()
     }
 
     Column(
