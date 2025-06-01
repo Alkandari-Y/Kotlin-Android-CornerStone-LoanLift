@@ -31,6 +31,12 @@ sealed class CampaignsUiState {
     data class Error(val message: String) : CampaignsUiState()
 }
 
+sealed class PublicCampaignsUiState {
+    data object Loading : PublicCampaignsUiState()
+    data class Success(val campaigns: List<CampaignListItemResponse>) : PublicCampaignsUiState()
+    data class Error(val message: String) : PublicCampaignsUiState()
+}
+
 sealed class PledgesUiState {
     data object Loading : PledgesUiState()
     data class Success(val pledges: List<UserPledgeDto>) : PledgesUiState()
@@ -81,6 +87,9 @@ class DashboardViewModel(
     private val _deleteCampaignUiState = MutableStateFlow<DeleteCampaignUiState>(DeleteCampaignUiState.Idle)
     val deleteCampaignUiState: StateFlow<DeleteCampaignUiState> = _deleteCampaignUiState
 
+    private val _publicCampaignsUiState = MutableStateFlow<PublicCampaignsUiState>(PublicCampaignsUiState.Loading)
+    val publicCampaignsUiState: StateFlow<PublicCampaignsUiState> = _publicCampaignsUiState
+
     fun fetchCategories() {
         viewModelScope.launch {
             try {
@@ -128,6 +137,23 @@ class DashboardViewModel(
                 }
             } catch (e: Exception) {
                 _campaignsUiState.value = CampaignsUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun fetchPublicCampaigns() {
+        viewModelScope.launch {
+            delay(500)
+            _publicCampaignsUiState.value = PublicCampaignsUiState.Loading
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).getAllCampaigns()
+                if (response.isSuccessful) {
+                    _publicCampaignsUiState.value = PublicCampaignsUiState.Success(response.body().orEmpty())
+                } else {
+                    _publicCampaignsUiState.value = PublicCampaignsUiState.Error("Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _publicCampaignsUiState.value = PublicCampaignsUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

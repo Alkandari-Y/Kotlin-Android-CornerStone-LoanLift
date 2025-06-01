@@ -137,7 +137,7 @@ fun DashboardScreen(
 
             item {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = onViewAllCampaignsClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
