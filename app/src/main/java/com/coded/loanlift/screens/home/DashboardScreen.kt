@@ -125,7 +125,8 @@ fun DashboardScreen(
                 when (val state = pledgesUiState) {
                     is PledgesUiState.Loading -> PledgesSectionLoading()
                     is PledgesUiState.Success -> PledgesSection(
-                        pledges = state.pledges
+                        pledges = state.pledges,
+                        onPledgeClick = onPledgeCLick
                     )
                     is PledgesUiState.Error -> Text(
                         text = "Failed to load pledges: ${state.message}",

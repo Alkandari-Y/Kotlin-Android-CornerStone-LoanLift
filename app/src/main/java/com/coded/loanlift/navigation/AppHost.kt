@@ -19,9 +19,11 @@ import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
 import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
+import com.coded.loanlift.screens.pledges.PledgeDetailsScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.KycViewModel
+import com.coded.loanlift.viewModels.PledgeDetailsViewModel
 
 object NavRoutes {
     const val NAV_ROUTE_LOGIN = "login"
@@ -178,6 +180,18 @@ fun AppHost(
                     navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
                 },
             )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_PLEDGE_DETAILS) { backStackEntry ->
+            val pledgeId = backStackEntry.arguments?.getString("pledgeId")
+
+            val pledgeDetailsViewModel = remember { PledgeDetailsViewModel(context) }
+            if (pledgeId != null) {
+                PledgeDetailsScreen(
+                    viewModel = pledgeDetailsViewModel,
+                    pledgeId = pledgeId.toLong()
+                )
+            }
         }
     }
 }

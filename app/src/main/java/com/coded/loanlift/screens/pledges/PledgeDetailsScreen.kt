@@ -4,11 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,42 +40,58 @@ fun PledgeDetailsScreen(
             viewModel.resetNavigationFlag()
         }
     }
-     when (val state = uiState){
-         is PledgeTransationsUiState.Loading -> {
-             Box(modifier = Modifier.fillMaxSize(),
-                 contentAlignment = Alignment.Center){
-                 CircularProgressIndicator()
-             }
-         }
-         is  PledgeTransationsUiState.Success -> {
-             val pledge = state.pledgeTransactions
-             Column (modifier = Modifier.padding(16.dp)){
-                 Text("Pledge ID: ${pledge.id}")
-                 Text("Status: ${pledge.status.name}")
-                 Text("Amount: ${pledge.amount}")
-                 Text("Account ID: ${pledge.accountId}")
 
-                 Spacer(modifier = Modifier.height(16.dp))
-                 Text(text = "Transactions:", fontWeight = FontWeight.Bold)
+    LazyColumn {
+        when (val state = uiState){
+            is PledgeTransationsUiState.Loading -> {
+                item {
+                    Box(modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center){
+                        CircularProgressIndicator()
+                    }
+                }
 
-                 pledge.transactions.forEach {tx ->
-                     Card (
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .padding(vertical = 4.dp),
-                         elevation = CardDefaults.cardElevation()
-                     ){
-                         Column (modifier = Modifier.padding(8.dp)){
-                             Text("Tranaction ID: ${tx.transactionId}")
-                             Text("Type: ${tx.type}")
-                             Text("")
-                         }
+            }
+            is  PledgeTransationsUiState.Success -> {
+                items(state.pledgeTransactions) { pledge ->
+                    Column (modifier = Modifier.padding(16.dp)){
+                        Text("Pledge ID: ${pledge}")
+                        Text("Status: ${pledge.transactionType}")
+                        Text("Amount: ${pledge.amount}")
+                        Text("Account ID: ${pledge.type}")
 
-                     }
-                 }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = "Transactions:", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
 
-             }
-         }
+            is PledgeTransationsUiState.Error -> {
+                item {
+                    Text(text = "Error")
+                }
+            }
+            null -> item{ Text(text = "Error") }
+        }
+    }
 
-     }
 }
+
+
+
+
+//                        pledge.transactions.forEach {tx ->
+//                            Card (
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(vertical = 4.dp),
+//                                elevation = CardDefaults.cardElevation()
+//                            ){
+//                                Column (modifier = Modifier.padding(8.dp)){
+//                                    Text("Tranaction ID: ${tx.transactionId}")
+//                                    Text("Type: ${tx.type}")
+//                                    Text("")
+//                                }
+//
+//                            }
+//                        }
