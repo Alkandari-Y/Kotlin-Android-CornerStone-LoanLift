@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,14 +24,18 @@ fun CampaignsSection(
     navController: NavHostController,
     onCampaignClick: (Long) -> Unit,
     onCampaignCreateClick: () -> Unit,
-    onViewAllClick: () -> Unit
+    onViewAllClick: () -> Unit,
+    listState: LazyListState
 ) {
     val categories = CategoryRepository.categories
     DashboardSection(
         sectionTitle = "My Campaigns",
         onLinkClick = onViewAllClick
     ) {
+
+
         LazyRow(
+            state = listState,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -52,9 +57,9 @@ fun CampaignsSection(
                     modifier = Modifier
                         .width(280.dp)
                         .heightIn(min = 260.dp, max = 268.dp),
-                    icon = Icons.Filled.Add,
-                    title = "Create New Campaign",
-                    buttonText = "Start Campaign",
+                    icon = Icons.Filled.Campaign,
+                    title = "Create A Campaign",
+                    buttonText = "Get Funded",
                     onCreateClick = onCampaignCreateClick
                 )
             }

@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -24,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -52,13 +49,13 @@ fun CreateEntityCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-
                 Icon(
                     imageVector = icon,
-                    contentDescription = title,
+                        contentDescription = title,
                     tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = title,
@@ -69,11 +66,11 @@ fun CreateEntityCard(
             }
 
             Button(
-                onClick = onCreateClick,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF6200EE)
                 ),
                 shape = RoundedCornerShape(4.dp),
+                onClick = { onCreateClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(40.dp)
