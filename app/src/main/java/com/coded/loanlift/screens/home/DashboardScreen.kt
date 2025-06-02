@@ -18,7 +18,6 @@ import com.coded.loanlift.composables.dashboard.*
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.navigation.NavRoutes
-import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.viewModels.*
 
 @Composable

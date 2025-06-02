@@ -2,8 +2,10 @@ package com.coded.loanlift.screens.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -19,6 +21,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,7 +64,7 @@ fun SignUpScreen(
         }
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(color = Color(0xFF0D0C1D))) {
         val screenHeight = maxHeight
         val screenWidth = maxWidth
 
@@ -67,17 +73,26 @@ fun SignUpScreen(
             contentDescription = "Top Background Logo",
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .height(screenHeight * 0.25f),
+                .height(screenHeight * 0.2f),
+            contentScale = ContentScale.Fit
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.logo_no_bg),
+            contentDescription = "Top Background Logo",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .scale(3f).absoluteOffset(60.dp,120.dp),
             contentScale = ContentScale.Fit
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(50.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Hi !", fontSize = 32.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Hi !", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1976D2))
             Text(
                 text = "Welcome",
                 fontSize = 32.sp,
@@ -89,46 +104,71 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            OutlinedTextField(
+            TextField(
                 value = formState.username,
                 onValueChange = { formState = formState.copy(username = it) },
-                label = { Text("Username") },
+                label = { Text("Username" ,color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.usernameError != null,
                 supportingText = {
                     formState.usernameError?.let {
                         Text(text = it, color = Color.Red)
                     }
-                }
+                },  colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
             )
 
-            OutlinedTextField(
+            TextField(
                 value = formState.email,
                 onValueChange = { formState = formState.copy(email = it).validate() },
-                label = { Text("Email") },
+                label = { Text("Email",color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.usernameError != null,
                 supportingText = {
                     formState.usernameError?.let {
                         Text(text = it, color = Color.Red)
                     }
-                }
+                },  colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
             )
 
-            OutlinedTextField(
+            TextField(
                 value = formState.civilId,
                 onValueChange = { formState = formState.copy(civilId = it).validate() },
-                label = { Text("Civil ID") },
+                label = { Text("Civil ID",color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.civilIdError != null,
-                supportingText = { formState.civilIdError?.let { Text(it, color = Color.Red) } }
+                supportingText = { formState.civilIdError?.let { Text(it, color = Color.Red) } },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                )
             )
 
 
-            OutlinedTextField(
+            TextField(
                 value = formState.password,
                 onValueChange = { formState = formState.copy(password = it).validate() },
-                label = { Text("Password") },
+                label = { Text("Password",color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.passwordError != null,
                 supportingText = { formState.passwordError?.let { Text(it, color = Color.Red) } },
@@ -141,13 +181,22 @@ fun SignUpScreen(
                         )
                     }
                 },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            OutlinedTextField(
+            TextField(
                 value = formState.confirmPassword,
                 onValueChange = { formState = formState.copy(confirmPassword = it).validate() },
-                label = { Text("Confirm Password") },
+                label = { Text("Confirm Password",color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 isError = formState.confirmPasswordError != null,
                 supportingText = {
@@ -155,6 +204,15 @@ fun SignUpScreen(
                         Text(it, color = Color.Red)
                     }
                 },
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.White
+                ),
                 visualTransformation = if (showConfirmedPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showConfirmedPassword = !showConfirmedPassword }) {
@@ -194,7 +252,8 @@ fun SignUpScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
+                shape = RectangleShape
             ) {
                 Text(text = "Sign Up", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
