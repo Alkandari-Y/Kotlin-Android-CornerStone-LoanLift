@@ -1,4 +1,4 @@
-package com.coded.loanlift.screens.campaigns
+package com.coded.loanlift.screens.campaigns.owner
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +40,7 @@ import com.coded.loanlift.composables.campaignOwnerDetails.CampaignGeneralInfoCa
 import com.coded.loanlift.composables.campaignOwnerDetails.CampaignPledgeTransactionCard
 import com.coded.loanlift.composables.campaignOwnerDetails.CampaignTransactionsTabSelector
 import com.coded.loanlift.composables.campaignOwnerDetails.MonthlyRepaymentSummaryCard
+import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
 import com.coded.loanlift.data.enums.CampaignDetailsTab
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.navigation.NavRoutes
@@ -249,7 +250,7 @@ fun CampaignOwnerDetailsScreen(
                                 .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = Color.Magenta)
+                            SkeletonCampaignCard()
                         }
                     }
                 }

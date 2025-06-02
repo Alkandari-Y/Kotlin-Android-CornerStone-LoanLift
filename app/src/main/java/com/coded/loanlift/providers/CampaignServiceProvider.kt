@@ -1,9 +1,9 @@
 package com.coded.loanlift.providers
 
-import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignDetailResponse
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
+import com.coded.loanlift.data.response.campaigns.CampaignPublicDetails
 import com.coded.loanlift.data.response.comments.CommentCreateRequest
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.campaigns.DownloadDto
@@ -36,16 +36,14 @@ interface CampaignServiceProvider {
     // Campaign Controller
 
     @GET("/api/v1/campaigns")
-    suspend fun getAllCampaigns(
-        @Query("status") status: CampaignStatus?
-    ): Response<List<CampaignListItemResponse>>
+    suspend fun getAllCampaigns(): Response<List<CampaignListItemResponse>>
 
     @Multipart
     @POST("/api/v1/campaigns")
     suspend fun createCampaign(
         @PartMap campaignFields: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part image: MultipartBody.Part
-    ): Response<CampaignDetailResponse>
+    ): Response<CampaignPublicDetails>
 
     @GET("/api/v1/campaigns/details/{campaignId}")
     suspend fun getCampaignDetails(

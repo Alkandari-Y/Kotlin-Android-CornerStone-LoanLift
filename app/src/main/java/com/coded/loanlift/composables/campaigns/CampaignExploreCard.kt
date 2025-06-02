@@ -31,12 +31,12 @@ import coil.compose.AsyncImage
 import com.coded.loanlift.R
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
+import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.category.CategoryDto
-
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun CampaignCard(
+fun CampaignExploreCard(
     modifier: Modifier = Modifier,
     campaign: CampaignListItemResponse,
     category: CategoryDto?,
@@ -45,7 +45,7 @@ fun CampaignCard(
     heightIn: Dp = 260.dp,
     composable: @Composable () -> Unit
 
-    ) {
+) {
     val fundingProgress =
         if (campaign.goalAmount.toFloat().coerceIn(0f, 1f) > 0F)
             (campaign.amountRaised / campaign.goalAmount).toFloat().coerceIn(0f, 1f)
@@ -67,7 +67,7 @@ fun CampaignCard(
         onClick = onCardClick,
         modifier = modifier
             .padding(bottom = 16.dp)
-            .heightIn(min = 260.dp),
+            .heightIn(min = 200.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
     ) {
@@ -86,6 +86,18 @@ fun CampaignCard(
                 )
 
                 Text(
+                    text = campaign.status.toString(),
+                    fontSize = 12.sp,
+                    color = statusColor,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .background(Color(0x99000000), RoundedCornerShape(6.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+
+                Text(
                     text = category?.name ?: "Uncategorized",
                     color = Color.White,
                     fontSize = 12.sp,
@@ -99,12 +111,25 @@ fun CampaignCard(
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = campaign.title,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = campaign.title,
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (showDeadline) {
+                        Text(
+                            text = "Ends: ${campaign.campaignDeadline}",
+                            fontSize = 12.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -123,6 +148,7 @@ fun CampaignCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+
                     Text(
                         text = "${(fundingProgress * 100).toInt()}% funded",
                         fontSize = 12.sp,
@@ -135,30 +161,6 @@ fun CampaignCard(
                         color = Color.White
                     )
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Status: ${campaign.status.name}",
-                        fontSize = 12.sp,
-                        color = statusColor,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    if (showDeadline) {
-                        Text(
-                            text = "Ends: ${campaign.campaignDeadline}",
-                            fontSize = 12.sp,
-                            color = Color.Gray
-                        )
-                    }
-                }
-
-                composable()
             }
         }
     }

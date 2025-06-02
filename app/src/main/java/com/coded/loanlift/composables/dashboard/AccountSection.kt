@@ -3,6 +3,7 @@ package com.coded.loanlift.composables.dashboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,13 +22,15 @@ fun AccountsSection(
     navController: NavHostController,
     onAccountClick: (String) -> Unit,
     onAccountCreateClick: () -> Unit,
-    onTransferClick: (String) -> Unit // ⬅️ Add this line
+    onTransferClick: (String) -> Unit
+    listState: LazyListState
 ) {
     DashboardSection(
         sectionTitle = "My Accounts",
         onLinkClick = { /* TODO */ }
     ) {
         LazyRow(
+            state = listState,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -44,8 +47,8 @@ fun AccountsSection(
                 CreateEntityCard(
                     modifier = Modifier.width(280.dp),
                     icon = Icons.Filled.CreditCard,
-                    title = "Create New Account",
-                    buttonText = "Create",
+                    title = "Create An Account",
+                    buttonText = "Get Started",
                     onCreateClick = onAccountCreateClick
                 )
             }

@@ -2,6 +2,7 @@ package com.coded.loanlift.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -39,11 +40,9 @@ fun DashboardScreen(
     val campaignsUiState by viewModel.campaignsUiState.collectAsState()
     val pledgesUiState by viewModel.pledgesUiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        if (UserRepository.userInfo == null) {
-            UserRepository.loadUserInfo(context)
-        }
-    }
+    val lazyListStateAccounts = rememberLazyListState()
+    val lazyListStateCampaigns = rememberLazyListState()
+    val lazyListStatePledges = rememberLazyListState()
 
     Column(
         modifier = Modifier
@@ -75,6 +74,7 @@ fun DashboardScreen(
                         onTransferClick = { accountNum ->
                             navController.navigate(NavRoutes.transferRoute(accountNum))
                         }
+                        listState = lazyListStateAccounts
                     )
                     is AccountsUiState.Error -> Text(
                         text = "Failed to load accounts: ${state.message}",
@@ -92,7 +92,8 @@ fun DashboardScreen(
                         navController = navController,
                         onCampaignClick = onCampaignClick,
                         onCampaignCreateClick = onCampaignCreateClick,
-                        onViewAllClick = onViewAllCampaignsClick
+                        onViewAllClick = onViewAllCampaignsClick,
+                        listState = lazyListStateCampaigns
                     )
                     is CampaignsUiState.Error -> Text(
                         text = "Failed to load campaigns: ${state.message}",
@@ -106,7 +107,9 @@ fun DashboardScreen(
                 when (val state = pledgesUiState) {
                     is PledgesUiState.Loading -> PledgesSectionLoading()
                     is PledgesUiState.Success -> PledgesSection(
-                        pledges = state.pledges
+                        pledges = state.pledges,
+                        listState = lazyListStatePledges
+
                     )
                     is PledgesUiState.Error -> Text(
                         text = "Failed to load pledges: ${state.message}",
@@ -118,7 +121,7 @@ fun DashboardScreen(
 
             item {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = onViewAllCampaignsClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier

@@ -18,7 +18,7 @@ fun AccountCreateScreen(
     viewModel: AccountViewModel = viewModel()
 ) {
     val context = LocalContext.current
-
+  
     val formState by viewModel.formState.collectAsState()
     val uiState by viewModel.accountUiState.collectAsState()
     val shouldNavigate by viewModel.shouldNavigate.collectAsState()
