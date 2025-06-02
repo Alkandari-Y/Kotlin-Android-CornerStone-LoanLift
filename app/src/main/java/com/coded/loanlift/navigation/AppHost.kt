@@ -16,8 +16,10 @@ import androidx.navigation.compose.composable
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
+import com.coded.loanlift.screens.accounts.TransferScreen
 import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
 import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
+import com.coded.loanlift.viewModels.AccountViewModel
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.KycViewModel
@@ -43,10 +45,12 @@ object NavRoutes {
 
     const val NAV_ROUTE_EDIT_KYC = "/kyc"
 
+    const val NAV_ROUTE_TRANSFER = "accounts/transfer/{sourceAccount}"
+
     fun accountDetailRoute(accountNum: String) = "accounts/manage/${accountNum}"
     fun campaignOwnerDetailRoute(campaignId: Long) = "campaigns/manage/${campaignId}"
     fun pledgeDetailRoute(pledgeId: Long) = "pledges/manage/${pledgeId}"
-
+    fun transferRoute(sourceAccount: String) = "accounts/transfer/$sourceAccount"
 
 }
 
@@ -62,13 +66,7 @@ fun AppHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = if (TokenManager.getToken(LocalContext.current) != null &&
-            TokenManager.isRememberMeEnabled(LocalContext.current) &&
-            !TokenManager.isAccessTokenExpired(LocalContext.current)) {
-            NavRoutes.NAV_ROUTE_LOADING_DASHBOARD
-        } else {
-            startDestination
-        }
+        startDestination = NavRoutes.NAV_ROUTE_LOGIN
     ) {
 
         composable(NavRoutes.NAV_ROUTE_LOGIN) {
@@ -156,12 +154,14 @@ fun AppHost(
         composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
             AccountDetailsScreen(
                 onCampaignClick = { navController.popBackStack() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                viewModel = dashboardViewModel
             )
         }
 
         composable(NavRoutes.NAV_ROUTE_CREATE_ACCOUNT) {
-            AccountCreateScreen(navController = navController)
+            val accountViewModel = remember { AccountViewModel(context) }
+            AccountCreateScreen(navController = navController, viewModel = accountViewModel)
         }
 
         composable(NavRoutes.NAV_ROUTE_EDIT_KYC) {
@@ -169,6 +169,15 @@ fun AppHost(
             KycScreen(
                 navController = navController,
                 viewModel= kycViewModel)
+        }
+
+        composable(NavRoutes.NAV_ROUTE_TRANSFER) { backStackEntry ->
+            val sourceAccount = backStackEntry.arguments?.getString("sourceAccount") ?: ""
+            TransferScreen(
+                viewModel = dashboardViewModel,
+                sourceAccountNumber = sourceAccount,
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL) {

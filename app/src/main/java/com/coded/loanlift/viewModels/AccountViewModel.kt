@@ -36,7 +36,6 @@ class AccountViewModel(
         _shouldNavigate.value = false
     }
 
-    private val repository = AccountRepository(context)
 
     fun updateName(name: String) {
         _formState.value = _formState.value.copy(name = name, nameError = null)
@@ -72,7 +71,7 @@ class AccountViewModel(
                     initialBalance = balance!!
                 )
 
-                val result = repository.createAccount(request)
+                val result = AccountRepository.createAccount(request, context)
 
                 result.onSuccess {
                     _accountUiState.value = AccountCreateUiState.Success(it)

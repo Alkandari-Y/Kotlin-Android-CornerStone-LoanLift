@@ -14,14 +14,10 @@ import com.coded.loanlift.viewModels.AccountViewModel
 
 @Composable
 fun AccountCreateScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: AccountViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val viewModel: AccountViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
-        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-            return AccountViewModel(context) as T
-        }
-    })
 
     val formState by viewModel.formState.collectAsState()
     val uiState by viewModel.accountUiState.collectAsState()
