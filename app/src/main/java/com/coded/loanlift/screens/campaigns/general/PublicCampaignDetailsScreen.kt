@@ -1,4 +1,4 @@
-package com.coded.loanlift.screens.campaigns
+package com.coded.loanlift.screens.campaigns.general
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
