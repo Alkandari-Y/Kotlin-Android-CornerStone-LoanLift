@@ -13,6 +13,8 @@ import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
 import com.coded.loanlift.data.response.comments.CommentCreateRequest
 import com.coded.loanlift.data.response.comments.CommentResponseDto
+import com.coded.loanlift.data.response.error.ApiErrorResponse
+import com.coded.loanlift.data.response.pledges.PledgeCreateRequest
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
@@ -21,12 +23,14 @@ import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.utils.prepareCampaignFormParts
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import kotlin.math.log
 
 sealed class AccountsUiState {
     data object Loading : AccountsUiState()
@@ -57,6 +61,13 @@ sealed class PledgesUiState {
     data object Loading : PledgesUiState()
     data class Success(val pledges: List<UserPledgeDto>) : PledgesUiState()
     data class Error(val message: String) : PledgesUiState()
+}
+
+sealed class CreatePledgeUiState {
+    data object Idle:CreatePledgeUiState()
+    data object Loading : CreatePledgeUiState()
+    data object Success : CreatePledgeUiState()
+    data class Error(val message: String) : CreatePledgeUiState()
 }
 
 sealed class CampaignDetailUiState {
@@ -115,6 +126,9 @@ class DashboardViewModel(
     private val _pledgesUiState = MutableStateFlow<PledgesUiState>(PledgesUiState.Loading)
     val pledgesUiState: StateFlow<PledgesUiState> = _pledgesUiState
 
+    private val _createPledgeUiState = MutableStateFlow<CreatePledgeUiState>(CreatePledgeUiState.Idle)
+    val createPledgeUiState: StateFlow<CreatePledgeUiState> = _createPledgeUiState
+
     private val _campaignDetailUiState = MutableStateFlow<CampaignDetailUiState>(CampaignDetailUiState.Loading)
     val campaignDetailUiState: StateFlow<CampaignDetailUiState> = _campaignDetailUiState
 
@@ -154,6 +168,8 @@ class DashboardViewModel(
     fun resetTransferUiState() {
         _transferUiState.value = TransferUiState.Idle
     }
+
+
 
     fun fetchAccounts() {
         viewModelScope.launch {
@@ -266,6 +282,50 @@ class DashboardViewModel(
         }
     }
 
+
+
+    fun createPledge(accountId: Long, campaignId: Long, amount: BigDecimal) {
+        viewModelScope.launch {
+            _createPledgeUiState.value = CreatePledgeUiState.Loading
+
+            try {
+                val request = PledgeCreateRequest(
+                    accountId = accountId,
+                    campaignId = campaignId,
+                    amount = amount
+                )
+
+                val response = RetrofitInstance.getCampaignApiService(context).createPledge(request)
+
+                val errorString = response.errorBody()?.string()
+
+                if (response.isSuccessful) {
+                    _createPledgeUiState.value = CreatePledgeUiState.Success
+                    fetchPledges()
+                } else {
+                    val errorMessage = try {
+                        val gson = Gson()
+                        val errorResponse = gson.fromJson(errorString, ApiErrorResponse::class.java)
+                        errorResponse?.fieldErrors?.firstOrNull()?.message
+                            ?: errorResponse?.message
+                            ?: "Something went wrong"
+                    } catch (e: Exception) {
+                        "Error parsing error body"
+                    }
+
+                    _createPledgeUiState.value = CreatePledgeUiState.Error(errorMessage)
+                }
+            } catch (e: Exception) {
+                _createPledgeUiState.value = CreatePledgeUiState.Error(
+                    e.localizedMessage ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    fun resetCreatePledgeState() {
+        _createPledgeUiState.value = CreatePledgeUiState.Idle
+    }
     fun fetchCampaignDetail(campaignId: Long) {
         viewModelScope.launch {
             _campaignDetailUiState.value = CampaignDetailUiState.Loading
