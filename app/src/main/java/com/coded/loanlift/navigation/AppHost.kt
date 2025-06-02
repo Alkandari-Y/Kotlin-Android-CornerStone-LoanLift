@@ -10,20 +10,19 @@ import com.coded.loanlift.screens.auth.LoginScreen
 import com.coded.loanlift.screens.auth.SignUpScreen
 import androidx.compose.animation.*
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.coded.loanlift.managers.TokenManager
-import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
-import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
-import com.coded.loanlift.screens.campaigns.AllPublicActiveCampaignsScreen
-import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
-import com.coded.loanlift.screens.campaigns.PublicCampaignDetailsScreen
+import com.coded.loanlift.screens.campaigns.owner.AllCampaignsOwnerScreen
+import com.coded.loanlift.screens.campaigns.general.AllPublicActiveCampaignsScreen
+import com.coded.loanlift.screens.campaigns.owner.CampaignOwnerDetailsScreen
+import com.coded.loanlift.screens.campaigns.general.PublicCampaignDetailsScreen
+import com.coded.loanlift.screens.campaigns.owner.CampaignCreateScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.KycViewModel
@@ -198,6 +197,15 @@ fun AppHost(
                 onCampaignClick = { campaignId: Long ->
                     navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
                 },
+            )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_CREATE_CAMPAIGN) {
+            CampaignCreateScreen(
+                viewModel = dashboardViewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
 

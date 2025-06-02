@@ -1,10 +1,9 @@
-package com.coded.loanlift.screens.campaigns
+package com.coded.loanlift.screens.campaigns.general
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,25 +27,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.coded.loanlift.composables.campaigns.CampaignCard
+import com.coded.loanlift.composables.campaigns.CampaignExploreCard
 import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
-import com.coded.loanlift.composables.dashboard.CampaignsSection
-import com.coded.loanlift.composables.dashboard.CampaignsSectionLoading
 import com.coded.loanlift.composables.dashboard.SectionLoading
 import com.coded.loanlift.repositories.CategoryRepository
-import com.coded.loanlift.viewModels.CampaignsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
+import com.coded.loanlift.viewModels.PublicCampaignsUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AllCampaignsOwnerScreen(
+fun AllPublicActiveCampaignsScreen(
     navController: NavHostController,
     viewModel: DashboardViewModel,
     onBackClick: () -> Unit,
     onCampaignClick: (Long) -> Unit
 ) {
-    val uiState: CampaignsUiState by viewModel.campaignsUiState.collectAsState()
+    val uiState: PublicCampaignsUiState by viewModel.publicCampaignsUiState.collectAsState()
     val categories = CategoryRepository.categories
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchPublicCampaigns()
+    }
 
     Scaffold(
         containerColor = Color(0xFF1A1B1E),
@@ -54,7 +55,7 @@ fun AllCampaignsOwnerScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Manage Campaigns",
+                        text = "Explore Campaigns",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -77,7 +78,7 @@ fun AllCampaignsOwnerScreen(
         }
     ) { paddingValues ->
         when (val state = uiState) {
-            is CampaignsUiState.Loading -> {
+            is PublicCampaignsUiState.Loading -> {
                 SectionLoading(
                     sectionTitle = "Loading Campaigns",
                     onLinkClick = { }
@@ -86,7 +87,7 @@ fun AllCampaignsOwnerScreen(
                 }
             }
 
-            is CampaignsUiState.Success -> {
+            is PublicCampaignsUiState.Success -> {
                 LazyColumn(
                     modifier = Modifier
                         .padding(paddingValues)
@@ -98,7 +99,7 @@ fun AllCampaignsOwnerScreen(
                     }
 
                     items(state.campaigns) { campaign ->
-                        CampaignCard(
+                        CampaignExploreCard(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .fillMaxWidth(),
@@ -113,7 +114,7 @@ fun AllCampaignsOwnerScreen(
                     }
                 }
             }
-            is CampaignsUiState.Error -> {
+            is PublicCampaignsUiState.Error -> {
                 Text(
                     text = "Failed to load campaigns: ${state.message}",
                     color = Color.Red,

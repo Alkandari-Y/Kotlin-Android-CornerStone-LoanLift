@@ -2,20 +2,23 @@ package com.coded.loanlift.viewModels
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coded.loanlift.data.mappers.toCampaignListItemResponse
 import com.coded.loanlift.data.response.accounts.AccountDto
+import com.coded.loanlift.data.response.campaigns.CampaignDetailResponse
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
 import com.coded.loanlift.data.response.comments.CommentCreateRequest
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
+import com.coded.loanlift.formStates.campaigns.CampaignFormState
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.utils.prepareCampaignFormParts
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,6 +85,13 @@ sealed class PostCommentUiState {
     data class Error(val message: String): PostCommentUiState()
 }
 
+sealed class CreateCampaignUiState {
+    data object Idle: CreateCampaignUiState()
+    data object Loading: CreateCampaignUiState()
+    data object Success: CreateCampaignUiState()
+    data class Error(val message: String): CreateCampaignUiState()
+}
+
 
 class DashboardViewModel(
     private val context: Context
@@ -113,6 +123,10 @@ class DashboardViewModel(
 
     private val _postCommentsUiState = MutableStateFlow<PostCommentUiState>(PostCommentUiState.Idle)
     val postCommentsUiState: StateFlow<PostCommentUiState> = _postCommentsUiState
+
+
+    private val _createCampaignUiState = MutableStateFlow<CreateCampaignUiState>(CreateCampaignUiState.Idle)
+    val createCampaignUiState: StateFlow<CreateCampaignUiState> = _createCampaignUiState
 
 
     init {
@@ -281,6 +295,37 @@ class DashboardViewModel(
             }
         }
     }
+
+    fun createCampaign(form: CampaignFormState, context: Context) {
+        val validatedForm = form.validate()
+        if (!validatedForm.isValid) {
+            // update state with errors
+            return
+        }
+
+        viewModelScope.launch {
+            _createCampaignUiState.value = CreateCampaignUiState.Loading
+            try {
+                val (fields, imagePart) = prepareCampaignFormParts(validatedForm, context)
+
+                val response = RetrofitInstance.getCampaignApiService(context)
+                    .createCampaign(fields, imagePart)
+
+                if (response.isSuccessful) {
+                    val newCampaign = response.body()?.toCampaignListItemResponse()
+                    val currentCampaignsOwned = (_campaignsUiState.value as? CampaignsUiState.Success)?.campaigns ?: emptyList()
+                    val updatedCampaigns = currentCampaignsOwned + newCampaign
+                    _campaignsUiState.value = CampaignsUiState.Success(campaigns = updatedCampaigns.filterNotNull())
+                } else {
+                    _createCampaignUiState.value = CreateCampaignUiState.Error(response.message())
+                }
+            } catch (e: Exception) {
+                _createCampaignUiState.value = CreateCampaignUiState.Error("Error: ${e.message}")
+
+            }
+        }
+    }
+
 
     fun deleteCampaign(campaignId: Long) {
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.coded.loanlift.screens.campaigns
+package com.coded.loanlift.screens.campaigns.owner
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
