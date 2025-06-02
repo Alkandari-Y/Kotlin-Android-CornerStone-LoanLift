@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.accounts.AccountCard
 import com.coded.loanlift.data.response.accounts.AccountDto
+import com.coded.loanlift.navigation.NavRoutes
 
 @Composable
 fun AccountsSection(
@@ -21,6 +22,7 @@ fun AccountsSection(
     navController: NavHostController,
     onAccountClick: (String) -> Unit,
     onAccountCreateClick: () -> Unit,
+    onTransferClick: (String) -> Unit
     listState: LazyListState
 ) {
     DashboardSection(
@@ -34,13 +36,10 @@ fun AccountsSection(
         ) {
             items(accounts) { account ->
                 AccountCard(
-                    modifier = Modifier
-                        .width(280.dp),
+                    modifier = Modifier.width(280.dp),
                     account = account,
-                    onCardClick = {
-                        onAccountClick(account.accountNumber)
-                    },
-                    onTransferClick = { /* TODO */ }
+                    onCardClick = { onAccountClick(account.accountNumber) },
+                    onTransferClick = { onTransferClick(account.accountNumber) }
                 )
             }
 

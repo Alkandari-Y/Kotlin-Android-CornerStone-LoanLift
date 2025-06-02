@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coded.loanlift.data.enums.TransactionType
 import com.coded.loanlift.data.mappers.toCampaignListItemResponse
 import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.data.response.campaigns.CampaignDetailResponse
@@ -13,6 +14,7 @@ import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResp
 import com.coded.loanlift.data.response.comments.CommentCreateRequest
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
+import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
@@ -22,14 +24,21 @@ import com.coded.loanlift.utils.prepareCampaignFormParts
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 sealed class AccountsUiState {
     data object Loading : AccountsUiState()
     data class Success(val accounts: List<AccountDto>) : AccountsUiState()
     data class Error(val message: String) : AccountsUiState()
+}
+
+sealed class TransferUiState {
+    data object Idle : TransferUiState()
+    data object Loading : TransferUiState()
+    data object Success : TransferUiState()
+    data class Error(val message: String) : TransferUiState()
 }
 
 sealed class CampaignsUiState {
@@ -57,20 +66,17 @@ sealed class CampaignDetailUiState {
 }
 
 sealed class CampaignHistoryUiState {
-    data object Loading: CampaignHistoryUiState()
-    data class Success(
-        val campaignTransactionHistory: CampaignTransactionHistoryResponse
-    ): CampaignHistoryUiState()
-    data class Error(val message: String): CampaignHistoryUiState()
+    data object Loading : CampaignHistoryUiState()
+    data class Success(val campaignTransactionHistory: CampaignTransactionHistoryResponse) : CampaignHistoryUiState()
+    data class Error(val message: String) : CampaignHistoryUiState()
 }
 
 sealed class DeleteCampaignUiState {
-    data object Idle: DeleteCampaignUiState()
-    data object Loading: DeleteCampaignUiState()
-    data object Success: DeleteCampaignUiState()
-    data class Error(val message: String): DeleteCampaignUiState()
+    data object Idle : DeleteCampaignUiState()
+    data object Loading : DeleteCampaignUiState()
+    data object Success : DeleteCampaignUiState()
+    data class Error(val message: String) : DeleteCampaignUiState()
 }
-
 
 sealed class CommentsUiState {
     data object Loading: CommentsUiState()
@@ -95,10 +101,13 @@ sealed class CreateCampaignUiState {
 
 class DashboardViewModel(
     private val context: Context
-): ViewModel() {
+) : ViewModel() {
 
     private val _accountsUiState = MutableStateFlow<AccountsUiState>(AccountsUiState.Loading)
     val accountsUiState: StateFlow<AccountsUiState> = _accountsUiState
+
+    private val _transferUiState = MutableStateFlow<TransferUiState>(TransferUiState.Idle)
+    val transferUiState: StateFlow<TransferUiState> = _transferUiState
 
     private val _campaignsUiState = MutableStateFlow<CampaignsUiState>(CampaignsUiState.Loading)
     val campaignsUiState: StateFlow<CampaignsUiState> = _campaignsUiState
@@ -141,6 +150,54 @@ class DashboardViewModel(
             fetchCategories()
         }
     }
+    
+    fun resetTransferUiState() {
+        _transferUiState.value = TransferUiState.Idle
+    }
+
+    fun fetchAccounts() {
+        viewModelScope.launch {
+            delay(500)
+            _accountsUiState.value = AccountsUiState.Loading
+            try {
+                val response = RetrofitInstance.getBankingServiceProvide(context).getAllAccounts()
+                if (response.isSuccessful) {
+                    val accounts = response.body()?.toMutableList() ?: mutableListOf()
+                    _accountsUiState.value = AccountsUiState.Success(accounts)
+                    AccountRepository.myAccounts = accounts
+                } else {
+                    _accountsUiState.value = AccountsUiState.Error("Error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _accountsUiState.value = AccountsUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun transferBetweenAccounts(source: String, destination: String, amount: BigDecimal) {
+        viewModelScope.launch {
+            _transferUiState.value = TransferUiState.Loading
+            try {
+                val request = TransferCreateRequest(
+                    sourceAccountNumber = source,
+                    destinationAccountNumber = destination,
+                    amount = amount,
+                    type = TransactionType.TRANSFER
+                )
+
+                val response = RetrofitInstance.getBankingServiceProvide(context).transfer(request)
+
+                if (response.isSuccessful) {
+                    _transferUiState.value = TransferUiState.Success
+                    fetchAccounts()
+                } else {
+                    _transferUiState.value = TransferUiState.Error("Transfer failed: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _transferUiState.value = TransferUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
 
     fun fetchCategories() {
         viewModelScope.launch {
@@ -154,24 +211,6 @@ class DashboardViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("DashboardViewModel", "Error fetching categories: ${e.message}")
-            }
-        }
-    }
-
-    fun fetchAccounts() {
-        viewModelScope.launch {
-            delay(500)
-            _accountsUiState.value = AccountsUiState.Loading
-            try {
-                val response = RetrofitInstance.getBankingServiceProvide(context).getAllAccounts()
-                if (response.isSuccessful) {
-                    _accountsUiState.value = AccountsUiState.Success(response.body().orEmpty())
-                    AccountRepository.myAccounts = response.body()?.toMutableList() ?: mutableListOf()
-                } else {
-                    _accountsUiState.value = AccountsUiState.Error("Error: ${response.code()}")
-                }
-            } catch (e: Exception) {
-                _accountsUiState.value = AccountsUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

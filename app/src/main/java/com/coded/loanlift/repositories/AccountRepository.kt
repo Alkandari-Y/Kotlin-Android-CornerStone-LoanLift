@@ -5,8 +5,8 @@ import com.coded.loanlift.data.response.accounts.AccountCreateRequest
 import com.coded.loanlift.data.response.accounts.AccountDto
 import com.coded.loanlift.providers.RetrofitInstance
 
-object AccountRepository {
-    var myAccounts = mutableListOf<AccountDto>()
+object AccountRepository{
+    var myAccounts: MutableList<AccountDto> = mutableListOf()
 
     suspend fun createAccount(request: AccountCreateRequest, context: Context): Result<AccountDto> {
         return try {
@@ -27,5 +27,4 @@ object AccountRepository {
     }
 
     fun getCachedAccounts(): List<AccountDto> = myAccounts
-
 }
