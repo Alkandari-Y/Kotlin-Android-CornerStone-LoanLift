@@ -22,7 +22,7 @@ fun AccountsSection(
     navController: NavHostController,
     onAccountClick: (String) -> Unit,
     onAccountCreateClick: () -> Unit,
-    onTransferClick: (String) -> Unit
+    onTransferClick: (String) -> Unit,
     listState: LazyListState
 ) {
     DashboardSection(

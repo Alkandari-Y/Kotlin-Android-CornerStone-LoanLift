@@ -73,7 +73,7 @@ fun DashboardScreen(
                         onAccountCreateClick = onAccountCreateClick,
                         onTransferClick = { accountNum ->
                             navController.navigate(NavRoutes.transferRoute(accountNum))
-                        }
+                        },
                         listState = lazyListStateAccounts
                     )
                     is AccountsUiState.Error -> Text(
