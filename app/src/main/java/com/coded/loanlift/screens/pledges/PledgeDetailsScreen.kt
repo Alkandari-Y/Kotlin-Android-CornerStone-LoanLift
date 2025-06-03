@@ -65,6 +65,7 @@ fun PledgeDetailsScreen(
             is PledgeDetailsUiState.Success -> {
                 item {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Pledge Details", fontWeight = FontWeight.Bold)
                         Text("Amount: ${state.pledgeDetails.amount}")
                         Text("Pledge Status: ${state.pledgeDetails.status}")
                         Text("Campaign Title: ${state.pledgeDetails.campaignTitle}")
@@ -74,7 +75,6 @@ fun PledgeDetailsScreen(
                         Text("Created ${state.pledgeDetails.createdAt}")
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "Transactions:", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -102,13 +102,14 @@ fun PledgeDetailsScreen(
             is PledgeTransactionsUiState.Success -> {
                 items(state.pledgeTransactions) { pledge ->
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Pledge ID: ${pledge}")
-                        Text("Status: ${pledge.transactionType}")
+                        Text("Pledge Transaction", fontWeight = FontWeight.Bold)
+                        Text("Pledge ID: ${pledge.id}")
+                        Text("Type: ${pledge.type}")
                         Text("Amount: ${pledge.amount}")
-                        Text("Account ID: ${pledge.type}")
+                        Text("Transactions Type: ${pledge.transactionType}")
+                        Text("Created at: ${pledge.createdAt}")
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "Transactions:", fontWeight = FontWeight.Bold)
                     }
                 }
             }
