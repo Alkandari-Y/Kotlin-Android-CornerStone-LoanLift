@@ -60,6 +60,11 @@ import com.coded.loanlift.viewModels.PledgesUiState
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import com.coded.loanlift.composables.campaigns.CampaignPublicInformation
 import com.coded.loanlift.composables.comments.CommentCard
+import com.coded.loanlift.composables.comments.SkeletonCommentCard
+import com.coded.loanlift.formStates.comments.CommentFormState
+import com.coded.loanlift.repositories.UserRepository
+import com.coded.loanlift.viewModels.PostCommentUiState
+import com.coded.loanlift.viewModels.PostReplyUiState
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,15 +80,17 @@ fun PublicCampaignDetailsScreen(
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
     val commentsUiState by viewModel.commentsUiState.collectAsState()
     val pledgesUiState by viewModel.pledgesUiState.collectAsState()
+    val postCommentUiState by viewModel.postCommentsUiState.collectAsState()
+    val postReplyUiState by viewModel.postReplyUiState.collectAsState()
 
     val categories = CategoryRepository.categories
 
     val listState = rememberLazyListState()
     var isWritingComment by remember { mutableStateOf(false) }
-    var commentText by remember { mutableStateOf("") }
-
+    var commentFormState by remember { mutableStateOf(CommentFormState()) }
     var replyToComment by remember { mutableStateOf<CommentResponseDto?>(null) }
     var replyText by remember { mutableStateOf("") }
+    val currentUserId = UserRepository.userInfo?.userId
 
     LaunchedEffect(Unit) {
         viewModel.fetchCampaignDetail(campaignId)
@@ -218,19 +225,30 @@ fun PublicCampaignDetailsScreen(
                         )
                     }
 
+                    if (postCommentUiState is PostCommentUiState.Loading) {
+                        item{
+                            SkeletonCommentCard()
+                        }
+                    }
+
                     when (val commentState = commentsUiState) {
                         is CommentsUiState.Loading -> {
                             item { Text("Loading comments...", color = Color.Gray) }
                         }
 
+
                         is CommentsUiState.Success -> {
-                            items(commentState.comments.sortedByDescending { LocalDateTime.parse(it.createdAt) }) { comment ->
+                            items(commentState.comments) { comment ->
+
                                 CommentCard(
                                     comment = comment,
+                                    currentUserIsCampaignOwner = currentUserId == campaign.createdBy,
                                     onReplyClick = { selectedComment ->
                                         replyToComment = selectedComment
                                         isWritingComment = true
-                                    }
+                                    },
+                                    showReplySkeleton = postReplyUiState is PostReplyUiState.Loading && replyToComment?.id == comment.id
+
                                 )
                             }
                         }
@@ -268,13 +286,26 @@ fun PublicCampaignDetailsScreen(
                         .background(Color(0xFF2A2B2E), shape = RoundedCornerShape(12.dp))
                         .padding(12.dp)
                 ) {
+
                     OutlinedTextField(
-                        value = if (replyToComment != null) replyText else commentText,
-                        onValueChange = { newValue ->
-                            if (replyToComment != null) replyText = newValue else commentText = newValue
+                        value = if (replyToComment != null) replyText else commentFormState.message,
+                        onValueChange = {
+                            if (replyToComment != null) {
+                                replyText = it
+                            } else {
+                                commentFormState = commentFormState.copy(message = it, messageError = null)
+                            }
                         },
+                        isError = commentFormState.messageError != null && replyToComment == null,
                         placeholder = {
                             Text(if (replyToComment != null) "Write a reply..." else "Write a comment...")
+                        },
+                        supportingText = {
+                            if (replyToComment == null) {
+                                commentFormState.messageError?.let {
+                                    Text(it, color = Color.Red, fontSize = 12.sp)
+                                }
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
@@ -288,6 +319,7 @@ fun PublicCampaignDetailsScreen(
                             unfocusedContainerColor = Color(0xFF2A2B2E)
                         )
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -295,10 +327,16 @@ fun PublicCampaignDetailsScreen(
                     ) {
                         Button(
                             onClick = {
+                                val validated = commentFormState.validate()
+                                if (!validated.isValid) {
+                                    commentFormState = validated
+                                    return@Button
+                                }
+
+                                viewModel.postComment(campaignId, validated)
+                                commentFormState = CommentFormState()
                                 isWritingComment = false
-                                commentText = ""
-                                replyToComment = null
-                                replyText = ""
+                                viewModel.fetchCampaignComments(campaignId)
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                         ) {
@@ -311,14 +349,22 @@ fun PublicCampaignDetailsScreen(
                                     viewModel.postReply(replyToComment!!.id, replyText)
                                     replyToComment = null
                                     replyText = ""
+                                    isWritingComment = false
+                                    viewModel.fetchCampaignComments(campaignId)
                                 } else {
-                                    viewModel.postComment(campaignId, commentText)
-                                    commentText = ""
+                                    val validated = commentFormState.validate()
+                                    if (!validated.isValid) {
+                                        commentFormState = validated
+                                        return@Button
+                                    }
+
+                                    viewModel.postComment(campaignId, validated)
+                                    commentFormState = CommentFormState()
+                                    isWritingComment = false
+                                    viewModel.fetchCampaignComments(campaignId)
                                 }
-                                isWritingComment = false
-                                viewModel.fetchCampaignComments(campaignId)
                             },
-                            enabled = if (replyToComment != null) replyText.isNotBlank() else commentText.isNotBlank(),
+                            enabled = if (replyToComment != null) replyText.isNotBlank() else commentFormState.message.isNotBlank(),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                         ) {
                             Text("Submit")

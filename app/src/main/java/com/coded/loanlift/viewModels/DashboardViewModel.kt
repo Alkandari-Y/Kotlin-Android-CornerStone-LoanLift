@@ -16,6 +16,7 @@ import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
+import com.coded.loanlift.formStates.comments.CommentFormState
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
@@ -140,9 +141,11 @@ class DashboardViewModel(
     private val _postCommentsUiState = MutableStateFlow<PostCommentUiState>(PostCommentUiState.Idle)
     val postCommentsUiState: StateFlow<PostCommentUiState> = _postCommentsUiState
 
-
     private val _createCampaignUiState = MutableStateFlow<CreateCampaignUiState>(CreateCampaignUiState.Idle)
     val createCampaignUiState: StateFlow<CreateCampaignUiState> = _createCampaignUiState
+
+    private val _postReplyUiState = MutableStateFlow<PostReplyUiState>(PostReplyUiState.Idle)
+    val postReplyUiState: StateFlow<PostReplyUiState> = _postReplyUiState
 
 
     init {
@@ -157,7 +160,7 @@ class DashboardViewModel(
             fetchCategories()
         }
     }
-    
+
     fun resetTransferUiState() {
         _transferUiState.value = TransferUiState.Idle
     }
@@ -332,7 +335,10 @@ class DashboardViewModel(
 
                 if (response.isSuccessful) {
                     val comments = response.body()
-                    _commentsUiState.value = CommentsUiState.Success(comments = comments!!)
+                    _commentsUiState.value = CommentsUiState.Success(
+                        comments = comments!!
+                            .sortedByDescending { LocalDateTime.parse(it.createdAt) }
+                    )
                 } else {
                     _commentsUiState.value = CommentsUiState.Error("Error: ${response.code()}")
                 }
@@ -390,21 +396,25 @@ class DashboardViewModel(
         }
     }
 
-    fun postComment(campaignId: Long, message: String) {
+    fun postComment(campaignId: Long, form: CommentFormState) {
+        val validated = form.validate()
+        if (!validated.isValid) {
+            return
+        }
+
         viewModelScope.launch {
             _postCommentsUiState.value = PostCommentUiState.Loading
             try {
                 val response = RetrofitInstance.getCampaignApiService(context).addComment(
                     campaignId = campaignId,
-                    CommentCreateRequest(message = message)
+                    CommentCreateRequest(message = validated.message)
                 )
 
                 if (response.isSuccessful) {
                     val newComment = response.body()
                     if (newComment != null) {
                         val currentComments = (_commentsUiState.value as? CommentsUiState.Success)?.comments ?: emptyList()
-                        val updatedComments = (currentComments + newComment)
-
+                        val updatedComments = listOf(newComment) + currentComments
                         _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
                     }
                     _postCommentsUiState.value = PostCommentUiState.Success

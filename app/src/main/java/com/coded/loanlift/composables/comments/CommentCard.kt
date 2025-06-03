@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.coded.loanlift.composables.ui.PlaceholderBox
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.utils.formatDateTime
 
@@ -31,12 +32,13 @@ import com.coded.loanlift.utils.formatDateTime
 fun CommentCard(
     comment: CommentResponseDto,
     modifier: Modifier = Modifier,
-    onReplyClick: (CommentResponseDto) -> Unit
+    onReplyClick: (CommentResponseDto) -> Unit,
+    currentUserIsCampaignOwner: Boolean = false,
+    showReplySkeleton: Boolean = false
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 80.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E)),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -62,9 +64,10 @@ fun CommentCard(
                 )
             }
 
-        }
-        comment.reply?.let { reply ->
             Spacer(modifier = Modifier.height(12.dp))
+
+        }
+        if (comment.reply != null) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -73,7 +76,7 @@ fun CommentCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = reply.message,
+                    text = comment.reply.message,
                     color = Color.White,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
@@ -82,24 +85,33 @@ fun CommentCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = formatDateTime(reply.createdAt),
+                    text = formatDateTime(comment.reply.createdAt),
                     color = Color(0xFFCCCCCC),
                     fontSize = 12.sp,
                     fontStyle = FontStyle.Italic
                 )
             }
-        } ?: run {
-            Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                onClick = { onReplyClick(comment) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
-                shape = RoundedCornerShape(6.dp),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth()
-
-            ) {
-                Text("Reply")
+        } else {
+            when {
+                showReplySkeleton -> {
+                    SkeletonReply(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+                }
+                currentUserIsCampaignOwner -> {
+                    Button(
+                        onClick = { onReplyClick(comment) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth()
+                    ) {
+                        Text("Reply")
+                    }
+                }
             }
         }
     }
