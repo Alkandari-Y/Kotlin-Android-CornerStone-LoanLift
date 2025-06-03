@@ -31,8 +31,8 @@ fun PledgeCard(
 
 
     val imageUrl = pledge.campaignImage
-        .replace("localhost", "10.0.2.2")
-        .let { "$it?ext=.jpg" }
+        ?.replace("localhost", "10.0.2.2")
+        ?.let { "$it?ext=.jpg" } ?: ""
 
     Card(
         modifier = modifier.heightIn(max = 180.dp),

@@ -96,6 +96,15 @@ fun LoginScreen(
     ) {
         val screenHeight = maxHeight
 
+        Image(
+            painter = painterResource(id = R.drawable.logo_no_bg),
+            contentDescription = "Top Background Logo",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .scale(3f).absoluteOffset(60.dp,120.dp),
+            contentScale = ContentScale.Fit
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -133,6 +142,8 @@ fun LoginScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 )
             )
@@ -170,6 +181,8 @@ fun LoginScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 )
             )

@@ -67,7 +67,7 @@ fun KycScreen(navController: NavHostController,
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(color=Color(0xFF0D0C1D))
     ) {
         Column(
             modifier = Modifier
@@ -110,10 +110,12 @@ fun KycScreen(navController: NavHostController,
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                OutlinedTextField(
+
+                TextField(
                     value = formState.firstName,
                     onValueChange = { viewModel.formState.value = formState.copy(firstName = it) },
-                    label = { Text("First Name") },
+                    label = { Text("First Name" ,color = Color.White) },
+
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isEditMode,
                     isError = formState.firstNameError != null,
@@ -124,13 +126,25 @@ fun KycScreen(navController: NavHostController,
                                 color = Color.Red
                             )
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledTextColor =  Color.Gray,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        cursorColor = Color.White
+                    )
                 )
 
-                OutlinedTextField(
+                TextField(
                     value = formState.lastName,
                     onValueChange = { viewModel.formState.value = formState.copy(lastName = it) },
-                    label = { Text("Last Name") },
+                    label = { Text("Last Name" ,color = Color.White) },
+
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isEditMode,
                     isError = formState.lastNameError != null,
@@ -141,15 +155,27 @@ fun KycScreen(navController: NavHostController,
                                 color = Color.Red
                             )
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledTextColor =  Color.Gray,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        cursorColor = Color.White
+                    )
                 )
 
-                OutlinedTextField(
+                TextField(
                     value = formState.dateOfBirth,
                     onValueChange = {
                         viewModel.formState.value = formState.copy(dateOfBirth = it)
                     },
-                    label = { Text("Date of Birth (dd-MM-yyyy)") },
+                    label = { Text("Date of Birth (dd-MM-yyyy)" ,color = Color.White) },
+
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isEditMode,
                     isError = formState.dateOfBirthError != null,
@@ -160,26 +186,53 @@ fun KycScreen(navController: NavHostController,
                                 color = Color.Red
                             )
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledTextColor =  Color.Gray,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        cursorColor = Color.White
+                    )
                 )
 
-                OutlinedTextField(
+                TextField(
                     value = formState.salary,
+
                     onValueChange = { viewModel.formState.value = formState.copy(salary = it) },
-                    label = { Text("Salary") },
+                    label = { Text("Salary" ,color = Color.White) },
+
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isEditMode,
                     isError = formState.salaryError != null,
-                    supportingText = { formState.salaryError?.let { Text(it, color = Color.Red) } }
+                    supportingText = { formState.salaryError?.let { Text(it, color = Color.Red) } },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledTextColor =  Color.Gray,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        cursorColor = Color.White
+                    )
                 )
 
-                OutlinedTextField(
+
+
+                TextField(
                     value = formState.nationality,
+                    label = { Text("Nationality" ,color = Color.White) },
                     onValueChange = {
                         viewModel.formState.value = formState.copy(nationality = it)
                     },
-                    label = { Text("Nationality") },
+
                     modifier = Modifier.fillMaxWidth(),
                     enabled = isEditMode,
                     isError = formState.nationalityError != null,
@@ -190,7 +243,19 @@ fun KycScreen(navController: NavHostController,
                                 color = Color.Red
                             )
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+disabledTextColor =  Color.Gray,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        cursorColor = Color.White
+                    )
+
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
