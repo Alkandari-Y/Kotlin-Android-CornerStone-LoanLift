@@ -279,51 +279,6 @@ fun CampaignOwnerDetailsScreen(
                                         )
                                     }
                                 }
-
-                                item {
-                                    if (isWritingComment || replyToComment != null) {
-                                        val isPostingComment =
-                                            postCommentUiState is PostCommentUiState.Loading
-                                        val isPostingReply =
-                                            postReplyUiState is PostReplyUiState.Loading
-
-                                        CommentInputOverlay(
-                                            isReply = replyToComment != null,
-                                            initialText = replyText,
-                                            commentFormState = commentFormState,
-                                            updateCommentFormState = { commentFormState = it },
-                                            onCancel = {
-                                                isWritingComment = false
-                                                replyToComment = null
-                                                replyText = ""
-                                                commentFormState = CommentFormState()
-                                            },
-                                            onSubmit = { message ->
-                                                if (replyToComment != null) {
-                                                    viewModel.postReply(
-                                                        replyToComment!!.id,
-                                                        message
-                                                    )
-                                                    replyToComment = null
-                                                } else {
-                                                    if (campaign != null) {
-                                                        viewModel.postComment(
-                                                            campaign.id,
-                                                            CommentFormState(message = message)
-                                                        )
-                                                    }
-                                                    commentFormState = CommentFormState()
-                                                }
-                                                isWritingComment = false
-                                                replyText = ""
-                                                if (campaign != null) {
-                                                    viewModel.fetchCampaignComments(campaign.id)
-                                                }
-                                            },
-                                            isSubmitting = if (replyToComment != null) isPostingReply else isPostingComment
-                                        )
-                                    }
-                                }
                             }
 
 
