@@ -94,16 +94,17 @@ fun PledgeDetailsScreen(
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
+
                                     Text("Pledge Information", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                                     Spacer(modifier = Modifier.height(12.dp))
 
-                                    Text("Amount: ${state.pledgeDetails.amount}", color = Color.White)
-                                    Text("Status: ${state.pledgeDetails.status}", color = Color.White)
-                                    Text("Campaign Title: ${state.pledgeDetails.campaignTitle}", color = Color.White)
-//                                    Text("Campaign ID: ${state.pledgeDetails.campaignId}", color = Color.White)
-//                                    Text("Campaign Status: ${state.pledgeDetails.campaignStatus}", color = Color.White)
-                                    Text("Interest Rate: ${state.pledgeDetails.interestRate}", color = Color.White)
-//                                    Text("Created At: ${state.pledgeDetails.createdAt}", color = Color.White)
+                                    Text("Amount",color = Color.White, fontSize = 16.sp)
+                                    Text("${state.pledgeDetails.amount}", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+                                    Text("Status", color = Color.White, fontSize = 16.sp)
+                                    Text("${state.pledgeDetails.status}", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                                    Text("Interest Rate", color = Color.White, fontSize = 16.sp)
+                                    Text("${state.pledgeDetails.interestRate}", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -144,7 +145,6 @@ fun PledgeDetailsScreen(
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
-                                    Text("ID: ${tx.id}", color = Color.White, fontWeight = FontWeight.Bold)
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text("Type: ${tx.type}", color = Color.White)
                                     Text("Amount: ${tx.amount}", color = Color.White)
