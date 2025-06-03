@@ -44,8 +44,6 @@ fun CampaignCard(
     onCardClick: () -> Unit,
     contentScale: ContentScale =  ContentScale.Crop,
     heightIn: Dp = 260.dp,
-    composable: @Composable () -> Unit
-
     ) {
     val rawProgress = (campaign.amountRaised
         .divide(campaign.goalAmount, 4, RoundingMode.HALF_UP))
@@ -161,7 +159,6 @@ fun CampaignCard(
                     }
                 }
 
-                composable()
             }
         }
     }

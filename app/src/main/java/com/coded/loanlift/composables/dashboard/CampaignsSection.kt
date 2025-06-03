@@ -47,9 +47,7 @@ fun CampaignsSection(
                     onCardClick = {
                         onCampaignClick(campaign.id)
                     },
-                ) {
-                    Spacer(modifier = Modifier)
-                }
+                )
             }
 
             item {
