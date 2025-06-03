@@ -23,11 +23,12 @@ fun AccountsSection(
     onAccountClick: (String) -> Unit,
     onAccountCreateClick: () -> Unit,
     onTransferClick: (String) -> Unit,
+    onViewAllClick: () -> Unit,
     listState: LazyListState
 ) {
     DashboardSection(
         sectionTitle = "My Accounts",
-        onLinkClick = { TODO() }
+        onLinkClick = onViewAllClick
     ) {
         LazyRow(
             state = listState,

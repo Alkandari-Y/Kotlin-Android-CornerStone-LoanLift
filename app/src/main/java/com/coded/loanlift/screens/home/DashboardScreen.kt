@@ -42,7 +42,8 @@ fun DashboardScreen(
     onAccountClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     onViewAllCampaignsClick: () -> Unit,
-    onExploreAllCampaignsClick: () -> Unit
+    onExploreAllCampaignsClick: () -> Unit,
+    onViewAllAccounts: () -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -112,6 +113,7 @@ fun DashboardScreen(
                             onTransferClick = { accountNum ->
                                 navController.navigate(NavRoutes.transferRoute(accountNum))
                             },
+                            onViewAllClick = onViewAllAccounts,
                             listState = lazyListStateAccounts
                         )
 

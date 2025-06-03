@@ -159,6 +159,9 @@ fun AppHost(
                 },
                 onExploreAllCampaignsClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE)
+                },
+                onViewAllAccounts = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_ACCOUNT_VIEW_ALL)
                 }
             )
         }
