@@ -337,7 +337,7 @@ class DashboardViewModel(
                     val comments = response.body()
                     _commentsUiState.value = CommentsUiState.Success(
                         comments = comments!!
-                            .sortedByDescending { LocalDateTime.parse(it.createdAt) }
+                            .sortedByDescending { it.id }
                     )
                 } else {
                     _commentsUiState.value = CommentsUiState.Error("Error: ${response.code()}")

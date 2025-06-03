@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +23,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.coded.loanlift.composables.ui.PlaceholderBox
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.utils.formatDateTime
 
@@ -33,6 +31,7 @@ fun CommentCard(
     comment: CommentResponseDto,
     modifier: Modifier = Modifier,
     onReplyClick: (CommentResponseDto) -> Unit,
+    updateWritingCommentState: () -> Unit,
     currentUserIsCampaignOwner: Boolean = false,
     showReplySkeleton: Boolean = false
 ) {
@@ -102,7 +101,10 @@ fun CommentCard(
                 }
                 currentUserIsCampaignOwner -> {
                     Button(
-                        onClick = { onReplyClick(comment) },
+                        onClick = {
+                            onReplyClick(comment)
+                            updateWritingCommentState()
+                      },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                         shape = RoundedCornerShape(6.dp),
                         modifier = Modifier
