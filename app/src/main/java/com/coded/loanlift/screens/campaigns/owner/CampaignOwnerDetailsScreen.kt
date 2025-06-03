@@ -224,6 +224,12 @@ fun CampaignOwnerDetailsScreen(
                             }
                         }
 
+                        CampaignDetailsTab.COMMENTS -> {
+                            item {
+                                Text(text = "hello")
+                            }
+                        }
+
                         null -> item {
                             Text(
                                 text = when (campaign?.status) {

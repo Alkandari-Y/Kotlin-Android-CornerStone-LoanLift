@@ -91,6 +91,13 @@ sealed class PostCommentUiState {
     data class Error(val message: String): PostCommentUiState()
 }
 
+sealed class PostReplyUiState {
+    data object Idle: PostReplyUiState()
+    data object Loading: PostReplyUiState()
+    data object Success: PostReplyUiState()
+    data class Error(val message: String): PostReplyUiState()
+}
+
 sealed class CreateCampaignUiState {
     data object Idle: CreateCampaignUiState()
     data object Loading: CreateCampaignUiState()
@@ -410,4 +417,37 @@ class DashboardViewModel(
         }
     }
 
+
+    fun postReply(commentId: Long, message: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).replyToComment(
+                    com.coded.loanlift.data.response.comments.ReplyCreateRequest(
+                        commentId = commentId,
+                        message = message
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    val newReply = response.body()
+
+                    val currentState = _commentsUiState.value
+                    if (currentState is CommentsUiState.Success && newReply != null) {
+                        val updatedComments = currentState.comments.map { comment ->
+                            if (comment.id == commentId) {
+                                comment.copy(reply = newReply)
+                            } else {
+                                comment
+                            }
+                        }
+                        _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
+                    }
+                } else {
+                    Log.e("DashboardViewModel", "Failed to reply: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardViewModel", "Reply error: ${e.message}")
+            }
+        }
+    }
 }

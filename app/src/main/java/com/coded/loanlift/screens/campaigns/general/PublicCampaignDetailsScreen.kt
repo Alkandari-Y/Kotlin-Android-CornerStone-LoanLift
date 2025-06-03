@@ -58,6 +58,8 @@ import com.coded.loanlift.viewModels.CommentsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.PledgesUiState
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import com.coded.loanlift.composables.campaigns.CampaignPublicInformation
+import com.coded.loanlift.composables.comments.CommentCard
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,6 +81,9 @@ fun PublicCampaignDetailsScreen(
     val listState = rememberLazyListState()
     var isWritingComment by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
+
+    var replyToComment by remember { mutableStateOf<CommentResponseDto?>(null) }
+    var replyText by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.fetchCampaignDetail(campaignId)
@@ -133,6 +138,7 @@ fun PublicCampaignDetailsScreen(
                 val campaign = state.campaign
                 LazyColumn(
                     state = listState,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
@@ -218,11 +224,14 @@ fun PublicCampaignDetailsScreen(
                         }
 
                         is CommentsUiState.Success -> {
-                            items(commentState
-                                .comments
-                                .sortedByDescending { LocalDateTime.parse(it.createdAt) }
-                            ) { comment ->
-                                CommentCard(comment)
+                            items(commentState.comments.sortedByDescending { LocalDateTime.parse(it.createdAt) }) { comment ->
+                                CommentCard(
+                                    comment = comment,
+                                    onReplyClick = { selectedComment ->
+                                        replyToComment = selectedComment
+                                        isWritingComment = true
+                                    }
+                                )
                             }
                         }
 
@@ -246,7 +255,7 @@ fun PublicCampaignDetailsScreen(
                 )
             }
         }
-        if (isWritingComment) {
+        if (isWritingComment || replyToComment != null) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -260,17 +269,19 @@ fun PublicCampaignDetailsScreen(
                         .padding(12.dp)
                 ) {
                     OutlinedTextField(
-                        value = commentText,
-                        onValueChange = { commentText = it },
-                        placeholder = { Text("Write a comment...") },
+                        value = if (replyToComment != null) replyText else commentText,
+                        onValueChange = { newValue ->
+                            if (replyToComment != null) replyText = newValue else commentText = newValue
+                        },
+                        placeholder = {
+                            Text(if (replyToComment != null) "Write a reply..." else "Write a comment...")
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.White,
                             unfocusedBorderColor = Color.Gray,
                             cursorColor = Color.White,
-                            focusedLabelColor = Color.White,
-                            unfocusedLabelColor = Color.Gray,
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White,
                             focusedContainerColor = Color(0xFF2A2B2E),
@@ -286,6 +297,8 @@ fun PublicCampaignDetailsScreen(
                             onClick = {
                                 isWritingComment = false
                                 commentText = ""
+                                replyToComment = null
+                                replyText = ""
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
                         ) {
@@ -294,115 +307,22 @@ fun PublicCampaignDetailsScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(
                             onClick = {
-                                viewModel.postComment(campaignId, commentText)
+                                if (replyToComment != null) {
+                                    viewModel.postReply(replyToComment!!.id, replyText)
+                                    replyToComment = null
+                                    replyText = ""
+                                } else {
+                                    viewModel.postComment(campaignId, commentText)
+                                    commentText = ""
+                                }
                                 isWritingComment = false
-                                commentText = ""
                                 viewModel.fetchCampaignComments(campaignId)
                             },
-                            enabled = commentText.isNotBlank(),
+                            enabled = if (replyToComment != null) replyText.isNotBlank() else commentText.isNotBlank(),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                         ) {
                             Text("Submit")
                         }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun DetailRow(label: String, value: String, padding: Dp = 4.dp) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = padding),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = label, color = Color.LightGray, fontSize = 14.sp)
-        Text(text = value, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-    }
-}
-
-@Composable
-fun CampaignPublicInformation(
-    campaign: CampaignOwnerDetails
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = campaign.description,
-                fontSize = 14.sp,
-                color = Color.LightGray,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text("Investment Details", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            DetailRow("Goal", "\$${campaign.goalAmount}")
-            DetailRow("Interest Rate", "${campaign.interestRate}%")
-            DetailRow("Repayment Period", "${campaign.repaymentMonths} months")
-        }
-    }
-}
-
-@Composable
-fun CommentCard(comment: CommentResponseDto) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2F3035)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(
-                text = comment.message,
-                color = Color.White,
-                fontSize = 14.sp
-            )
-            Text(
-                text = "Posted on ${comment.createdAt}",
-                color = Color.Gray,
-                fontSize = 12.sp,
-                fontStyle = FontStyle.Italic,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-
-            comment.reply?.let { reply ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    shape = RoundedCornerShape(6.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF3A3B3F)),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(10.dp)) {
-                        Text(
-                            text = reply.message,
-                            color = Color(0xFFD0D0D0),
-                            fontSize = 13.sp
-                        )
-                        Text(
-                            text = "Reply on ${reply.createdAt}",
-                            color = Color.Gray,
-                            fontSize = 11.sp,
-                            fontStyle = FontStyle.Italic,
-                            modifier = Modifier.padding(top = 2.dp)
-                        )
                     }
                 }
             }
