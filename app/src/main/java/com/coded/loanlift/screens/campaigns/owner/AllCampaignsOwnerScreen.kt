@@ -80,7 +80,7 @@ fun AllCampaignsOwnerScreen(
                 campaign = campaign,
                 category = categories.find { it.id == campaign.categoryId },
                 onCardClick = { onCampaignClick(campaign.id) }
-            ) { Spacer(modifier = Modifier) }
+            )
         },
         isSortDescending = isSortDescending,
         onToggleSortDirection = { isSortDescending = !isSortDescending },

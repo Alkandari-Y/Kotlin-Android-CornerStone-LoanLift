@@ -26,7 +26,5 @@ fun CampaignDetailsForOwner(
         category = CategoryDto(campaign.categoryId, campaign.categoryName),
         contentScale = ContentScale.FillWidth,
         heightIn = 340.dp
-    ) {
-
-    }
+    )
 }
