@@ -18,8 +18,8 @@ import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
-import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
-import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
+//import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
+//import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.screens.pledges.PledgeDetailsScreen
 import com.coded.loanlift.screens.accounts.TransferScreen
 import com.coded.loanlift.viewModels.AccountViewModel

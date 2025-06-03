@@ -108,7 +108,7 @@ fun DashboardScreen(
                     is PledgesUiState.Success -> PledgesSection(
                         pledges = state.pledges,
                         onPledgeClick = onPledgeCLick
-                        listState = lazyListStatePledges
+//                        listState = lazyListStatePledges
                     )
                     is PledgesUiState.Error -> Text(
                         text = "Failed to load pledges: ${state.message}",

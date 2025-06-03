@@ -130,10 +130,11 @@ interface CampaignServiceProvider {
         @Body request: UpdatePledgeRequest,
     ): Response<PledgeResultDto>
 
+    //changed response
     @GET("/api/v1/pledges/details/{pledgeId}")
     suspend fun getPledgeDetails(
         @Path("pledgeId") pledgeId: Long,
-    ): Response<PledgeWithPledgeTransactionsDto>
+    ): Response<UserPledgeDto>
 
     @GET("/api/v1/pledges/details/{pledgeId}/transactions")
     suspend fun getPledgeDetailedTransactions(

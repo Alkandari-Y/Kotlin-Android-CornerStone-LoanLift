@@ -19,17 +19,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.coded.loanlift.viewModels.PledgeDetailsUiState
 import com.coded.loanlift.viewModels.PledgeDetailsViewModel
-import com.coded.loanlift.viewModels.PledgeTransationsUiState
+import com.coded.loanlift.viewModels.PledgeTransactionsUiState
 
 @Composable
 fun PledgeDetailsScreen(
     pledgeId: Long,
     viewModel: PledgeDetailsViewModel = viewModel()
 ){
-    val uiState by viewModel.pledgesUiState.collectAsState()
+    val uiDetailsState by viewModel.pledgeDetailsUiState.collectAsState()
+    val uiTransactionsUiState by viewModel.pledgesUiState.collectAsState()
     val shouldNavigate by viewModel.shouldNavigate.collectAsState()
 
+    //for pledge details
+    LaunchedEffect (Unit){
+        viewModel.loadPledgeDetails(pledgeId)
+    }
+
+    //for pledges transactions
     LaunchedEffect(Unit) {
         viewModel.loadPledgeTransactions(pledgeId)
 
@@ -42,19 +50,58 @@ fun PledgeDetailsScreen(
     }
 
     LazyColumn {
-        when (val state = uiState){
-            is PledgeTransationsUiState.Loading -> {
+        when (val state = uiDetailsState) {
+            is PledgeDetailsUiState.Loading -> {
                 item {
-                    Box(modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center){
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+
+            is PledgeDetailsUiState.Success -> {
+                item {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Amount: ${state.pledgeDetails.amount}")
+                        Text("Pledge Status: ${state.pledgeDetails.status}")
+                        Text("Campaign Title: ${state.pledgeDetails.campaignTitle}")
+                        Text("Campaign ID: ${state.pledgeDetails.campaignId}")
+                        Text("Campaign Status: ${state.pledgeDetails.campaignStatus}")
+                        Text("Interest Rate: ${state.pledgeDetails.interestRate}")
+                        Text("Created ${state.pledgeDetails.createdAt}")
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = "Transactions:", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+            is PledgeDetailsUiState.Error -> {
+                item {
+                    Text("Error")
+                }
+            }
+        }
+
+
+        when (val state = uiTransactionsUiState) {
+            is PledgeTransactionsUiState.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator()
                     }
                 }
 
             }
-            is  PledgeTransationsUiState.Success -> {
+
+            is PledgeTransactionsUiState.Success -> {
                 items(state.pledgeTransactions) { pledge ->
-                    Column (modifier = Modifier.padding(16.dp)){
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Text("Pledge ID: ${pledge}")
                         Text("Status: ${pledge.transactionType}")
                         Text("Amount: ${pledge.amount}")
@@ -66,32 +113,14 @@ fun PledgeDetailsScreen(
                 }
             }
 
-            is PledgeTransationsUiState.Error -> {
+            is PledgeTransactionsUiState.Error -> {
                 item {
                     Text(text = "Error")
                 }
             }
-            null -> item{ Text(text = "Error") }
         }
+
+
+
     }
-
 }
-
-
-
-
-//                        pledge.transactions.forEach {tx ->
-//                            Card (
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .padding(vertical = 4.dp),
-//                                elevation = CardDefaults.cardElevation()
-//                            ){
-//                                Column (modifier = Modifier.padding(8.dp)){
-//                                    Text("Tranaction ID: ${tx.transactionId}")
-//                                    Text("Type: ${tx.type}")
-//                                    Text("")
-//                                }
-//
-//                            }
-//                        }
