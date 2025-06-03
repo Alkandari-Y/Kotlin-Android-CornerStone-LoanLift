@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.coded.loanlift.data.enums.TransactionType
 import com.coded.loanlift.data.mappers.toCampaignListItemResponse
 import com.coded.loanlift.data.response.accounts.AccountDto
-import com.coded.loanlift.data.response.campaigns.CampaignDetailResponse
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
@@ -31,8 +30,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.time.LocalDateTime
-import kotlin.math.log
 
 sealed class AccountsUiState {
     data object Loading : AccountsUiState()
