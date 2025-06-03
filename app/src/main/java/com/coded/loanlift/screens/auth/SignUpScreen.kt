@@ -121,6 +121,8 @@ fun SignUpScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 )
             )
@@ -142,6 +144,8 @@ fun SignUpScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 )
             )
@@ -160,6 +164,8 @@ fun SignUpScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 )
             )
@@ -188,6 +194,8 @@ fun SignUpScreen(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorContainerColor = Color.Transparent,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -210,7 +218,9 @@ fun SignUpScreen(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.White,
+                    errorContainerColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Gray,
+                    errorTextColor =Color.White ,
                     cursorColor = Color.White
                 ),
                 visualTransformation = if (showConfirmedPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -252,7 +262,7 @@ fun SignUpScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                 shape = RectangleShape
             ) {
                 Text(text = "Sign Up", fontSize = 16.sp, fontWeight = FontWeight.Bold)
