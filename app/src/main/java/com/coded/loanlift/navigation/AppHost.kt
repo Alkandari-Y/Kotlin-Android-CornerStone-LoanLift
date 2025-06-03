@@ -147,7 +147,7 @@ fun AppHost(
                     navController.navigate(NavRoutes.NAV_ROUTE_CREATE_CAMPAIGN)
                 },
                 onPledgeCreateClick = {
-                    navController.navigate(NavRoutes.NAV_ROUTE_CREATE_PLEDGE)
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE)
                 },
                 onProfileClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)

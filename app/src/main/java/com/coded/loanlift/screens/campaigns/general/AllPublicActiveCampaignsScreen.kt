@@ -86,5 +86,6 @@ fun AllPublicActiveCampaignsScreen(
         },
         isSortDescending = isSortDescending,
         onToggleSortDirection = { isSortDescending = !isSortDescending },
+        onRefresh = { viewModel.fetchPublicCampaigns() }
     )
 }

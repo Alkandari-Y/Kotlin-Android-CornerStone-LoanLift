@@ -1,6 +1,5 @@
 package com.coded.loanlift.screens.campaigns.owner
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -84,5 +83,6 @@ fun AllCampaignsOwnerScreen(
         },
         isSortDescending = isSortDescending,
         onToggleSortDirection = { isSortDescending = !isSortDescending },
+        onRefresh = { viewModel.fetchCampaigns() }
     )
 }
