@@ -38,17 +38,14 @@ object NavRoutes {
     const val NAV_ROUTE_DASHBOARD = "dashboard"
     const val NAV_ROUTE_LOADING_DASHBOARD = "loading_dashboard"
 
-
     const val NAV_ROUTE_CREATE_ACCOUNT = "accounts/create"
     const val NAV_ROUTE_ACCOUNT_DETAILS = "accounts/manage/{accountNum}"
-
 
     const val NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL = "campaigns/manage"
     const val NAV_ROUTE_CAMPAIGN_OWNER_DETAILS = "campaigns/manage/{campaignId}"
     const val NAV_ROUTE_CREATE_CAMPAIGN = "campaigns/manage/create"
     const val NAV_ROUTE_CAMPAIGN_EXPLORE = "campaigns/explore"
     const val NAV_ROUTE_CAMPAIGN_PUBLIC_DETAILS = "campaigns/explore/{campaignId}"
-
 
     const val NAV_ROUTE_CREATE_PLEDGE = "pledges/create"
     const val NAV_ROUTE_PLEDGE_DETAILS = "pledges/manage/{pledgeId}"
@@ -134,8 +131,8 @@ fun AppHost(
                         popUpTo(0) { inclusive = true }
                     }
                 },
-                onAccountClick = { accountNum: String ->
-                    navController.navigate(NavRoutes.accountDetailRoute(accountNum))
+                onAccountClick = { accountNum ->
+                    navController.navigate(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS + "/$accountNum")
                 },
                 onCampaignClick = { campaignId: Long ->
                     navController.navigate(NavRoutes.campaignOwnerDetailRoute(campaignId))
@@ -176,12 +173,13 @@ fun AppHost(
             }
         }
 
-        // these screens need to be updated
-        composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS) {
+        composable(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS + "/{accountNumber}") { backStackEntry ->
+            val accountNumber = backStackEntry.arguments?.getString("accountNumber") ?: ""
             AccountDetailsScreen(
-                onCampaignClick = { navController.popBackStack() },
                 onBackClick = { navController.popBackStack() },
-                viewModel = dashboardViewModel
+                onCampaignClick = { navController.popBackStack() },
+                viewModel = dashboardViewModel,
+                accountNumber = accountNumber
             )
         }
 

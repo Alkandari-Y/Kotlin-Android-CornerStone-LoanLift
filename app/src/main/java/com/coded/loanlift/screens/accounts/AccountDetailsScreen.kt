@@ -28,26 +28,23 @@ import java.math.BigDecimal
 fun AccountDetailsScreen(
     onBackClick: () -> Unit,
     onCampaignClick: (String) -> Unit,
-    viewModel: DashboardViewModel
+    viewModel: DashboardViewModel,
+    accountNumber: String
 ) {
     val darkBlue = Color(0xFF1B2541)
-    val account = AccountDto(
-        id = 1L,
-        accountNumber = "1111",
-        name = "Meshal Alquraini",
-        balance = BigDecimal("3000"),
-        active = true,
-        ownerId = 1,
-        ownerType = AccountType.CAMPAIGN
-    )
+    val accountState by viewModel.selectedAccount.collectAsState()
+    val transactionsState by viewModel.accountTransactions.collectAsState()
+
+    LaunchedEffect(accountNumber) {
+        viewModel.fetchAccountDetails(accountNumber)
+        viewModel.fetchAccountTransactions(accountNumber)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
                 title = { Text("Account Details", color = Color.White) },
                 navigationIcon = {
@@ -63,28 +60,56 @@ fun AccountDetailsScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
             )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(containerColor = darkBlue)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(account.name, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(16.dp))
+            when (val account = accountState) {
+                null -> CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                else -> {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = darkBlue)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(account.name, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Account Number", color = Color.White, fontSize = 16.sp)
-                    Text(account.accountNumber, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text("Account Number", color = Color.White, fontSize = 16.sp)
+                            Text(account.accountNumber, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Account Type", color = Color.White, fontSize = 16.sp)
-                    Text(account.ownerType.toString(), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text("Account Type", color = Color.White, fontSize = 16.sp)
+                            Text(account.ownerType.toString(), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Current Balance", color = Color.White, fontSize = 16.sp)
-                    Text("${account.balance} KWD", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text("Current Balance", color = Color.White, fontSize = 16.sp)
+                            Text("${account.balance} KWD", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    Text("Transactions", color = Color.White, fontSize = 20.sp, modifier = Modifier.padding(16.dp))
+
+                    when (val txs = transactionsState) {
+                        null -> CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        else -> LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            items(txs) { tx ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp)) {
+                                        Text("To: ${tx.destinationAccountNumber}", color = Color.White)
+                                        Text("Amount: ${tx.amount} KWD", color = Color.White)
+                                        Text("Date: ${tx.createdAt}", color = Color.White)
+                                        Text("Category: ${tx.category}", color = Color.White)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
