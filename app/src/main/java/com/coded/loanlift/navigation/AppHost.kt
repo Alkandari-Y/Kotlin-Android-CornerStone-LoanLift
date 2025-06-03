@@ -225,6 +225,7 @@ fun AppHost(
             if (pledgeId != null) {
                 PledgeDetailsScreen(
                     viewModel = pledgeDetailsViewModel,
+                    navController = navController,
                     pledgeId = pledgeId.toLong()
                 )
             }

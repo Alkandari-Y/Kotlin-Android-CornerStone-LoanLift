@@ -119,10 +119,6 @@ fun PublicCampaignDetailsScreen(
     var replyText by remember { mutableStateOf("") }
 
 
-
-
-    val currentUserId = UserRepository.userInfo?.userId
-
     LaunchedEffect(Unit) {
         viewModel.fetchCampaignDetail(campaignId)
         viewModel.fetchCampaignComments(campaignId)
@@ -227,7 +223,7 @@ fun PublicCampaignDetailsScreen(
 
                                         Button(
                                             onClick = { showPledgeDialog = true },
-                                            enabled = hasAccounts,
+                                            enabled = hasAccounts ,
                                             shape = RoundedCornerShape(8.dp),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = if (hasAccounts) Color(0xFF6200EE) else Color.Gray
