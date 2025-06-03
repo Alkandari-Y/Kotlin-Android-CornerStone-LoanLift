@@ -20,7 +20,9 @@ import com.coded.loanlift.composables.pledges.PledgeCard
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 
 @Composable
-fun PledgesSection(pledges: List<UserPledgeDto>, onPledgeClick: (Long) -> Unit) {
+fun PledgesSection(pledges: List<UserPledgeDto>, onPledgeClick: (Long) -> Unit,
+                   listState: LazyListState
+) {
     DashboardSection(
         sectionTitle = "My Pledges",
         onLinkClick = { /* TODO */ }

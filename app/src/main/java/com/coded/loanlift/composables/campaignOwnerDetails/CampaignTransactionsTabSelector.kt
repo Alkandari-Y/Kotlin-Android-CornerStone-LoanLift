@@ -19,7 +19,12 @@ fun CampaignTransactionsTabSelector(
     selectedTab: CampaignDetailsTab,
     onTabSelected: (CampaignDetailsTab) -> Unit
 ) {
-    val visibleTabs = listOf(CampaignDetailsTab.INFO, CampaignDetailsTab.PLEDGES, CampaignDetailsTab.REPAYMENTS)
+    val visibleTabs = listOf(
+        CampaignDetailsTab.INFO,
+        CampaignDetailsTab.PLEDGES,
+        CampaignDetailsTab.REPAYMENTS,
+        CampaignDetailsTab.COMMENTS
+    )
 
     Row(
         modifier = Modifier

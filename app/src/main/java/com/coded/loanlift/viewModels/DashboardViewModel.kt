@@ -13,20 +13,25 @@ import com.coded.loanlift.data.response.campaigns.CampaignOwnerDetails
 import com.coded.loanlift.data.response.campaigns.CampaignTransactionHistoryResponse
 import com.coded.loanlift.data.response.comments.CommentCreateRequest
 import com.coded.loanlift.data.response.comments.CommentResponseDto
+import com.coded.loanlift.data.response.error.ApiErrorResponse
+import com.coded.loanlift.data.response.pledges.PledgeCreateRequest
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
+import com.coded.loanlift.formStates.comments.CommentFormState
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.utils.prepareCampaignFormParts
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import kotlin.math.log
 
 sealed class AccountsUiState {
     data object Loading : AccountsUiState()
@@ -57,6 +62,13 @@ sealed class PledgesUiState {
     data object Loading : PledgesUiState()
     data class Success(val pledges: List<UserPledgeDto>) : PledgesUiState()
     data class Error(val message: String) : PledgesUiState()
+}
+
+sealed class CreatePledgeUiState {
+    data object Idle:CreatePledgeUiState()
+    data object Loading : CreatePledgeUiState()
+    data object Success : CreatePledgeUiState()
+    data class Error(val message: String) : CreatePledgeUiState()
 }
 
 sealed class CampaignDetailUiState {
@@ -91,6 +103,13 @@ sealed class PostCommentUiState {
     data class Error(val message: String): PostCommentUiState()
 }
 
+sealed class PostReplyUiState {
+    data object Idle: PostReplyUiState()
+    data object Loading: PostReplyUiState()
+    data object Success: PostReplyUiState()
+    data class Error(val message: String): PostReplyUiState()
+}
+
 sealed class CreateCampaignUiState {
     data object Idle: CreateCampaignUiState()
     data object Loading: CreateCampaignUiState()
@@ -115,6 +134,9 @@ class DashboardViewModel(
     private val _pledgesUiState = MutableStateFlow<PledgesUiState>(PledgesUiState.Loading)
     val pledgesUiState: StateFlow<PledgesUiState> = _pledgesUiState
 
+    private val _createPledgeUiState = MutableStateFlow<CreatePledgeUiState>(CreatePledgeUiState.Idle)
+    val createPledgeUiState: StateFlow<CreatePledgeUiState> = _createPledgeUiState
+
     private val _campaignDetailUiState = MutableStateFlow<CampaignDetailUiState>(CampaignDetailUiState.Loading)
     val campaignDetailUiState: StateFlow<CampaignDetailUiState> = _campaignDetailUiState
 
@@ -133,9 +155,11 @@ class DashboardViewModel(
     private val _postCommentsUiState = MutableStateFlow<PostCommentUiState>(PostCommentUiState.Idle)
     val postCommentsUiState: StateFlow<PostCommentUiState> = _postCommentsUiState
 
-
     private val _createCampaignUiState = MutableStateFlow<CreateCampaignUiState>(CreateCampaignUiState.Idle)
     val createCampaignUiState: StateFlow<CreateCampaignUiState> = _createCampaignUiState
+
+    private val _postReplyUiState = MutableStateFlow<PostReplyUiState>(PostReplyUiState.Idle)
+    val postReplyUiState: StateFlow<PostReplyUiState> = _postReplyUiState
 
 
     init {
@@ -150,10 +174,12 @@ class DashboardViewModel(
             fetchCategories()
         }
     }
-    
+
     fun resetTransferUiState() {
         _transferUiState.value = TransferUiState.Idle
     }
+
+
 
     fun fetchAccounts() {
         viewModelScope.launch {
@@ -266,6 +292,50 @@ class DashboardViewModel(
         }
     }
 
+
+
+    fun createPledge(accountId: Long, campaignId: Long, amount: BigDecimal) {
+        viewModelScope.launch {
+            _createPledgeUiState.value = CreatePledgeUiState.Loading
+
+            try {
+                val request = PledgeCreateRequest(
+                    accountId = accountId,
+                    campaignId = campaignId,
+                    amount = amount
+                )
+
+                val response = RetrofitInstance.getCampaignApiService(context).createPledge(request)
+
+                val errorString = response.errorBody()?.string()
+
+                if (response.isSuccessful) {
+                    _createPledgeUiState.value = CreatePledgeUiState.Success
+                    fetchPledges()
+                } else {
+                    val errorMessage = try {
+                        val gson = Gson()
+                        val errorResponse = gson.fromJson(errorString, ApiErrorResponse::class.java)
+                        errorResponse?.fieldErrors?.firstOrNull()?.message
+                            ?: errorResponse?.message
+                            ?: "Something went wrong"
+                    } catch (e: Exception) {
+                        "Error parsing error body"
+                    }
+
+                    _createPledgeUiState.value = CreatePledgeUiState.Error(errorMessage)
+                }
+            } catch (e: Exception) {
+                _createPledgeUiState.value = CreatePledgeUiState.Error(
+                    e.localizedMessage ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    fun resetCreatePledgeState() {
+        _createPledgeUiState.value = CreatePledgeUiState.Idle
+    }
     fun fetchCampaignDetail(campaignId: Long) {
         viewModelScope.launch {
             _campaignDetailUiState.value = CampaignDetailUiState.Loading
@@ -325,7 +395,10 @@ class DashboardViewModel(
 
                 if (response.isSuccessful) {
                     val comments = response.body()
-                    _commentsUiState.value = CommentsUiState.Success(comments = comments!!)
+                    _commentsUiState.value = CommentsUiState.Success(
+                        comments = comments!!
+                            .sortedByDescending { it.id }
+                    )
                 } else {
                     _commentsUiState.value = CommentsUiState.Error("Error: ${response.code()}")
                 }
@@ -383,21 +456,25 @@ class DashboardViewModel(
         }
     }
 
-    fun postComment(campaignId: Long, message: String) {
+    fun postComment(campaignId: Long, form: CommentFormState) {
+        val validated = form.validate()
+        if (!validated.isValid) {
+            return
+        }
+
         viewModelScope.launch {
             _postCommentsUiState.value = PostCommentUiState.Loading
             try {
                 val response = RetrofitInstance.getCampaignApiService(context).addComment(
                     campaignId = campaignId,
-                    CommentCreateRequest(message = message)
+                    CommentCreateRequest(message = validated.message.trim())
                 )
 
                 if (response.isSuccessful) {
                     val newComment = response.body()
                     if (newComment != null) {
                         val currentComments = (_commentsUiState.value as? CommentsUiState.Success)?.comments ?: emptyList()
-                        val updatedComments = (currentComments + newComment)
-
+                        val updatedComments = listOf(newComment) + currentComments
                         _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
                     }
                     _postCommentsUiState.value = PostCommentUiState.Success
@@ -410,4 +487,37 @@ class DashboardViewModel(
         }
     }
 
+
+    fun postReply(commentId: Long, message: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).replyToComment(
+                    com.coded.loanlift.data.response.comments.ReplyCreateRequest(
+                        commentId = commentId,
+                        message = message.trim()
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    val newReply = response.body()
+
+                    val currentState = _commentsUiState.value
+                    if (currentState is CommentsUiState.Success && newReply != null) {
+                        val updatedComments = currentState.comments.map { comment ->
+                            if (comment.id == commentId) {
+                                comment.copy(reply = newReply)
+                            } else {
+                                comment
+                            }
+                        }
+                        _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
+                    }
+                } else {
+                    Log.e("DashboardViewModel", "Failed to reply: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardViewModel", "Reply error: ${e.message}")
+            }
+        }
+    }
 }
