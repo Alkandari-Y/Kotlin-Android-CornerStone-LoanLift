@@ -16,6 +16,7 @@ import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.data.response.error.ApiErrorResponse
 import com.coded.loanlift.data.response.pledges.PledgeCreateRequest
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
+import com.coded.loanlift.data.response.transaction.TransactionDetails
 import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
 import com.coded.loanlift.formStates.comments.CommentFormState
@@ -118,6 +119,7 @@ sealed class CreateCampaignUiState {
 }
 
 
+
 class DashboardViewModel(
     private val context: Context
 ) : ViewModel() {
@@ -160,6 +162,12 @@ class DashboardViewModel(
 
     private val _postReplyUiState = MutableStateFlow<PostReplyUiState>(PostReplyUiState.Idle)
     val postReplyUiState: StateFlow<PostReplyUiState> = _postReplyUiState
+
+    private val _selectedAccount = MutableStateFlow<AccountDto?>(null)
+    val selectedAccount: StateFlow<AccountDto?> = _selectedAccount
+
+    private val _accountTransactions = MutableStateFlow<List<TransactionDetails>?>(null)
+    val accountTransactions: StateFlow<List<TransactionDetails>?> = _accountTransactions
 
 
     init {
@@ -520,4 +528,39 @@ class DashboardViewModel(
             }
         }
     }
+
+    fun fetchAccountDetails(accountNumber: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.getBankingServiceProvide(context)
+                    .getAccountDetails(accountNumber)
+
+                if (response.isSuccessful) {
+                    _selectedAccount.value = response.body()
+                } else {
+                    _selectedAccount.value = null
+                }
+            } catch (e: Exception) {
+                _selectedAccount.value = null
+            }
+        }
+    }
+
+    fun fetchAccountTransactions(accountNumber: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.getBankingServiceProvide(context)
+                    .getAllTransactionsByAccountNumber(accountNumber)
+
+                if (response.isSuccessful) {
+                    _accountTransactions.value = response.body()
+                } else {
+                    _accountTransactions.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _accountTransactions.value = emptyList()
+            }
+        }
+    }
+
 }

@@ -25,12 +25,12 @@ fun DashboardScreen(
     viewModel: DashboardViewModel,
     navController: NavHostController,
     onLogoutClick: () -> Unit,
-    onAccountClick: (String) -> Unit,
     onCampaignClick: (Long) -> Unit,
     onPledgeCLick: (Long) -> Unit,
     onAccountCreateClick: () -> Unit,
     onCampaignCreateClick: () -> Unit,
     onPledgeCreateClick: () -> Unit,
+    onAccountClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     onViewAllCampaignsClick: () -> Unit,
     onExploreAllCampaignsClick: () -> Unit
@@ -59,9 +59,7 @@ fun DashboardScreen(
         )
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(15.dp)) {
-            item {
-                Spacer(modifier = Modifier.padding(10.dp))
-            }
+            item { Spacer(modifier = Modifier.padding(10.dp)) }
 
             item {
                 when (val state = accountsUiState) {
@@ -69,7 +67,9 @@ fun DashboardScreen(
                     is AccountsUiState.Success -> AccountsSection(
                         accounts = state.accounts,
                         navController = navController,
-                        onAccountClick = onAccountClick,
+                        onAccountClick = { accountNumber ->
+                            navController.navigate(NavRoutes.NAV_ROUTE_ACCOUNT_DETAILS + "/$accountNumber")
+                        },
                         onAccountCreateClick = onAccountCreateClick,
                         onTransferClick = { accountNum ->
                             navController.navigate(NavRoutes.transferRoute(accountNum))

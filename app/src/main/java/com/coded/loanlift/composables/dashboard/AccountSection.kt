@@ -27,7 +27,7 @@ fun AccountsSection(
 ) {
     DashboardSection(
         sectionTitle = "My Accounts",
-        onLinkClick = { /* TODO */ }
+        onLinkClick = { TODO() }
     ) {
         LazyRow(
             state = listState,
@@ -55,3 +55,4 @@ fun AccountsSection(
         }
     }
 }
+
