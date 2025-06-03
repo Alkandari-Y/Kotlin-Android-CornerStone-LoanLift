@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -15,11 +16,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.coded.loanlift.data.enums.AccountType
 import com.coded.loanlift.data.response.accounts.AccountDto
+import com.coded.loanlift.utils.formatDateTime
 import com.coded.loanlift.viewModels.DashboardViewModel
 import java.math.BigDecimal
 
@@ -94,6 +97,7 @@ fun AccountDetailsScreen(
                         null -> CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                         else -> LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
                             items(txs) { tx ->
+                                val isSource = account.accountNumber == tx.sourceAccountNumber
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -101,9 +105,27 @@ fun AccountDetailsScreen(
                                     colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
                                 ) {
                                     Column(modifier = Modifier.padding(12.dp)) {
-                                        Text("To: ${tx.destinationAccountNumber}", color = Color.White)
-                                        Text("Amount: ${tx.amount} KWD", color = Color.White)
-                                        Text("Date: ${tx.createdAt}", color = Color.White)
+                                        Row() {
+                                            Text(text = if (isSource) {
+                                                "To: ${tx.destinationAccountNumber}"
+                                            } else {
+                                                "From: ${tx.sourceAccountNumber}"
+                                            },
+                                            color = Color.White
+                                            )
+                                        }
+
+                                        Row() {
+                                            Icon(
+                                                imageVector = if (isSource) Icons.Filled.ArrowDownward else Icons.Filled.ArrowUpward,
+                                                contentDescription = "",
+                                                tint = if (isSource) Color.Red else Color.Green,
+//                                                modifier = Modifier.size(36.dp)
+                                            )
+                                            Text("${tx.amount} KWD", color = Color.White)
+
+                                        }
+                                        Text("Date: ${formatDateTime(tx.createdAt)}", color = Color.White)
                                         Text("Category: ${tx.category}", color = Color.White)
                                     }
                                 }
