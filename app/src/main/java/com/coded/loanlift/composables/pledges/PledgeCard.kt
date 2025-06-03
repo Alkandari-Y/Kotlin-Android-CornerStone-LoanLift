@@ -28,6 +28,12 @@ fun PledgeCard(
     pledge: UserPledgeDto,
     onCardClick: () -> Unit
 ) {
+
+
+    val imageUrl = pledge.campaignImage
+        .replace("localhost", "10.0.2.2")
+        .let { "$it?ext=.jpg" }
+
     Card(
         modifier = modifier.heightIn(max = 180.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E)),
@@ -35,7 +41,7 @@ fun PledgeCard(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = pledge.campaignImage,
+                model = imageUrl,
                 placeholder = painterResource(R.drawable.default_campaign_image),
                 error = painterResource(R.drawable.default_campaign_image),
                 fallback = painterResource(R.drawable.default_campaign_image),
