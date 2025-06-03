@@ -32,6 +32,7 @@ import com.coded.loanlift.R
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.campaigns.CampaignListItemResponse
 import com.coded.loanlift.data.response.category.CategoryDto
+import java.math.RoundingMode
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -46,10 +47,11 @@ fun CampaignCard(
     composable: @Composable () -> Unit
 
     ) {
-    val fundingProgress =
-        if (campaign.goalAmount.toFloat().coerceIn(0f, 1f) > 0F)
-            (campaign.amountRaised / campaign.goalAmount).toFloat().coerceIn(0f, 1f)
-        else 0f
+    val rawProgress = (campaign.amountRaised
+        .divide(campaign.goalAmount, 4, RoundingMode.HALF_UP))
+        .toFloat()
+    val percent = (rawProgress * 100).toInt()
+
 
     val statusColor = when (campaign.status) {
         CampaignStatus.ACTIVE -> Color(0xFF2196F3)
@@ -109,7 +111,7 @@ fun CampaignCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LinearProgressIndicator(
-                    progress = { fundingProgress },
+                    progress = { minOf(rawProgress, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(4.dp),
@@ -124,10 +126,11 @@ fun CampaignCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${(fundingProgress * 100).toInt()}% funded",
+                        text = "$percent% funded",
                         fontSize = 12.sp,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
+                        color = statusColor,
+                        textAlign = TextAlign.Center,
+                        fontWeight = if (rawProgress >= 1f) FontWeight.Bold else FontWeight.Normal
                     )
                     Text(
                         text = "${campaign.goalAmount} KWD",

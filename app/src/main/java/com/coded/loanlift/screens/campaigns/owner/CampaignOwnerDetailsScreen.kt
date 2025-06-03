@@ -54,7 +54,6 @@ import com.coded.loanlift.navigation.NavRoutes
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.viewModels.CampaignDetailUiState
 import com.coded.loanlift.viewModels.CampaignHistoryUiState
-import com.coded.loanlift.viewModels.CommentsUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.PostCommentUiState
 import com.coded.loanlift.viewModels.PostReplyUiState
