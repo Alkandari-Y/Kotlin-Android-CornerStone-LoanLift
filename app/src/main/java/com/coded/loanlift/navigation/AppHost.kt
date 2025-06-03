@@ -18,8 +18,6 @@ import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.screens.kyc.KycScreen
 import com.coded.loanlift.screens.accounts.AccountCreateScreen
 import com.coded.loanlift.screens.accounts.AccountDetailsScreen
-import com.coded.loanlift.screens.campaigns.AllCampaignsOwnerScreen
-import com.coded.loanlift.screens.campaigns.CampaignOwnerDetailsScreen
 import com.coded.loanlift.screens.pledges.PledgeDetailsScreen
 import com.coded.loanlift.screens.accounts.TransferScreen
 import com.coded.loanlift.viewModels.AccountViewModel
@@ -158,6 +156,9 @@ fun AppHost(
                     navController.navigate(NavRoutes.NAV_ROUTE_EDIT_KYC)
                 },
                 onViewAllCampaignsClick = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_OWNER_VIEW_ALL)
+                },
+                onExploreAllCampaignsClick = {
                     navController.navigate(NavRoutes.NAV_ROUTE_CAMPAIGN_EXPLORE)
                 }
             )

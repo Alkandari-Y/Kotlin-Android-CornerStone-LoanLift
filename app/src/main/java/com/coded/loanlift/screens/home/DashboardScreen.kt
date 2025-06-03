@@ -32,7 +32,8 @@ fun DashboardScreen(
     onCampaignCreateClick: () -> Unit,
     onPledgeCreateClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onViewAllCampaignsClick: () -> Unit
+    onViewAllCampaignsClick: () -> Unit,
+    onExploreAllCampaignsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val accountsUiState by viewModel.accountsUiState.collectAsState()
@@ -107,7 +108,7 @@ fun DashboardScreen(
                     is PledgesUiState.Loading -> PledgesSectionLoading()
                     is PledgesUiState.Success -> PledgesSection(
                         pledges = state.pledges,
-                        onPledgeClick = onPledgeCLick
+                        onPledgeClick = onPledgeCLick,
                         listState = lazyListStatePledges
                     )
                     is PledgesUiState.Error -> Text(
@@ -120,7 +121,7 @@ fun DashboardScreen(
 
             item {
                 Button(
-                    onClick = onViewAllCampaignsClick,
+                    onClick = onExploreAllCampaignsClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier

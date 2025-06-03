@@ -18,6 +18,7 @@ import com.coded.loanlift.data.response.pledges.PledgeCreateRequest
 import com.coded.loanlift.data.response.pledges.UserPledgeDto
 import com.coded.loanlift.data.response.transaction.TransferCreateRequest
 import com.coded.loanlift.formStates.campaigns.CampaignFormState
+import com.coded.loanlift.formStates.comments.CommentFormState
 import com.coded.loanlift.providers.RetrofitInstance
 import com.coded.loanlift.repositories.AccountRepository
 import com.coded.loanlift.repositories.CategoryRepository
@@ -102,6 +103,13 @@ sealed class PostCommentUiState {
     data class Error(val message: String): PostCommentUiState()
 }
 
+sealed class PostReplyUiState {
+    data object Idle: PostReplyUiState()
+    data object Loading: PostReplyUiState()
+    data object Success: PostReplyUiState()
+    data class Error(val message: String): PostReplyUiState()
+}
+
 sealed class CreateCampaignUiState {
     data object Idle: CreateCampaignUiState()
     data object Loading: CreateCampaignUiState()
@@ -147,9 +155,11 @@ class DashboardViewModel(
     private val _postCommentsUiState = MutableStateFlow<PostCommentUiState>(PostCommentUiState.Idle)
     val postCommentsUiState: StateFlow<PostCommentUiState> = _postCommentsUiState
 
-
     private val _createCampaignUiState = MutableStateFlow<CreateCampaignUiState>(CreateCampaignUiState.Idle)
     val createCampaignUiState: StateFlow<CreateCampaignUiState> = _createCampaignUiState
+
+    private val _postReplyUiState = MutableStateFlow<PostReplyUiState>(PostReplyUiState.Idle)
+    val postReplyUiState: StateFlow<PostReplyUiState> = _postReplyUiState
 
 
     init {
@@ -164,7 +174,7 @@ class DashboardViewModel(
             fetchCategories()
         }
     }
-    
+
     fun resetTransferUiState() {
         _transferUiState.value = TransferUiState.Idle
     }
@@ -385,7 +395,10 @@ class DashboardViewModel(
 
                 if (response.isSuccessful) {
                     val comments = response.body()
-                    _commentsUiState.value = CommentsUiState.Success(comments = comments!!)
+                    _commentsUiState.value = CommentsUiState.Success(
+                        comments = comments!!
+                            .sortedByDescending { it.id }
+                    )
                 } else {
                     _commentsUiState.value = CommentsUiState.Error("Error: ${response.code()}")
                 }
@@ -443,21 +456,25 @@ class DashboardViewModel(
         }
     }
 
-    fun postComment(campaignId: Long, message: String) {
+    fun postComment(campaignId: Long, form: CommentFormState) {
+        val validated = form.validate()
+        if (!validated.isValid) {
+            return
+        }
+
         viewModelScope.launch {
             _postCommentsUiState.value = PostCommentUiState.Loading
             try {
                 val response = RetrofitInstance.getCampaignApiService(context).addComment(
                     campaignId = campaignId,
-                    CommentCreateRequest(message = message)
+                    CommentCreateRequest(message = validated.message.trim())
                 )
 
                 if (response.isSuccessful) {
                     val newComment = response.body()
                     if (newComment != null) {
                         val currentComments = (_commentsUiState.value as? CommentsUiState.Success)?.comments ?: emptyList()
-                        val updatedComments = (currentComments + newComment)
-
+                        val updatedComments = listOf(newComment) + currentComments
                         _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
                     }
                     _postCommentsUiState.value = PostCommentUiState.Success
@@ -470,4 +487,37 @@ class DashboardViewModel(
         }
     }
 
+
+    fun postReply(commentId: Long, message: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.getCampaignApiService(context).replyToComment(
+                    com.coded.loanlift.data.response.comments.ReplyCreateRequest(
+                        commentId = commentId,
+                        message = message.trim()
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    val newReply = response.body()
+
+                    val currentState = _commentsUiState.value
+                    if (currentState is CommentsUiState.Success && newReply != null) {
+                        val updatedComments = currentState.comments.map { comment ->
+                            if (comment.id == commentId) {
+                                comment.copy(reply = newReply)
+                            } else {
+                                comment
+                            }
+                        }
+                        _commentsUiState.value = CommentsUiState.Success(comments = updatedComments)
+                    }
+                } else {
+                    Log.e("DashboardViewModel", "Failed to reply: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardViewModel", "Reply error: ${e.message}")
+            }
+        }
+    }
 }
