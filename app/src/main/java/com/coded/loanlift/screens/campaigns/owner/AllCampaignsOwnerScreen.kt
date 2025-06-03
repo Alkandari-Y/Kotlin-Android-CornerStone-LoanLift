@@ -1,34 +1,19 @@
 package com.coded.loanlift.screens.campaigns.owner
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.coded.loanlift.composables.campaigns.CampaignCard
-import com.coded.loanlift.composables.campaigns.SkeletonCampaignCard
-import com.coded.loanlift.composables.dashboard.SectionLoading
-import com.coded.loanlift.composables.ui.SearchTopBarWithToggle
-import com.coded.loanlift.composables.ui.SortAndFilterRow
+import com.coded.loanlift.composables.campaigns.CampaignsListDisplay
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.viewModels.CampaignsUiState
@@ -49,97 +34,55 @@ fun AllCampaignsOwnerScreen(
     var selectedStatus by remember { mutableStateOf<CampaignStatus?>(null) }
     var sortOption by remember { mutableStateOf("None") }
     var showSearchBar by remember { mutableStateOf(false) }
+    var isSortDescending by remember { mutableStateOf(true) }
 
+    val filteredOwnerCampaigns = when (val state = uiState) {
+        is CampaignsUiState.Success -> {
+            val filtered = state.campaigns
+                .filter { it.title.contains(searchQuery, ignoreCase = true) }
+                .filter { selectedStatus == null || it.status == selectedStatus }
 
-    Scaffold(
-        containerColor = Color(0xFF1A1B1E),
-        topBar = {
-            SearchTopBarWithToggle(
-                title = "Manage Campaigns",
-                searchQuery = searchQuery,
-                onSearchQueryChange = { searchQuery = it },
-                showSearchBar = showSearchBar,
-                onToggleSearch = { showSearchBar = !showSearchBar },
-                onBackClick = onBackClick,
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            SortAndFilterRow(
-                sortLabel = "Sort By",
-                sortOptions = listOf(
-                    "None",
-                    "Name",
-                    "Status",
-                    "Goal Amount",
-                    "Amount Raised",
-                    "Deadline"
-                ),
-                selectedSort = sortOption,
-                onSortSelected = { sortOption = it },
-                filterLabel = "Filter Status",
-                filterOptions = listOf(null) + CampaignStatus.entries,
-                selectedFilter = selectedStatus,
-                onFilterSelected = { selectedStatus = it },
-                filterLabelMapper = { it?.name ?: "All" }
-            )
-
-            when (val state = uiState) {
-                is CampaignsUiState.Loading -> {
-                    SectionLoading("Loading Campaigns") {
-                        SkeletonCampaignCard()
-                    }
-                }
-
-                is CampaignsUiState.Success -> {
-                    val filteredCampaigns = state.campaigns
-                        .filter { it.title.contains(searchQuery, ignoreCase = true) }
-                        .filter { selectedStatus == null || it.status == selectedStatus }
-                        .let {
-                            when (sortOption) {
-                                "Name" -> it.sortedBy { c -> c.title }
-                                "Status" -> it.sortedBy { c -> c.status.name }
-                                "Goal Amount" -> it.sortedByDescending { c -> c.goalAmount }
-                                "Amount Raised" -> it.sortedByDescending { c -> c.amountRaised }
-                                "Deadline" -> it.sortedBy { c -> c.campaignDeadline }
-                                else -> it
-                            }
-                        }
-
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        items(filteredCampaigns) { campaign ->
-                            CampaignCard(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .fillMaxWidth(),
-                                campaign = campaign,
-                                category = categories.find { it.id == campaign.categoryId },
-                                onCardClick = { onCampaignClick(campaign.id) }
-                            ) {
-                                Spacer(modifier = Modifier)
-                            }
-                        }
-                    }
-                }
-
-                is CampaignsUiState.Error -> {
-                    Text(
-                        text = "Failed to load campaigns: ${state.message}",
-                        color = Color.Red,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    )
-                }
+            val sorted = when (sortOption) {
+                "Name" -> filtered.sortedBy { it.title }
+                "Status" -> filtered.sortedBy { it.status.name }
+                "Goal Amount" -> filtered.sortedBy { it.goalAmount }
+                "Amount Raised" -> filtered.sortedBy { it.amountRaised }
+                "Deadline" -> filtered.sortedBy { it.campaignDeadline }
+                else -> filtered
             }
+
+            if (isSortDescending) sorted.reversed() else sorted
         }
+
+        else -> emptyList()
     }
+
+
+    CampaignsListDisplay(
+        title = "Manage Campaigns",
+        searchQuery = searchQuery,
+        onSearchQueryChange = { searchQuery = it },
+        showSearchBar = showSearchBar,
+        onToggleSearch = { showSearchBar = !showSearchBar },
+        sortOption = sortOption,
+        onSortSelected = { sortOption = it },
+        selectedStatus = selectedStatus,
+        onStatusSelected = { selectedStatus = it },
+        campaigns = filteredOwnerCampaigns,
+        onBackClick = onBackClick,
+        isLoading = uiState is CampaignsUiState.Loading,
+        errorMessage = (uiState as? CampaignsUiState.Error)?.message,
+        renderCard = { campaign ->
+            CampaignCard(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                campaign = campaign,
+                category = categories.find { it.id == campaign.categoryId },
+                onCardClick = { onCampaignClick(campaign.id) }
+            ) { Spacer(modifier = Modifier) }
+        },
+        isSortDescending = isSortDescending,
+        onToggleSortDirection = { isSortDescending = !isSortDescending },
+    )
 }
