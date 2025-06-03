@@ -262,6 +262,9 @@ fun AppHost(
                     navController = navController,
                     campaignId = campaignId.toLong(),
                     onBackClick = { navController.popBackStack() },
+                    onPledgeDetailClick = { pledgeId ->
+                        navController.navigate(NavRoutes.pledgeDetailRoute(pledgeId))
+                    }
                 )
             }
         }

@@ -94,6 +94,7 @@ fun PublicCampaignDetailsScreen(
     campaignId: Long,
     navController: NavHostController,
     onBackClick: () -> Unit,
+    onPledgeDetailClick: (Long) -> Unit
 ) {
     val context = LocalContext.current
     val accountsState by viewModel.accountsUiState.collectAsState()
@@ -202,16 +203,17 @@ fun PublicCampaignDetailsScreen(
                     when (pledgesUiState) {
                         is PledgesUiState.Success -> {
                             val pledges = (pledgesUiState as PledgesUiState.Success).pledges
-                            val hasPledged = pledges.any { it.campaignId == campaign.id }
+                            val pledge = pledges.find { it.campaignId == campaign.id }
+                            val hasPledged = pledge != null
 
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    if (hasPledged) {
+                                    if (hasPledged && pledge != null) {
                                         Button(
-                                            onClick = { /* TODO  */},
+                                            onClick = {  onPledgeDetailClick(pledge.id) },
                                             shape = RoundedCornerShape(8.dp),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = Color(0xFF6200EE)
