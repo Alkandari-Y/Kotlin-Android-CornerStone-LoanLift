@@ -3,6 +3,7 @@ package com.coded.loanlift.composables.comments
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +39,7 @@ fun CampaignCommentsSection(
         viewModel.fetchCampaignComments(campaignId)
     }
 
-    Column(modifier = Modifier) {
+    Column(modifier = Modifier.padding(10.dp)) {
         Text("Comments", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
         if (postCommentUiState is PostCommentUiState.Loading) {
