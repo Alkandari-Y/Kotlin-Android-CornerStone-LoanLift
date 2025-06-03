@@ -1,13 +1,10 @@
-package com.coded.loanlift.composables.campaigns
+package com.coded.loanlift.composables.accounts
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -27,16 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.coded.loanlift.composables.dashboard.SectionLoading
 import com.coded.loanlift.composables.ui.SearchTopBarWithToggle
 import com.coded.loanlift.composables.ui.SortAndFilterRow
-import com.coded.loanlift.data.enums.CampaignStatus
+import com.coded.loanlift.data.enums.AccountType
+import com.coded.loanlift.data.response.accounts.AccountDto
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> CampaignsListDisplay(
+fun AccountsListDisplay(
     title: String,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
@@ -44,18 +41,17 @@ fun <T> CampaignsListDisplay(
     onToggleSearch: () -> Unit,
     sortOption: String,
     onSortSelected: (String) -> Unit,
-    selectedStatus: CampaignStatus?,
-    onStatusSelected: (CampaignStatus?) -> Unit,
-    campaigns: List<T>,
-    onBackClick: () -> Unit,
-    renderCard: @Composable (T) -> Unit,
-    isLoading: Boolean,
-    errorMessage: String? = null,
     isSortDescending: Boolean,
     onToggleSortDirection: () -> Unit,
-    onRefresh: () -> Unit
+    accounts: List<AccountDto>,
+    onBackClick: () -> Unit,
+    isLoading: Boolean,
+    errorMessage: String? = null,
+    onRefresh: () -> Unit,
+    selectedOwnerType: AccountType?,
+    onOwnerTypeSelected: (AccountType?) -> Unit,
+    renderCard: @Composable (AccountDto) -> Unit,
 ) {
-
     val coroutineScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -89,20 +85,13 @@ fun <T> CampaignsListDisplay(
         ) {
             SortAndFilterRow(
                 sortLabel = "Sort By",
-                sortOptions = listOf(
-                    "None",
-                    "Name",
-                    "Status",
-                    "Goal Amount",
-                    "Amount Raised",
-                    "Deadline"
-                ),
+                sortOptions = listOf("None", "Name", "Balance", "Owner Type"),
                 selectedSort = sortOption,
                 onSortSelected = onSortSelected,
-                filterLabel = "Filter Status",
-                filterOptions = listOf(null) + CampaignStatus.entries,
-                selectedFilter = selectedStatus,
-                onFilterSelected = onStatusSelected,
+                filterLabel = "Filter",
+                filterOptions = listOf(null) + AccountType.entries,
+                selectedFilter = selectedOwnerType,
+                onFilterSelected = onOwnerTypeSelected,
                 filterLabelMapper = { it?.name ?: "All" },
                 isSortDescending = isSortDescending,
                 onToggleSortDirection = onToggleSortDirection
@@ -110,16 +99,14 @@ fun <T> CampaignsListDisplay(
 
             when {
                 isLoading -> {
-                    LazyColumn (
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally                    ) {
-                        items(2) { SkeletonCampaignCard() }
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(2) { SkeletonAccountCard() }
                     }
                 }
 
                 errorMessage != null -> {
                     Text(
-                        text = "Failed to load campaigns: $errorMessage",
+                        text = "Failed to load accounts: $errorMessage",
                         color = Color.Red,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -135,8 +122,7 @@ fun <T> CampaignsListDisplay(
                         state = pullToRefreshState,
                         indicator = {
                             PullToRefreshDefaults.Indicator(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter),
+                                modifier = Modifier.align(Alignment.TopCenter),
                                 isRefreshing = isRefreshing,
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -144,13 +130,9 @@ fun <T> CampaignsListDisplay(
                             )
                         }
                     ) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(campaigns) { campaign ->
-                                renderCard(campaign)
-                                Spacer(modifier = Modifier)
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(accounts) { account ->
+                                renderCard(account)
                             }
                         }
                     }

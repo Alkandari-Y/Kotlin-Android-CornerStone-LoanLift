@@ -49,8 +49,8 @@ fun <T1, T2> SortAndFilterRow(
         Spacer(modifier = Modifier.width(16.dp))
 
         TextButton(onClick = onToggleSortDirection) {
-            val direction = if (isSortDescending) "↓" else "↑"
-            Text("Direction: $direction", color = Color.White)
+            val directionText = if (isSortDescending) "↓ Desc" else "↑ Asce"
+            Text(text = directionText, color = Color.White)
         }
     }
 }
