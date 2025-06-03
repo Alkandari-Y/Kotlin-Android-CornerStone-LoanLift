@@ -41,6 +41,9 @@ fun PublicCampaignDetailsScreen(
 
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
     val pledgesUiState by viewModel.pledgesUiState.collectAsState()
+    val postCommentUiState by viewModel.postCommentsUiState.collectAsState()
+    val postReplyUiState by viewModel.postReplyUiState.collectAsState()
+
 
     val categories = CategoryRepository.categories
     val listState = rememberLazyListState()
@@ -48,6 +51,10 @@ fun PublicCampaignDetailsScreen(
     var commentFormState by remember { mutableStateOf(CommentFormState()) }
     var replyToComment by remember { mutableStateOf<CommentResponseDto?>(null) }
     var replyText by remember { mutableStateOf("") }
+
+
+
+
     val currentUserId = UserRepository.userInfo?.userId
 
     LaunchedEffect(Unit) {
@@ -201,6 +208,8 @@ fun PublicCampaignDetailsScreen(
         }
 
         if (isWritingComment || replyToComment != null) {
+            val isPostingComment = postCommentUiState is PostCommentUiState.Loading
+            val isPostingReply = postReplyUiState is PostReplyUiState.Loading
             CommentInputOverlay(
                 isReply = replyToComment != null,
                 initialText = replyText,
@@ -223,7 +232,8 @@ fun PublicCampaignDetailsScreen(
                     isWritingComment = false
                     replyText = ""
                     viewModel.fetchCampaignComments(campaignId)
-                }
+                },
+                isSubmitting = if (replyToComment != null) isPostingReply else isPostingComment
             )
         }
     }

@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -36,7 +38,8 @@ fun CommentInputOverlay(
     commentFormState: CommentFormState,
     updateCommentFormState: (CommentFormState) -> Unit,
     onCancel: () -> Unit,
-    onSubmit: (String) -> Unit
+    onSubmit: (String) -> Unit,
+    isSubmitting: Boolean
 ) {
     var text by remember { mutableStateOf(initialText) }
 
@@ -104,13 +107,21 @@ fun CommentInputOverlay(
                                 updateCommentFormState(validated)
                                 return@Button
                             }
-                            onSubmit(validated.message)
+                            onSubmit(validated.message.trim())
                         }
                     },
-                    enabled = if (isReply) text.isNotBlank() else commentFormState.message.isNotBlank(),
+                    enabled = !isSubmitting && (if (isReply) text.isNotBlank() else commentFormState.message.isNotBlank()),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                 ) {
-                    Text("Submit")
+                    if (isSubmitting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Submit")
+                    }
                 }
             }
         }

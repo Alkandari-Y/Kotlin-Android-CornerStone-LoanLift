@@ -407,7 +407,7 @@ class DashboardViewModel(
             try {
                 val response = RetrofitInstance.getCampaignApiService(context).addComment(
                     campaignId = campaignId,
-                    CommentCreateRequest(message = validated.message)
+                    CommentCreateRequest(message = validated.message.trim())
                 )
 
                 if (response.isSuccessful) {
@@ -434,7 +434,7 @@ class DashboardViewModel(
                 val response = RetrofitInstance.getCampaignApiService(context).replyToComment(
                     com.coded.loanlift.data.response.comments.ReplyCreateRequest(
                         commentId = commentId,
-                        message = message
+                        message = message.trim()
                     )
                 )
 
