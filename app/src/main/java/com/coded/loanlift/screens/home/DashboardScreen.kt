@@ -18,7 +18,6 @@ import com.coded.loanlift.composables.dashboard.*
 import com.coded.loanlift.composables.ui.TopBar
 import com.coded.loanlift.managers.TokenManager
 import com.coded.loanlift.navigation.NavRoutes
-import com.coded.loanlift.repositories.UserRepository
 import com.coded.loanlift.viewModels.*
 
 @Composable
@@ -109,8 +108,8 @@ fun DashboardScreen(
                     is PledgesUiState.Loading -> PledgesSectionLoading()
                     is PledgesUiState.Success -> PledgesSection(
                         pledges = state.pledges,
+                        onPledgeClick = onPledgeCLick,
                         listState = lazyListStatePledges
-
                     )
                     is PledgesUiState.Error -> Text(
                         text = "Failed to load pledges: ${state.message}",

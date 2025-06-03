@@ -1,5 +1,7 @@
 package com.coded.loanlift.screens.auth
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -7,33 +9,39 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.coded.loanlift.navigation.NavRoutes
 
 @Composable
 fun ForgotPasswordScreen(
-    onSubmitClick: () -> Unit
+    onSubmitClick: () -> Unit,
 ) {
     var identifier by remember { mutableStateOf("") }
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(color = Color(0xFF0D0C1D))) {
+        val screenHeight = maxHeight
+        val screenWidth = maxWidth
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(50.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Oh, no !",
-            fontSize = 32.sp,
+            fontSize = 60.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White
         )
         Text(
             text = "I forgot",
-            fontSize = 32.sp,
+            fontSize = 60.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF1976D2)
         )
@@ -46,12 +54,21 @@ fun ForgotPasswordScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        OutlinedTextField(
+        TextField(
             value = identifier,
             onValueChange = { identifier = it },
-            label = { Text("Username, Email or Phone Number") },
+            label = { Text("Username, Email or Phone Number",color = Color.White) },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.White,
+            unfocusedIndicatorColor = Color.Gray,
+            cursorColor = Color.White
+        )
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -59,9 +76,11 @@ fun ForgotPasswordScreen(
         Button(
             onClick = onSubmitClick,
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B1FA2))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+            shape = RectangleShape
         ) {
             Text("Forgot Password", fontWeight = FontWeight.Bold)
         }
+
     }
-}
+} }
