@@ -45,7 +45,7 @@ fun AccountDetailsScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.Black
+        color = Color(0xFF1A1B1E)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
@@ -60,7 +60,7 @@ fun AccountDetailsScreen(
                         Icon(Icons.Default.MoreVert, contentDescription = "Menu", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF2A2B2E))
             )
 
             when (val account = accountState) {

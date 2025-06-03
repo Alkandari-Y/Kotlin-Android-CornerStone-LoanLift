@@ -51,7 +51,7 @@ fun TransferScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(Color(0xFF1A1B1E))) {
         Column(modifier = Modifier.fillMaxSize()) {
 
             TopAppBar(
@@ -61,7 +61,7 @@ fun TransferScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF2A2B2E))
             )
 
             Column(
@@ -86,7 +86,17 @@ fun TransferScreen(
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth(),
-                        colors = ExposedDropdownMenuDefaults.textFieldColors()
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.Gray,
+                            errorContainerColor = Color.Transparent,
+                            errorTextColor =Color.White ,
+                            cursorColor = Color.White
+                        )
                     )
 
                     ExposedDropdownMenu(
@@ -109,11 +119,22 @@ fun TransferScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                TextField(
                     value = amount,
                     onValueChange = { amount = it },
                     label = { Text("Amount (KWD)") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.White,
+                        unfocusedIndicatorColor = Color.Gray,
+                        errorContainerColor = Color.Transparent,
+                        errorTextColor =Color.White ,
+                        cursorColor = Color.White
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -136,7 +157,7 @@ fun TransferScreen(
                             viewModel.transferBetweenAccounts(sourceAccountNumber, selectedAccountNumber, parsedAmount!!)
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
                         enabled = uiState !is TransferUiState.Loading && canTransfer
                     ) {
                         Text("Transfer", color = Color.White)

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +29,8 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -126,37 +129,70 @@ fun CampaignCreateScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
+            TextField(
                 value = formState.title,
                 onValueChange = { formState = formState.copy(title = it) },
                 label = { Text("Title", color = Color.White) },
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 isError = formState.titleError != null,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    errorContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorTextColor =Color.White ,
+                    cursorColor = Color.White
+                ),
             )
             formState.titleError?.let { Text(it, color = Color.Red) }
 
-            OutlinedTextField(
+            TextField(
                 value = formState.description,
                 onValueChange = { formState = formState.copy(description = it) },
                 label = { Text("Description", color = Color.White) },
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 isError = formState.descriptionError != null,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    errorContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorTextColor =Color.White ,
+                    cursorColor = Color.White
+                ),
             )
             formState.descriptionError?.let { Text(it, color = Color.Red) }
 
-            OutlinedTextField(
+            TextField(
                 value = formState.goalAmount,
                 onValueChange = { formState = formState.copy(goalAmount = it) },
                 label = { Text("Goal Amount", color = Color.White) },
                 textStyle = LocalTextStyle.current.copy(color = Color.White),
                 isError = formState.goalAmountError != null,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    errorContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorTextColor =Color.White ,
+                    cursorColor = Color.White
+                ),
             )
             formState.goalAmountError?.let { Text(it, color = Color.Red) }
 
-            OutlinedTextField(
+            TextField(
                 value = formState.campaignDeadline,
                 onValueChange = {},
                 label = { Text("Campaign Deadline", color = Color.White) },
@@ -165,12 +201,23 @@ fun CampaignCreateScreen(
                     .fillMaxWidth()
                     .clickable { showDatePicker = true },
                 readOnly = true,
-                isError = formState.campaignDeadlineError != null
+                isError = formState.campaignDeadlineError != null,
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                    errorContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Gray,
+                    errorTextColor =Color.White ,
+                    cursorColor = Color.White
+                ),
             )
             formState.campaignDeadlineError?.let { Text(it, color = Color.Red) }
 
             Box {
-                OutlinedTextField(
+                TextField(
                     value = categories.find { it.id == formState.categoryId }?.name ?: "Select Category",
                     onValueChange = {},
                     label = { Text("Category", color = Color.White) },
@@ -179,7 +226,18 @@ fun CampaignCreateScreen(
                         .fillMaxWidth()
                         .clickable { expanded = true },
                     readOnly = true,
-                    isError = formState.categoryIdError != null
+                    isError = formState.categoryIdError != null,
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.White,
+                        errorContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Gray,
+                        errorTextColor =Color.White ,
+                        cursorColor = Color.White
+                    ),
                 )
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     categories.forEach { category ->
@@ -206,7 +264,9 @@ fun CampaignCreateScreen(
                     }
                 }
             } else {
-                Button(onClick = { imageLauncher.launch("image/*") }) {
+                Button(onClick = { imageLauncher.launch("image/*") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+                ) {
                     Text("Choose Image")
                 }
             }
@@ -232,8 +292,10 @@ fun CampaignCreateScreen(
                         formState = validated
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+
+                ) {
                 Text("Submit Campaign")
             }
         }
