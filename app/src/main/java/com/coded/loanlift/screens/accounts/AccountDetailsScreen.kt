@@ -32,15 +32,15 @@ fun AccountDetailsScreen(
     onBackClick: () -> Unit,
     onCampaignClick: (String) -> Unit,
     viewModel: DashboardViewModel,
-    accountNumber: String
+    accountNum: String
 ) {
     val darkBlue = Color(0xFF1B2541)
     val accountState by viewModel.selectedAccount.collectAsState()
     val transactionsState by viewModel.accountTransactions.collectAsState()
 
-    LaunchedEffect(accountNumber) {
-        viewModel.fetchAccountDetails(accountNumber)
-        viewModel.fetchAccountTransactions(accountNumber)
+    LaunchedEffect(Unit) {
+        viewModel.fetchAccountDetails(accountNum)
+        viewModel.fetchAccountTransactions(accountNum)
     }
 
     Surface(

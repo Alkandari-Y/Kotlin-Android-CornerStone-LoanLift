@@ -65,6 +65,7 @@ fun CampaignOwnerDetailsScreen(
     campaignId: Long,
     viewModel: DashboardViewModel,
     onBackClick: () -> Unit,
+    onAccountClick: (String) -> Unit
 ) {
     val context = LocalContext.current
     val campaignDetailUiState by viewModel.campaignDetailUiState.collectAsState()
