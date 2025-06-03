@@ -28,7 +28,7 @@ fun PledgesSection(pledges: List<UserPledgeDto>, onPledgeClick: (Long) -> Unit,
         onLinkClick = { /* TODO */ }
     ) {
         LazyRow(
-            state = listState,
+//            state = listState,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
