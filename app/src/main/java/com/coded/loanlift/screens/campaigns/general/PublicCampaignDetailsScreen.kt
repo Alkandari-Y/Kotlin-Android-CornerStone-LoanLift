@@ -136,11 +136,19 @@ fun PublicCampaignDetailsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Campaign", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text("Campaign",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF2A2B2E))
@@ -202,10 +210,10 @@ fun PublicCampaignDetailsScreen(
                             val pledge = pledges.find { it.campaignId == campaign.id }
                             val hasPledged = pledge != null
 
-                                Box(
+                                Row(
                                     modifier = Modifier
                                         .fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
                                     if (hasPledged && pledge != null) {
                                         Button(
@@ -310,7 +318,7 @@ fun PublicCampaignDetailsScreen(
             )
         }
         if (showPledgeDialog) {
-            androidx.compose.material3.AlertDialog(
+            AlertDialog(
                 onDismissRequest = { showPledgeDialog = false },
                 confirmButton = {
                     Button(
@@ -402,7 +410,6 @@ fun PublicCampaignDetailsScreen(
                                 isLoading = true
                             }
                             is CreatePledgeUiState.Success -> {
-                                // show success message or navigate
                                 Text(text = "Pledge successful!", color = Color.Green)
 
                                 LaunchedEffect(Unit) {

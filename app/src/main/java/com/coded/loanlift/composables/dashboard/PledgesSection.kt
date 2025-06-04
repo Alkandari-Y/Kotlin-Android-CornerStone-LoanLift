@@ -19,11 +19,12 @@ fun PledgesSection(
     pledges: List<UserPledgeDto>,
     onPledgeClick: (Long) -> Unit,
     onPledgeCreate: () -> Unit,
-    listState: LazyListState
+    listState: LazyListState,
+    onViewAllClick: () -> Unit
 ) {
     DashboardSection(
         sectionTitle = "My Pledges",
-        onLinkClick = { /* TODO */ }
+        onLinkClick = onViewAllClick
     ) {
         LazyRow(
             state = listState,

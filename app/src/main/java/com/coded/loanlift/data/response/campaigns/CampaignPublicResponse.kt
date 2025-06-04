@@ -23,7 +23,7 @@ data class CampaignPublicDetails(
     val imageUrl: String?,
     var amountRaised: BigDecimal,
     var accountId: Long? = null,
-)
+): CampaignDetailResponse
 
 data class CampaignPublicDetailsWithComments(
     val id: Long?,
@@ -42,7 +42,7 @@ data class CampaignPublicDetailsWithComments(
     val amountRaised: BigDecimal = BigDecimal.ZERO,
     var accountId: Long? = null,
     val comments: List<Comment> = emptyList()
-)
+): CampaignDetailResponse
 
 data class Comment(
     val id: Long,

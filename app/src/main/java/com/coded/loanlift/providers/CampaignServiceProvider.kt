@@ -49,7 +49,7 @@ interface CampaignServiceProvider {
     suspend fun getCampaignDetails(
         @Path("campaignId") campaignId: Long,
         @Query("includeComments") includeComments: Boolean = false
-    ): Response<CampaignDetailResponse>
+    ): Response<CampaignPublicDetails>
 
     @GET("/api/v1/campaigns/manage")
     suspend fun getMyCampaigns(): Response<List<CampaignListItemResponse>>

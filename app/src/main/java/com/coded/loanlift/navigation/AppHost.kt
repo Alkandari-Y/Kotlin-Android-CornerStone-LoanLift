@@ -27,6 +27,7 @@ import com.coded.loanlift.screens.campaigns.general.AllPublicActiveCampaignsScre
 import com.coded.loanlift.screens.campaigns.owner.CampaignOwnerDetailsScreen
 import com.coded.loanlift.screens.campaigns.general.PublicCampaignDetailsScreen
 import com.coded.loanlift.screens.campaigns.owner.CampaignCreateScreen
+import com.coded.loanlift.screens.pledges.AllPledgesScreen
 import com.coded.loanlift.viewModels.AuthViewModel
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.KycViewModel
@@ -162,6 +163,9 @@ fun AppHost(
                 },
                 onViewAllAccounts = {
                     navController.navigate(NavRoutes.NAV_ROUTE_ACCOUNT_VIEW_ALL)
+                },
+                onViewAllPledges = {
+                    navController.navigate(NavRoutes.NAV_ROUTE_PLEDGE_VIEW_ALL)
                 }
             )
         }
@@ -186,7 +190,7 @@ fun AppHost(
             if (accountNum != null) {
                 AccountDetailsScreen(
                     onBackClick = { navController.popBackStack() },
-                    onCampaignClick = { navController.popBackStack() },
+                    onTransferClick = { navController.navigate(NavRoutes.NAV_ROUTE_TRANSFER) },
                     viewModel = dashboardViewModel,
                     accountNum = accountNum
                 )
@@ -288,6 +292,20 @@ fun AppHost(
                 onAccountClick = { accountNum: String ->
                     navController.navigate(NavRoutes.accountDetailRoute(accountNum))
                 },
+            )
+        }
+
+        composable(NavRoutes.NAV_ROUTE_PLEDGE_VIEW_ALL) {
+            AllPledgesScreen(
+                navController = navController,
+                viewModel = dashboardViewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onPledgeClick = { pledgeId ->
+                    navController.navigate(NavRoutes.pledgeDetailRoute(pledgeId))
+
+                }
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.coded.loanlift.screens.campaigns.owner
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,14 +51,15 @@ import com.coded.loanlift.data.enums.CampaignDetailsTab
 import com.coded.loanlift.data.enums.CampaignStatus
 import com.coded.loanlift.data.response.comments.CommentResponseDto
 import com.coded.loanlift.formStates.comments.CommentFormState
-import com.coded.loanlift.navigation.NavRoutes
 import com.coded.loanlift.repositories.AccountRepository
+import com.coded.loanlift.repositories.CategoryRepository
 import com.coded.loanlift.viewModels.CampaignDetailUiState
 import com.coded.loanlift.viewModels.CampaignHistoryUiState
 import com.coded.loanlift.viewModels.DashboardViewModel
 import com.coded.loanlift.viewModels.PostCommentUiState
 import com.coded.loanlift.viewModels.PostReplyUiState
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CampaignOwnerDetailsScreen(
@@ -82,6 +84,7 @@ fun CampaignOwnerDetailsScreen(
     val campaignAccount = remember(campaign) {
         AccountRepository.myAccounts.find { it.id == campaign?.accountId }
     }
+    val categories = CategoryRepository.categories
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -136,20 +139,17 @@ fun CampaignOwnerDetailsScreen(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false }
                         ) {
-
-                            DropdownMenuItem(
-                                text = { Text("View Account", color = Color.Red) },
-                                onClick = {
-                                    menuExpanded = false
-                                    campaignAccount?.accountNumber?.let { accountNum ->
-                                        navController.navigate(
-                                            NavRoutes.accountDetailRoute(
-                                                accountNum
-                                            )
-                                        )
+                            if (campaign?.status?.ordinal != null && campaign.status.ordinal >= CampaignStatus.ACTIVE.ordinal) {
+                                DropdownMenuItem(
+                                    text = { Text("View Account", color = Color.Black) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        campaignAccount?.accountNumber?.let { accountNum ->
+                                            onAccountClick(accountNum)
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
 
                             if (campaign?.status == CampaignStatus.NEW) {
                                 DropdownMenuItem(
@@ -185,183 +185,178 @@ fun CampaignOwnerDetailsScreen(
             }
         }
     ) { paddingValues ->
-        Box(
+
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                item {
-                    when (val state = campaignDetailUiState) {
-                        is CampaignDetailUiState.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(32.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = Color.Magenta)
+            item {
+                when (val state = campaignDetailUiState) {
+                    is CampaignDetailUiState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color.Magenta)
+                        }
+                    }
+
+                    is CampaignDetailUiState.Success -> {
+                        CampaignDetailsForOwner(
+                            campaign = state.campaign,
+                        )
+                    }
+
+                    is CampaignDetailUiState.Error -> {
+                        Text(
+                            text = "Error loading campaign: ${state.message}",
+                            color = Color.Red,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
+            }
+
+            item {
+                if (campaign != null) {
+                    selectedTab?.let { it ->
+                        CampaignTransactionsTabSelector(
+                            selectedTab = it,
+                            onTabSelected = { selectedTab = it },
+                        )
+                    }
+                }
+            }
+
+
+            when (campaignHistoryUiState) {
+                is CampaignHistoryUiState.Success -> {
+                    val history =
+                        (campaignHistoryUiState as CampaignHistoryUiState.Success).campaignTransactionHistory
+                    when (selectedTab) {
+                        CampaignDetailsTab.INFO -> {
+                            item {
+                                CampaignGeneralInfoCardOwner(campaign)
                             }
                         }
 
-                        is CampaignDetailUiState.Success -> {
-                            CampaignDetailsForOwner(
-                                campaign = state.campaign,
-                            )
+                        CampaignDetailsTab.PLEDGES -> {
+                            items(history.pledgeTransactions) { tx ->
+                                CampaignPledgeTransactionCard(tx)
+                            }
                         }
 
-                        is CampaignDetailUiState.Error -> {
+                        CampaignDetailsTab.REPAYMENTS -> {
+                            items(history.repaymentSummaries) { summary ->
+                                MonthlyRepaymentSummaryCard(summary)
+                            }
+                        }
+
+                        CampaignDetailsTab.COMMENTS -> {
+                            item {
+                                if (campaign != null) {
+                                    CampaignCommentsSection(
+                                        campaignId = campaign.id,
+                                        campaignCreatorId = campaign.createdBy,
+                                        viewModel = viewModel,
+                                        isWritingComment = isWritingComment,
+                                        updateWritingCommentState = {
+                                            isWritingComment = !isWritingComment
+                                        },
+                                        onTriggerReply = {
+                                            replyToComment = it
+                                            isWritingComment = true
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
+
+                        null -> item {
                             Text(
-                                text = "Error loading campaign: ${state.message}",
-                                color = Color.Red,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    if (campaign != null) {
-                        selectedTab?.let { it ->
-                            CampaignTransactionsTabSelector(
-                                selectedTab = it,
-                                onTabSelected = { selectedTab = it },
-                            )
-                        }
-                    }
-                }
-
-
-                when (campaignHistoryUiState) {
-                    is CampaignHistoryUiState.Success -> {
-                        val history =
-                            (campaignHistoryUiState as CampaignHistoryUiState.Success).campaignTransactionHistory
-                        when (selectedTab) {
-                            CampaignDetailsTab.INFO -> {
-                                item {
-                                    CampaignGeneralInfoCardOwner(campaign)
-                                }
-                            }
-
-                            CampaignDetailsTab.PLEDGES -> {
-                                items(history.pledgeTransactions) { tx ->
-                                    CampaignPledgeTransactionCard(tx)
-                                }
-                            }
-
-                            CampaignDetailsTab.REPAYMENTS -> {
-                                items(history.repaymentSummaries) { summary ->
-                                    MonthlyRepaymentSummaryCard(summary)
-                                }
-                            }
-
-                            CampaignDetailsTab.COMMENTS -> {
-                                item {
-                                    if (campaign != null) {
-                                        CampaignCommentsSection(
-                                            campaignId = campaign.id,
-                                            campaignCreatorId = campaign.createdBy,
-                                            viewModel = viewModel,
-                                            isWritingComment = isWritingComment,
-                                            updateWritingCommentState = {
-                                                isWritingComment = !isWritingComment
-                                            },
-                                            onTriggerReply = {
-                                                replyToComment = it
-                                                isWritingComment = true
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-
-
-                            null -> item {
-                                Text(
-                                    text = when (campaign?.status) {
-                                        CampaignStatus.NEW -> "Thank you for submitting your campaign. You may edit or remove your campaign application."
-                                        CampaignStatus.PENDING -> "Campaign is under review."
-                                        CampaignStatus.REJECTED -> "Campaign has been rejected."
-                                        else -> "No data to display."
-                                    },
-                                    color = Color.Gray,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                    }
-
-                    is CampaignHistoryUiState.Loading -> {
-                        item {
-                            Box(
+                                text = when (campaign?.status) {
+                                    CampaignStatus.NEW -> "Thank you for submitting your campaign. You may edit or remove your campaign application."
+                                    CampaignStatus.PENDING -> "Campaign is under review."
+                                    CampaignStatus.REJECTED -> "Campaign has been rejected."
+                                    else -> "No data to display."
+                                },
+                                color = Color.Gray,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                SkeletonCampaignCard()
-                            }
-                        }
-                    }
-
-                    is CampaignHistoryUiState.Error -> {
-                        item {
-                            Text(
-                                text = "Failed to load transactions: ${(campaignHistoryUiState as CampaignHistoryUiState.Error).message}",
-                                color = Color.Red,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
                 }
-            }
-            if ((selectedTab == CampaignDetailsTab.COMMENTS) && (isWritingComment || replyToComment != null)) {
-                val isPostingComment = postCommentUiState is PostCommentUiState.Loading
-                val isPostingReply = postReplyUiState is PostReplyUiState.Loading
 
-                CommentInputOverlay(
-                    isReply = replyToComment != null,
-                    initialText = replyText,
-                    commentFormState = commentFormState,
-                    updateCommentFormState = { commentFormState = it },
-                    onCancel = {
-                        isWritingComment = false
-                        replyToComment = null
-                        replyText = ""
-                        commentFormState = CommentFormState()
-                    },
-                    onSubmit = { message ->
-                        if (replyToComment != null) {
-                            viewModel.postReply(replyToComment!!.id, message)
-                            replyToComment = null
-                        } else {
-                            campaign?.let {
-                                viewModel.postComment(it.id, CommentFormState(message = message))
-                            }
-                            commentFormState = CommentFormState()
+                is CampaignHistoryUiState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            SkeletonCampaignCard()
                         }
-                        isWritingComment = false
-                        replyText = ""
-                        campaign?.let {
-                            viewModel.fetchCampaignComments(it.id)
-                        }
-                    },
-                    isSubmitting = if (replyToComment != null) isPostingReply else isPostingComment
-                )
+                    }
+                }
+
+                is CampaignHistoryUiState.Error -> {
+                    item {
+                        Text(
+                            text = "Failed to load transactions: ${(campaignHistoryUiState as CampaignHistoryUiState.Error).message}",
+                            color = Color.Red,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
             }
+        }
+        if ((selectedTab == CampaignDetailsTab.COMMENTS) && (isWritingComment || replyToComment != null)) {
+            val isPostingComment = postCommentUiState is PostCommentUiState.Loading
+            val isPostingReply = postReplyUiState is PostReplyUiState.Loading
+
+            CommentInputOverlay(
+                isReply = replyToComment != null,
+                initialText = replyText,
+                commentFormState = commentFormState,
+                updateCommentFormState = { commentFormState = it },
+                onCancel = {
+                    isWritingComment = false
+                    replyToComment = null
+                    replyText = ""
+                    commentFormState = CommentFormState()
+                },
+                onSubmit = { message ->
+                    if (replyToComment != null) {
+                        viewModel.postReply(replyToComment!!.id, message)
+                        replyToComment = null
+                    } else {
+                        campaign?.let {
+                            viewModel.postComment(it.id, CommentFormState(message = message))
+                        }
+                        commentFormState = CommentFormState()
+                    }
+                    isWritingComment = false
+                    replyText = ""
+                    campaign?.let {
+                        viewModel.fetchCampaignComments(it.id)
+                    }
+                },
+                isSubmitting = if (replyToComment != null) isPostingReply else isPostingComment
+            )
         }
     }
 }

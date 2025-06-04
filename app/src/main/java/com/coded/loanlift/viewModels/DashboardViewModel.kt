@@ -559,5 +559,4 @@ class DashboardViewModel(
             }
         }
     }
-
 }

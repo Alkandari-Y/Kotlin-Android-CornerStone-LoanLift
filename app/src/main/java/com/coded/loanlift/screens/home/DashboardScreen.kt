@@ -43,7 +43,8 @@ fun DashboardScreen(
     onProfileClick: () -> Unit,
     onViewAllCampaignsClick: () -> Unit,
     onExploreAllCampaignsClick: () -> Unit,
-    onViewAllAccounts: () -> Unit
+    onViewAllAccounts: () -> Unit,
+    onViewAllPledges: () -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -152,7 +153,8 @@ fun DashboardScreen(
                             pledges = state.pledges,
                             onPledgeClick = onPledgeCLick,
                             listState = lazyListStatePledges,
-                            onPledgeCreate = onPledgeCreateClick
+                            onPledgeCreate = onPledgeCreateClick,
+                            onViewAllClick = onViewAllPledges
                         )
 
                         is PledgesUiState.Error -> Text(

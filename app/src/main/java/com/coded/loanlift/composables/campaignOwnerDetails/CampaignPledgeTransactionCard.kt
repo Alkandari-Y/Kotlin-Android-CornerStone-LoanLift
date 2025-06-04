@@ -1,11 +1,6 @@
 package com.coded.loanlift.composables.campaignOwnerDetails
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Card
@@ -27,18 +22,29 @@ fun CampaignPledgeTransactionCard(tx: CampaignTransactionViewDto) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF173E5D))
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2B2E))
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Rounded.AccountBalanceWallet, contentDescription = null, tint = Color.White)
+            Icon(
+                imageVector = Icons.Rounded.AccountBalanceWallet,
+                contentDescription = "Pledge",
+                tint = Color(0xFFBB86FC),
+                modifier = Modifier.size(28.dp)
+            )
+
             Spacer(modifier = Modifier.width(12.dp))
-            Column {
+
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${tx.pledgeTransactionType.name} - ${tx.amount} KWD",
+                    text = tx.pledgeTransactionType.name,
                     color = Color.White,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
@@ -47,6 +53,15 @@ fun CampaignPledgeTransactionCard(tx: CampaignTransactionViewDto) {
                     fontSize = 12.sp
                 )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = "${tx.amount} KWD",
+                color = Color(0xFF4CAF50),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
         }
     }
 }
